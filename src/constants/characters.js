@@ -1,7 +1,6 @@
 import hoodie from "../assets/3d/characters/char_hoodie.glb";
 import casual from "../assets/3d/characters/char_casual.glb";
 import business from "../assets/3d/characters/char_business.glb";
-import womanHoodie from "../assets/3d/characters/woman_hoodie.glb";
 import womanCasual from "../assets/3d/characters/woman_casual.glb";
 import womanBusiness from "../assets/3d/characters/woman_business.glb";
 
@@ -13,7 +12,6 @@ export const characters = [
   { id: "business", name: "Business", group: "He", url: business },
   { id: "w-casual", name: "Casual", group: "She", url: womanCasual },
   { id: "w-business", name: "Formal", group: "She", url: womanBusiness },
-  { id: "w-hoodie", name: "Punk", group: "She", url: womanHoodie },
 ];
 
 export const CLIPS = {
