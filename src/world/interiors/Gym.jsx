@@ -353,7 +353,7 @@ export default {
     luxfit: { at: [8.4, 1.4], area: [3.4, 6.2] },
     bayclub: { at: [0.5, 2.7], area: [5, 2.8] },
     skrappack: { at: [-6.6, 4.7], area: [4.4, 4.4] },
-    offtheweights: { at: [-6.6, 0.3], radius: 1.6, label: true, ring: true },
+    offtheweights: { at: [-6.6, 0.3], radius: 1.6, ring: true }, // the wall banner names it
   },
   // [x, z, halfWidth, halfDepth] boxes the player can't walk through
   blockers: [
