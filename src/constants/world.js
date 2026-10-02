@@ -156,7 +156,7 @@ export const rooms = {
         id: "offtheweights",
         title: "OFFTHEWEIGHTS",
         role: "Founder · my coaching brand",
-        dates: "2023",
+        dates: "Mar 2023 – Dec 2023",
         points: ["Built my own coaching brand alongside LuxFit, growing client reach and recognition about 50%."],
       },
       {
