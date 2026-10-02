@@ -16,6 +16,8 @@ const LOOK_OFFSET = new THREE.Vector3(0, 0.5, -3);
 // Close-up while choosing a character
 // Indoors the rooms are small, so sit closer
 const CAMERA_OFFSET_INDOOR = new THREE.Vector3(0, 6, 8.5);
+// portrait phones: higher and further back so the whole room fits the narrow view
+const CAMERA_OFFSET_INDOOR_NARROW = new THREE.Vector3(0, 13, 12);
 // Standing at a station: ease in so the set piece fills the view
 const CAMERA_OFFSET_STATION = new THREE.Vector3(0, 4.2, 6.4);
 const CAMERA_OFFSET_PICK = new THREE.Vector3(0, 1.6, 5);
@@ -147,7 +149,9 @@ const Player = ({ characterUrl, frozen, pose, closeUp, indoor, atStation, freeCa
           : indoor
             ? atStation
               ? CAMERA_OFFSET_STATION
-              : CAMERA_OFFSET_INDOOR
+              : size.width < size.height
+                ? CAMERA_OFFSET_INDOOR_NARROW
+                : CAMERA_OFFSET_INDOOR
             : size.width < size.height
               ? CAMERA_OFFSET_NARROW
               : CAMERA_OFFSET
