@@ -13,13 +13,15 @@ const CAMERA_OFFSET = new THREE.Vector3(0, 7.5, 10);
 const CAMERA_OFFSET_NARROW = new THREE.Vector3(0, 11, 15);
 const LOOK_OFFSET = new THREE.Vector3(0, 0.5, -3);
 // Close-up while choosing a character
+// Indoors the rooms are small, so sit closer
+const CAMERA_OFFSET_INDOOR = new THREE.Vector3(0, 6, 8.5);
 const CAMERA_OFFSET_PICK = new THREE.Vector3(0, 1.6, 5);
 const LOOK_OFFSET_PICK = new THREE.Vector3(0, 0.2, 0);
 
 // Feet sit at the bottom of the capsule plus Ecctrl's float height
 const FEET_Y = -(0.3 + 0.35 + 0.2);
 
-const Player = ({ characterUrl, frozen, pose, closeUp }) => {
+const Player = ({ characterUrl, frozen, pose, closeUp, indoor, spawn = SPAWN }) => {
   const ecctrl = useRef();
   const [, getKeys] = useKeyboardControls();
   const [animation, setAnimation] = useState("idle");
@@ -30,6 +32,8 @@ const Player = ({ characterUrl, frozen, pose, closeUp }) => {
   useFrame(({ camera, size }, delta) => {
     const player = ecctrl.current;
     if (!player) return;
+    // Dev-only handle for automated walkthrough tests (stripped from production builds)
+    if (import.meta.env.DEV) window.__player = player;
 
     // Feed keyboard + touch joystick into the controller each frame
     const keys = getKeys();
@@ -50,7 +54,7 @@ const Player = ({ characterUrl, frozen, pose, closeUp }) => {
 
     // Fell off the island: put them back on the plaza
     if (player.currPos.y < -25) {
-      player.body.setTranslation({ x: SPAWN[0], y: SPAWN[1], z: SPAWN[2] }, true);
+      player.body.setTranslation({ x: spawn[0], y: spawn[1], z: spawn[2] }, true);
       player.body.setLinvel({ x: 0, y: 0, z: 0 }, true);
     }
 
@@ -65,7 +69,15 @@ const Player = ({ characterUrl, frozen, pose, closeUp }) => {
     const t = 1 - Math.pow(0.001, delta);
     cameraTarget.current
       .copy(player.currPos)
-      .add(closeUp ? CAMERA_OFFSET_PICK : size.width < size.height ? CAMERA_OFFSET_NARROW : CAMERA_OFFSET);
+      .add(
+        closeUp
+          ? CAMERA_OFFSET_PICK
+          : indoor
+            ? CAMERA_OFFSET_INDOOR
+            : size.width < size.height
+              ? CAMERA_OFFSET_NARROW
+              : CAMERA_OFFSET
+      );
     lookTarget.current.lerp((closeUp ? LOOK_OFFSET_PICK : LOOK_OFFSET).clone().add(player.currPos), t);
     camera.position.lerp(cameraTarget.current, t);
     camera.lookAt(lookTarget.current);
@@ -75,7 +87,7 @@ const Player = ({ characterUrl, frozen, pose, closeUp }) => {
     <Ecctrl
       ref={ecctrl}
       name='player'
-      position={SPAWN}
+      position={spawn}
       capsuleHalfHeight={0.3}
       capsuleRadius={0.35}
       maxWalkVel={3.5}

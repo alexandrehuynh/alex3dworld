@@ -12,6 +12,7 @@ Currently, two official plugins are available:
 All third-party assets are CC0 (public domain). Credit is not required, but thanks to:
 
 - Characters: "Ultimate Modular Men" (Hoodie, Casual, Business Man) by [Quaternius](https://quaternius.com), via [Poly Pizza](https://poly.pizza)
+- Interior props: [KayKit](https://kaylousberg.com) Furniture Bits & City Builder Bits by Kay Lousberg; desk, computer, monitor, chair, corkboard, treadmill, dumbbell, and mat by CreativeTrio, Quaternius, and Isa Lousberg; plants and café treats by Isa Lousberg, via Poly Pizza
 - Sky: "Kloofendal 48d Partly Cloudy (Pure Sky)" by Greg Zaal and Jarod Guest, [Poly Haven](https://polyhaven.com)
 - Music: "Chill lofi inspired" by omfgdude, loop edit by qubodup, [OpenGameArt](https://opengameart.org/content/chill-lofi-inspired-loop-edit)
 - Icons: [Devicon](https://devicon.dev) (MIT) and [Lucide](https://lucide.dev) (ISC)

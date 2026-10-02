@@ -14,8 +14,19 @@ import CharacterPicker from "../components/CharacterPicker";
 import { characters, loadCharacterId, saveCharacterId } from "../constants/characters";
 import { Loader, RoomPanel } from "../components";
 import { soundoff, soundon } from "../assets/icons";
-import { buildings } from "../constants/world";
+import StationCard from "../components/StationCard";
+import { BUILDING_RING, buildings, rooms } from "../constants/world";
 import { Building, Clouds, Island, Player } from "../world";
+import { Interior, interiorSpawn } from "../world/interiors";
+import { SPAWN } from "../world/Player";
+
+// Where you reappear when walking out of a building: on its path, facing the plaza
+const doorSpawn = (building) => {
+  const k = (BUILDING_RING - 6) / BUILDING_RING;
+  return [building.position[0] * k, 1.5, building.position[2] * k];
+};
+
+const sameTarget = (a, b) => a && b && a.kind === b.kind && a.id === b.id;
 
 const KEYBOARD_MAP = [
   { name: "forward", keys: ["ArrowUp", "KeyW"] },
@@ -33,8 +44,6 @@ const Home = () => {
   const audioRef = useRef(null);
   const [isPlayingMusic, setIsPlayingMusic] = useState(false);
   const [showIntro, setShowIntro] = useState(true);
-  const [nearbyId, setNearbyId] = useState(null);
-  const [openId, setOpenId] = useState(null);
   const touch = useMemo(isTouch, []);
   const [characterId, setCharacterId] = useState(
     () => characters.find((c) => c.id === loadCharacterId())?.id ?? null
@@ -49,8 +58,19 @@ const Home = () => {
     setPicking(false);
   }, [previewId]);
 
-  const nearby = buildings.find((b) => b.id === nearbyId);
-  const open = buildings.find((b) => b.id === openId);
+  // "island" or a building id when inside
+  const [location, setLocation] = useState("island");
+  const [spawn, setSpawn] = useState(SPAWN);
+  const [fading, setFading] = useState(false);
+  // What the player is standing at: { kind: "door" | "station" | "exit", id }
+  const [target, setTarget] = useState(null);
+  // Open UI: { kind: "station", id: index } or { kind: "overview" }
+  const [card, setCard] = useState(null);
+
+  const inside = buildings.find((b) => b.id === location);
+  const doorBuilding = target?.kind === "door" ? buildings.find((b) => b.id === target.id) : null;
+  const overviewBuilding = card?.kind === "overview" ? inside ?? doorBuilding : null;
+  const stationSection = card?.kind === "station" && inside ? rooms[inside.id].sections[card.id] : null;
 
   useEffect(() => {
     if (!audioRef.current) {
@@ -65,24 +85,49 @@ const Home = () => {
     return () => audioRef.current?.pause();
   }, [isPlayingMusic]);
 
-  const onEnterZone = useCallback((id) => setNearbyId(id), []);
-  const onExitZone = useCallback(
-    (id) => setNearbyId((current) => (current === id ? null : current)),
-    []
-  );
-  const closeRoom = useCallback(() => setOpenId(null), []);
+  const onZone = useCallback((t) => setTarget(t), []);
+  const offZone = useCallback((t) => setTarget((current) => (sameTarget(current, t) ? null : current)), []);
+  const onDoorEnter = useCallback((id) => onZone({ kind: "door", id }), [onZone]);
+  const onDoorExit = useCallback((id) => offZone({ kind: "door", id }), [offZone]);
+  const closeCard = useCallback(() => setCard(null), []);
 
-  // E / Enter opens the room you're standing at
+  // Fade out, swap scenes, fade back in
+  const travel = useCallback((nextLocation, nextSpawn) => {
+    setFading(true);
+    setCard(null);
+    setTimeout(() => {
+      setTarget(null);
+      setLocation(nextLocation);
+      setSpawn(nextSpawn);
+      setTimeout(() => setFading(false), 150);
+    }, 350);
+  }, []);
+
+  const activate = useCallback(() => {
+    if (!target || card || fading) return;
+    setShowIntro(false);
+    if (target.kind === "door") travel(target.id, interiorSpawn(target.id));
+    else if (target.kind === "exit") travel("island", doorSpawn(inside));
+    else if (target.kind === "station") setCard({ kind: "station", id: target.id });
+  }, [target, card, fading, travel, inside]);
+
+  // E / Enter acts on whatever you're standing at
   useEffect(() => {
     const onKey = (e) => {
-      if ((e.key === "e" || e.key === "E" || e.key === "Enter") && nearbyId && !openId) {
-        setOpenId(nearbyId);
-        setShowIntro(false);
-      }
+      if (e.key === "e" || e.key === "E" || e.key === "Enter") activate();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [nearbyId, openId]);
+  }, [activate]);
+
+  const prompt =
+    target?.kind === "door"
+      ? `${doorBuilding.emoji} Enter ${doorBuilding.name}`
+      : target?.kind === "exit"
+        ? "🚪 Back outside"
+        : target?.kind === "station" && inside
+          ? `${inside.emoji} ${rooms[inside.id].sections[target.id]?.title}`
+          : null;
 
   // Hide the intro card once they start moving
   useEffect(() => {
@@ -160,22 +205,36 @@ const Home = () => {
             />
             <Clouds />
 
-            <Physics>
-              <Island />
-              {buildings.map((b) => (
-                <Building
-                  key={b.id}
-                  building={b}
-                  isNearby={nearbyId === b.id}
-                  onEnterZone={onEnterZone}
-                  onExitZone={onExitZone}
+            <Physics key={location}>
+              {inside ? (
+                <Interior
+                  building={inside}
+                  sections={rooms[inside.id].sections}
+                  active={target?.id ?? null}
+                  onZone={onZone}
+                  offZone={offZone}
                 />
-              ))}
+              ) : (
+                <>
+                  <Island />
+                  {buildings.map((b) => (
+                    <Building
+                      key={b.id}
+                      building={b}
+                      isNearby={target?.kind === "door" && target.id === b.id}
+                      onEnterZone={onDoorEnter}
+                      onExitZone={onDoorExit}
+                    />
+                  ))}
+                </>
+              )}
               <Player
                 characterUrl={activeCharacter.url}
-                frozen={!!openId || picking}
+                frozen={!!card || picking || fading}
                 pose={picking ? "wave" : undefined}
                 closeUp={picking}
+                indoor={!!inside}
+                spawn={spawn}
               />
             </Physics>
 
@@ -195,21 +254,52 @@ const Home = () => {
 
       <Loader />
 
-      {nearby && !open && (
+      {prompt && !card && !fading && !picking && (
         <div className='absolute bottom-24 sm:bottom-10 left-0 right-0 z-20 flex justify-center px-4'>
-          <button
-            onClick={() => setOpenId(nearby.id)}
-            className='neo-brutalism-white neo-btn !text-base'
-          >
-            {nearby.emoji} Enter {nearby.name}
+          <button onClick={activate} className='neo-brutalism-white neo-btn !text-base'>
+            {prompt}
             {!touch && <kbd className='ml-2 rounded bg-slate-100 px-1.5 text-xs'>E</kbd>}
           </button>
         </div>
       )}
 
-      {open && <RoomPanel building={open} onClose={closeRoom} />}
+      {inside && !picking && (
+        <div className='absolute top-24 left-4 z-20 flex flex-wrap items-center gap-2'>
+          <span className='rounded-full bg-white/90 px-4 py-1.5 font-poppins text-sm font-semibold shadow'>
+            {inside.emoji} {inside.name}
+          </span>
+          <button
+            onClick={() => setCard({ kind: "overview" })}
+            className='rounded-full bg-white/80 px-3 py-1.5 text-sm font-medium shadow hover:bg-white'
+          >
+            Overview
+          </button>
+          <button
+            onClick={() => travel("island", doorSpawn(inside))}
+            className='rounded-full bg-white/80 px-3 py-1.5 text-sm font-medium shadow hover:bg-white'
+          >
+            Exit ↩
+          </button>
+        </div>
+      )}
 
-      {touch && !open && !picking && (
+      {stationSection && (
+        <StationCard
+          building={inside}
+          section={stationSection}
+          onClose={closeCard}
+          onOverview={() => setCard({ kind: "overview" })}
+        />
+      )}
+      {overviewBuilding && <RoomPanel building={overviewBuilding} onClose={closeCard} />}
+
+      <div
+        className={`pointer-events-none absolute inset-0 z-40 bg-white transition-opacity duration-300 ${
+          fading ? "opacity-100" : "opacity-0"
+        }`}
+      />
+
+      {touch && !card && !picking && (
         <Joystick joystickWrapperStyle={{ left: 24, bottom: 72, width: 140, height: 140 }} />
       )}
 
@@ -220,7 +310,7 @@ const Home = () => {
         Skip to résumé →
       </Link>
 
-      {!picking && !open && (
+      {!picking && !card && (
         <button
           onClick={() => {
             setPreviewId(characterId);
