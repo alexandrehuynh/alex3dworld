@@ -173,7 +173,7 @@ export const rooms = {
         dates: "Sep 2022 – Mar 2023",
         place: "San Francisco, CA",
         points: [
-          "2022 Most Inspirational Trainer of the Year and Rookie of the Year.",
+          "2022 Equinox Union Street Most Inspirational Trainer of the Year and Rookie of the Year.",
           "Led 75–85 client sessions a month with 85% retention.",
           "Ran a posture challenge with 102 participants.",
           "90% client acquisition rate from gym-floor engagement.",
@@ -242,7 +242,10 @@ export const rooms = {
         role: "Server, American diner",
         dates: "Apr 2023 – Dec 2023",
         place: "San Francisco, CA",
-        points: ["More details coming soon."],
+        points: [
+          "Ran my own section start to finish, from greeting to close-out.",
+          "Consistently earned around 20% in tips; once tipped $500 on a $100 bill.",
+        ],
       },
       {
         id: "magicflute",
@@ -273,8 +276,9 @@ export const rooms = {
         flyers: [
           {
             title: "Sierra Adventures",
-            role: "Rafting tour guide / Store Manager",
+            role: "Store Manager & rafting guide",
             dates: "Jun – Oct 2016 · Reno, NV",
+            note: "Ran store inventory and bookings, fitted customers for tubing, and guided rafting trips as a standby guide.",
             color: "#bae6fd",
             art: "sierra",
           },
@@ -289,7 +293,8 @@ export const rooms = {
           {
             title: "Obour Foods",
             role: "Hummus stand, farmers market",
-            dates: SOON,
+            dates: "Weekends, for fun",
+            note: "Worked the farmers market stand for a friend's business.",
             color: "#fef08a",
             art: "obour",
             logo: obourLogo,
