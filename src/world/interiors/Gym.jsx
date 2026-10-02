@@ -160,7 +160,8 @@ const OutdoorPlatform = ({ position }) => (
     </group>
     {/* rack against the wall, facing into the room */}
     <SquatRack position={[1.05, 0, -0.4]} rotation={[0, -Math.PI / 2, 0]} plate='#16a34a' />
-    <group position={[-0.35, 0.42, -0.4]} rotation={[0, Math.PI / 2, 0]}>
+    {/* plate radius 0.42 + platform top 0.09, so the plates rest on the platform */}
+    <group position={[-0.35, 0.51, -0.4]} rotation={[0, Math.PI / 2, 0]}>
       <Barbell position={[0, 0, 0]} plate='#2563eb' />
     </group>
     <TextPanel width={2.6} height={0.85} position={[1.56, 2.35, -0.4]} rotation={[0, -Math.PI / 2, 0]} draw={luxfit} />
