@@ -57,7 +57,7 @@ const About = () => {
         <ol className='mt-6 flex flex-wrap items-center gap-2 text-sm font-medium text-slate-700'>
           {[
             ["💻", "Engineering", "2015–2020"],
-            ["🏋️", "Fitness coaching + customer service", "2020–2025"],
+            ["🏋️", "Fitness coaching + customer service", "2020–2026"],
             ["📈", "Sales & GTM", "2025–now"],
           ].map(([e, l, d], i) => (
             <li key={l} className='flex items-center gap-2'>

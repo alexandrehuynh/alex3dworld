@@ -165,6 +165,16 @@ const Experience = () => {
           ))}
       </div>
 
+      {track.earlier && (
+        <div className='mt-14'>
+          <h2 className='subhead-text'>{track.earlier.title}</h2>
+          <div className='mt-8 flex flex-col gap-10'>
+            {track.earlier.sections.map((s) => (
+              <Role key={s.id} section={s} accent={track.accent} />
+            ))}
+          </div>
+        </div>
+      )}
       {track.showProjects && <Projects />}
       {track.extra && <Extra extra={track.extra} accent={track.accent} />}
 

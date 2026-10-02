@@ -1,3 +1,4 @@
+import nevadaLogo from "../assets/logos/nevada.png";
 import obourLogo from "../assets/logos/obour.png";
 
 // Layout and content for the walkable hub world.
@@ -83,28 +84,6 @@ export const rooms = {
         ],
       },
       {
-        id: "gainspan",
-        title: "GainSpan",
-        role: "Software Engineer Intern",
-        dates: "May 2015 – Aug 2015",
-        place: "San Jose, CA",
-        points: [
-          "Automated IoT sensor data processing and reporting with Python and Pandas.",
-          "Wrote a program to record Wi-Fi module interference and plotted it as histograms.",
-        ],
-      },
-      {
-        id: "codingtemple",
-        title: "Coding Temple",
-        role: "Full-Stack Software Developer Trainee",
-        dates: "Jan 2024 – Mar 2024",
-        place: "Remote",
-        points: [
-          "Built full-stack apps with React front ends and Flask REST APIs backed by SQL.",
-          "Capstone: a Pokémon battler with Firebase, React, and Flask.",
-        ],
-      },
-      {
         id: "colab",
         title: "Co.Lab",
         role: "Lead Software Developer",
@@ -118,6 +97,28 @@ export const rooms = {
         link: "https://bitebyte.onrender.com/",
       },
       {
+        id: "codingtemple",
+        title: "Coding Temple",
+        role: "Full-Stack Software Developer Trainee",
+        dates: "Jan 2024 – Mar 2024",
+        place: "Remote",
+        points: [
+          "Built full-stack apps with React front ends and Flask REST APIs backed by SQL.",
+          "Capstone: a Pokémon battler with Firebase, React, and Flask.",
+        ],
+      },
+      {
+        id: "gainspan",
+        title: "GainSpan",
+        role: "Software Engineer Intern",
+        dates: "May 2015 – Aug 2015",
+        place: "San Jose, CA",
+        points: [
+          "Automated IoT sensor data processing and reporting with Python and Pandas.",
+          "Wrote a program to record Wi-Fi module interference and plotted it as histograms.",
+        ],
+      },
+      {
         id: "projects",
         title: "Projects & hackathons",
         role: "EyeSpyAI, Trainers Memory, HealthBridge, and more",
@@ -126,17 +127,56 @@ export const rooms = {
     ],
   },
   gym: {
-    intro: "Five years coaching in the Bay Area, from NBA combines to luxury clubs, plus my own brand.",
+    intro: "Five-plus years of strength and conditioning and personal training, from NBA combines to luxury clubs, plus my own brand.",
+    // newest first
     sections: [
+      {
+        id: "bayclub",
+        title: "Bay Club",
+        role: "Ultimate Personal Trainer",
+        dates: "Sep 2024 – Feb 2026",
+        place: "Pleasanton, CA",
+        points: [
+          "Personalized programs that improved client adherence by 73%.",
+          "Focused on injury prevention and safe technique to keep clients training consistently.",
+        ],
+      },
+      {
+        id: "luxfit",
+        title: "LuxFit",
+        role: "Fitness Coach",
+        dates: "Mar 2023 – Dec 2023",
+        place: "San Francisco, CA",
+        points: [
+          "Ran 20–25 personalized sessions a month with 95% retention after the first package.",
+          "Grew my client base 30% through marketing and partnerships with other coaches.",
+        ],
+      },
+      {
+        id: "offtheweights",
+        title: "OFFTHEWEIGHTS",
+        role: "Founder · my coaching brand",
+        dates: "2023",
+        points: ["Built my own coaching brand alongside LuxFit, growing client reach and recognition about 50%."],
+      },
+      {
+        id: "skrappack",
+        title: "Skrap Pack Marina",
+        role: "Strength & Conditioning Coach",
+        place: "San Francisco, CA",
+        points: ["Strength and conditioning for jiu-jitsu athletes."],
+      },
       {
         id: "equinox",
         title: "Equinox",
-        role: "Personal Trainer",
-        dates: "Sep 2022 – Oct 2025",
+        role: "Personal Trainer, Tier 3",
+        dates: "Sep 2022 – Mar 2023",
         place: "San Francisco, CA",
         points: [
-          "2022 Equinox Union Street Most Inspirational Trainer of the Year and Rookie of the Year.",
-          "Science-based programs for a diverse clientele, with about 90% client retention.",
+          "2022 Most Inspirational Trainer of the Year and Rookie of the Year.",
+          "Led 75–85 client sessions a month with 85% retention.",
+          "Ran a posture challenge with 102 participants.",
+          "90% client acquisition rate from gym-floor engagement.",
         ],
       },
       {
@@ -146,40 +186,11 @@ export const rooms = {
         dates: "Apr 2021 – Nov 2022",
         place: "San Francisco, CA",
         points: [
-          "Coached athletes toward collegiate scholarships and professional contracts.",
+          "Trained 63 athletes with zero major injuries; 205 lb average strength gained per athlete.",
+          "Athletes earned collegiate scholarships and professional contracts overseas and with national teams.",
           "Helped run NBA combines for the G League Ignite, basketball camps, and AAU teams.",
-          "Built Smartabase player reports and dashboards to track readiness and strength gains.",
+          "2022 SF City Champions with Abraham Lincoln High School Varsity Boys Basketball.",
         ],
-      },
-      {
-        id: "luxfit",
-        title: "LuxFit",
-        role: "Performance Coach",
-        dates: "Oct 2020 – Oct 2025",
-        place: "SF Bay Area",
-        points: ["Outdoor barbell and strength coaching.", "More details coming soon."],
-      },
-      {
-        id: "bayclub",
-        title: "Bay Club",
-        role: "Performance Coach",
-        dates: "Oct 2020 – Oct 2025",
-        place: "SF Bay Area",
-        points: [
-          "Across Bay Club, Equinox, and LuxFit: $80K–$120K in annual revenue from 100+ client relationships with 85% retention.",
-        ],
-      },
-      {
-        id: "skrappack",
-        title: "Skrap Pack Marina",
-        role: "Strength & Conditioning Coach",
-        points: ["Strength and conditioning for jiu-jitsu athletes.", "More details coming soon."],
-      },
-      {
-        id: "offtheweights",
-        title: "OFFTHEWEIGHTS",
-        role: "My coaching brand",
-        link: "https://www.offtheweights.com/",
       },
     ],
   },
@@ -207,7 +218,7 @@ export const rooms = {
         place: "SF Bay Area",
         points: [
           "A QA platform for mobile apps: AI agents run tests on cloud devices and feed results straight back into the dev loop. First GTM hire.",
-          "Booked 52 meetings from cold outbound and sourced 2 closed-won customers, one enterprise.",
+          "Booked 52 meetings in 8 months from cold outbound: 2 closed-won customers (one enterprise) and 9 accounts into product evaluation.",
           "Built the outbound motion from zero and wrote the playbook, persona matrix, and product claims reference.",
         ],
       },
@@ -260,14 +271,14 @@ export const rooms = {
         flyers: [
           {
             title: "Sierra Adventures",
-            role: "River rafting tour guide / Store Manager",
+            role: "Rafting tour guide / Store Manager",
             dates: "Jun – Oct 2016 · Reno, NV",
             color: "#bae6fd",
             art: "sierra",
           },
           {
             title: "Pure Barre Marina",
-            role: "Fitness Sales Associate",
+            role: "Sales Associate",
             dates: "Oct 2020 – Mar 2021 · SF",
             note: "Lead gen and cold calls grew customer acquisition 24% during COVID.",
             color: "#fbcfe8",
@@ -280,6 +291,14 @@ export const rooms = {
             color: "#fef08a",
             art: "obour",
             logo: obourLogo,
+          },
+          {
+            title: "Wolf Pack Call Center",
+            role: "Student Representative, Fundraiser",
+            dates: "Jan 2016 – Apr 2017 · Reno, NV",
+            note: "Raised $12,000 in year two and ranked top 3 in engagement and pledge calls.",
+            color: "#dbeafe",
+            logo: nevadaLogo,
           },
         ],
       },

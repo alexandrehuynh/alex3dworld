@@ -456,14 +456,14 @@ const FlyerBoard = ({ position }) => {
   const flyers = rooms.cafe.sections.find((s) => s.id === "board").flyers;
   return (
     <group position={position}>
-      <Soft args={[3.2, 2, 0.12]} position={[0, 1.6, 0]} color='#78350f' radius={0.05} />
-      <Soft args={[3, 1.8, 0.14]} position={[0, 1.6, 0.01]} color='#d6a76c' radius={0.04} roughness={1} />
+      <Soft args={[4.2, 2, 0.12]} position={[0, 1.6, 0]} color='#78350f' radius={0.05} />
+      <Soft args={[4, 1.8, 0.14]} position={[0, 1.6, 0.01]} color='#d6a76c' radius={0.04} roughness={1} />
       {flyers.map((flyer, i) => (
         <Flyer
           key={flyer.title}
           flyer={flyer}
           position={[(i - (flyers.length - 1) / 2) * 0.95, 1.6 + (i % 2 ? -0.08 : 0.06), 0.1]}
-          tilt={(i - 1) * 0.05}
+          tilt={(i - 1.5) * 0.04}
         />
       ))}
     </group>

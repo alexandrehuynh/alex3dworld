@@ -30,6 +30,34 @@ export const tracks = [
     ],
     // most recent first
     sections: [...rooms.sales.sections].reverse(),
+    // phone and in-person sales before the GTM roles
+    earlier: {
+      title: "Earlier sales roles",
+      sections: [
+        {
+          id: "purebarre",
+          title: "Pure Barre Marina",
+          role: "Sales Associate",
+          dates: "Oct 2020 – Mar 2021",
+          place: "San Francisco, CA",
+          points: [
+            "Acquired new members through cold outreach and networking: lead gen, follow-up, and close.",
+            "Re-engaged inactive and at-risk members to protect studio revenue.",
+          ],
+        },
+        {
+          id: "wolfpack",
+          title: "Wolf Pack Call Center, University of Nevada",
+          role: "Student Representative, Fundraiser",
+          dates: "Jan 2016 – Apr 2017",
+          place: "Reno, NV",
+          points: [
+            "Cold-called alumni and parents for the Nevada Fund and college funds.",
+            "Raised $1,100 in year one and $12,000 in year two; ranked top 3 in engagement rate and calls leading to pledges.",
+          ],
+        },
+      ],
+    },
     extra: {
       title: "Stack I've run",
       chips: ["Clay", "n8n", "Claude", "Perplexity", "Apollo", "HeyReach", "Instantly", "HubSpot", "Nooks", "Sumble"],
@@ -61,8 +89,8 @@ export const tracks = [
     stats: [
       { value: "$80K–$120K", label: "annual coaching revenue" },
       { value: "100+", label: "client relationships" },
-      { value: "85%", label: "client retention" },
       { value: "2022", label: "Equinox Most Inspirational Trainer & Rookie of the Year" },
+      { value: "63", label: "athletes trained at Murray with zero major injuries" },
     ],
     sections: rooms.gym.sections,
     extra: {
