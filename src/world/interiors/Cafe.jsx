@@ -373,12 +373,8 @@ const CafeDecor = () => (
     <group position={[6.2, 0, 1]} rotation={[0, -Math.PI / 2, 0]}>
       <KbbqTable position={[0, 0, 0]} />
     </group>
-    {/* freestanding, angled toward the room so the flyers face you */}
-    <group position={[-6.9, 0, 1.4]} rotation={[0, 0.87, 0]} scale={1.2}>
+    <group position={[-7.88, 0, 1.2]} rotation={[0, Math.PI / 2, 0]}>
       <FlyerBoard position={[0, 0, 0]} />
-      {[-1.3, 1.3].map((x) => (
-        <Soft key={x} args={[0.1, 0.7, 0.1]} position={[x, 0.35, 0]} color='#5b3a1e' />
-      ))}
     </group>
     <Plant url={PROPS.plantPothos} position={[7.2, 0, -4.6]} />
     <Plant position={[-7.2, 0, 4.4]} />
@@ -396,12 +392,11 @@ export default {
     presidio: [0.8, -2.1],
     magicflute: [-5.1, -1.6],
     kelements: [4.3, 1],
-    board: [-5.6, 2.5],
+    board: [-6.3, 1.2],
   },
   blockers: [
     [1.1, -4.2, 3, 0.5],
     [-5.1, -3.7, 1.6, 0.9],
-    [-6.9, 1.4, 0.8, 0.8],
     [6.5, 1, 1.2, 1],
   ],
   Decor: CafeDecor,
