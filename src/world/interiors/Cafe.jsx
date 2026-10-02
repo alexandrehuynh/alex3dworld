@@ -206,18 +206,83 @@ const CoffeeCup = ({ position }) => (
 );
 
 // Powdered-sugar beignets on a plate
+// Square beignets dusted in powdered sugar, with a ramekin of jam
 const Beignets = ({ position }) => (
   <group position={position}>
     <mesh>
-      <cylinderGeometry args={[0.17, 0.17, 0.02, 24]} />
+      <cylinderGeometry args={[0.15, 0.15, 0.02, 24]} />
       <meshStandardMaterial color='#ffffff' />
     </mesh>
     {[
-      [-0.05, -0.04, 0.3],
-      [0.06, -0.03, -0.4],
-      [0, 0.06, 0.9],
-    ].map(([x, z, r], i) => (
-      <Soft key={i} args={[0.11, 0.06, 0.11]} position={[x, 0.04 + (i === 2 ? 0.04 : 0), z]} rotation={[0, r, 0]} color='#fdf6e3' radius={0.03} roughness={1} />
+      [-0.05, -0.04, 0.2, 0],
+      [0.05, -0.02, -0.3, 0],
+      [-0.01, 0.05, 0.7, 0.045],
+    ].map(([x, z, r, y], i) => (
+      <group key={i} position={[x, 0.035 + y, z]} rotation={[0, r, 0]}>
+        <Soft args={[0.085, 0.05, 0.085]} color='#e8b46a' radius={0.015} roughness={1} />
+        <Soft args={[0.088, 0.012, 0.088]} position={[0, 0.026, 0]} color='#ffffff' radius={0.005} roughness={1} />
+      </group>
+    ))}
+    <group position={[0.08, 0.02, 0.07]}>
+      <mesh position={[0, 0.02, 0]}>
+        <cylinderGeometry args={[0.035, 0.03, 0.04, 16]} />
+        <meshStandardMaterial color='#ffffff' />
+      </mesh>
+      <mesh position={[0, 0.041, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[0.03, 16]} />
+        <meshStandardMaterial color='#9f1239' roughness={0.3} />
+      </mesh>
+    </group>
+  </group>
+);
+
+// Glass pitcher of orange juice
+const Pitcher = ({ position }) => (
+  <group position={position}>
+    <mesh position={[0, 0.08, 0]}>
+      <cylinderGeometry args={[0.05, 0.055, 0.15, 20]} />
+      <meshStandardMaterial color='#fb923c' roughness={0.3} />
+    </mesh>
+    <mesh position={[0, 0.1, 0]}>
+      <cylinderGeometry args={[0.06, 0.062, 0.2, 20]} />
+      <meshStandardMaterial color='#e0f2fe' transparent opacity={0.35} roughness={0.05} />
+    </mesh>
+    <mesh position={[0.07, 0.11, 0]}>
+      <torusGeometry args={[0.035, 0.008, 8, 16]} />
+      <meshStandardMaterial color='#e0f2fe' transparent opacity={0.6} />
+    </mesh>
+  </group>
+);
+
+// Silver ice bucket with a champagne bottle
+const IceBucket = ({ position }) => (
+  <group position={position}>
+    <mesh position={[0, 0.07, 0]}>
+      <cylinderGeometry args={[0.075, 0.06, 0.14, 24]} />
+      <meshStandardMaterial color='#d4d4d8' metalness={0.85} roughness={0.2} />
+    </mesh>
+    <group position={[0, 0.02, 0]} rotation={[0, 0, 0.18]}>
+      <Bottle position={[0, 0, 0]} color='#14532d' />
+    </group>
+  </group>
+);
+
+// Small bud vase with flowers
+const Vase = ({ position }) => (
+  <group position={position}>
+    <mesh position={[0, 0.05, 0]}>
+      <cylinderGeometry args={[0.02, 0.03, 0.1, 12]} />
+      <meshStandardMaterial color='#e0f2fe' transparent opacity={0.5} />
+    </mesh>
+    {[
+      [0, 0.17, 0, "#f9a8d4"],
+      [0.03, 0.15, 0.02, "#fde68a"],
+      [-0.03, 0.155, -0.01, "#ffffff"],
+    ].map(([x, y, z, c]) => (
+      <mesh key={c} position={[x, y, z]}>
+        <sphereGeometry args={[0.025, 12, 8]} />
+        <meshStandardMaterial color={c} />
+      </mesh>
     ))}
   </group>
 );
@@ -259,22 +324,32 @@ const BrunchTable = ({ position }) => (
       <cylinderGeometry args={[0.85, 0.85, 0.08, 40]} />
       <meshStandardMaterial color='#f4f4f5' roughness={0.25} />
     </mesh>
-    {[0, Math.PI / 2, Math.PI, (3 * Math.PI) / 2].map((a) => (
-      <mesh key={a} position={[Math.sin(a) * 0.55, 0.77, Math.cos(a) * 0.55]}>
-        <cylinderGeometry args={[0.15, 0.15, 0.02, 24]} />
-        <meshStandardMaterial color='#ffffff' />
-      </mesh>
-    ))}
-    {/* mimosas, champagne, and coffee */}
-    <Glass position={[0.3, 0.76, 0.32]} liquid='#fb923c' />
-    <Glass position={[-0.33, 0.76, 0.28]} liquid='#fb923c' />
-    <Glass position={[0.38, 0.76, -0.28]} liquid='#fef3c7' />
-    <Glass position={[-0.28, 0.76, -0.35]} liquid='#fef3c7' />
-    <Bottle position={[0, 0.76, 0]} color='#14532d' />
-    <CoffeeCup position={[0.12, 0.77, 0.5]} />
-    <CoffeeCup position={[-0.5, 0.77, -0.12]} />
-    <Beignets position={[0.55, 0.77, 0.05]} />
-    <Calamari position={[-0.55, 0.77, 0]} />
+    {/* full brunch for four: a plate, a coffee, and a mimosa or champagne at each seat */}
+    {[
+      [-1, 1],
+      [1, 1],
+      [-1, -1],
+      [1, -1],
+    ].map(([sx, sz], i) => {
+      const plate = [sx * 0.37, 0.77, sz * 0.37];
+      // perpendicular to the seat direction, for the cup and glass either side
+      const px = -sz * 0.707;
+      const pz = sx * 0.707;
+      return (
+        <group key={i}>
+          {i % 2 ? <Calamari position={plate} /> : <Beignets position={plate} />}
+          <CoffeeCup position={[plate[0] + px * 0.21, 0.77, plate[2] + pz * 0.21]} />
+          <Glass
+            position={[plate[0] - px * 0.2 - sx * 0.04, 0.76, plate[2] - pz * 0.2 - sz * 0.04]}
+            liquid={i < 2 ? "#fb923c" : "#fef3c7"}
+          />
+        </group>
+      );
+    })}
+    {/* shared middle of the table */}
+    <IceBucket position={[-0.1, 0.76, 0.06]} />
+    <Pitcher position={[0.13, 0.76, 0.05]} />
+    <Vase position={[0.02, 0.76, -0.14]} />
     {/* table for four, chairs staggered on the diagonals so all of them show */}
     {[
       [-1, 1],
@@ -514,12 +589,14 @@ export default {
   floor: "#e7c9a0",
   wall: "#fff7ed",
   trim: "#92400e",
+  // No floor rings here: each zone covers the area in front of its set piece,
+  // so walking up to the bar, patio, board, or grill brings up its prompt.
+  rings: false,
   stations: {
-    presidio: [-1.2, -2.1],
-    // walking up to the table's open side opens it; no floor ring
-    magicflute: { at: [-3.9, -0.6], area: [1.4, 2.8] },
-    kelements: [4.3, 1],
-    board: [4.6, -3.8],
+    presidio: { at: [-1.2, -2.7], area: [5.6, 2] },
+    magicflute: { at: [-5.2, -0.6], area: [3.6, 4.2] },
+    board: { at: [4.6, -4], area: [3.4, 2.2] },
+    kelements: { at: [5, 1], area: [3, 3.6] },
   },
   blockers: [
     [-1.2, -4.2, 3, 0.5],

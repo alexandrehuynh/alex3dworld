@@ -1,7 +1,11 @@
 import { RoundedBox } from "@react-three/drei";
 import { CuboidCollider, CylinderCollider, RigidBody } from "@react-three/rapier";
 
+import { useEffect, useRef } from "react";
+import { useFrame } from "@react-three/fiber";
+
 import Sign from "../Sign";
+import { playerState } from "../playerState";
 
 export const WALL_HEIGHT = 3.2;
 const T = 0.4; // wall thickness
@@ -73,36 +77,16 @@ export const Room = ({ width, depth, floor, wall, trim, onZone, offZone, active,
 // A spot in the room tied to one job. Either a glowing floor ring, or (with
 // `area`) a walk-on zone like a court or mat that lights up when you step on
 // it. The label rises in as you get close so it doesn't cover the props.
-export const Station = ({ id, label, showLabel = true, position, accent, active, onZone, offZone, area, radius = 1.1 }) => {
-  const target = { kind: "station", id };
+export const Station = ({ id, label, showLabel = true, showRing = true, position, accent, active, area, radius = 1.1 }) => {
   const isActive = active === id;
-  const handlers = {
-    onIntersectionEnter: (e) => isPlayer(e) && onZone(target),
-    onIntersectionExit: (e) => isPlayer(e) && offZone(target),
-  };
   return (
     <group position={[position[0], 0, position[1]]} userData={{ walkTo: [position[0], position[1]] }}>
-      <RigidBody type='fixed' colliders={false}>
-        {area ? (
-          <CuboidCollider sensor args={[area[0] / 2, 1, area[1] / 2]} position={[0, 1, 0]} {...handlers} />
-        ) : (
-          <CylinderCollider sensor args={[1, radius]} position={[0, 1, 0]} {...handlers} />
-        )}
-      </RigidBody>
-      {!area && (
+      {!area && showRing && (
         <mesh position={[0, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <ringGeometry args={[radius - 0.35, radius - 0.15, 48]} />
-          <meshStandardMaterial
-            color={accent}
-            emissive={accent}
-            emissiveIntensity={0.25}
-            transparent
-            opacity={0.6}
-          />
+          <meshStandardMaterial color={accent} emissive={accent} emissiveIntensity={0.25} transparent opacity={0.6} />
         </mesh>
       )}
-      {/* Area labels sit at the back edge so they don't cover you; the active
-          station hides its label because the Enter prompt already names it */}
       {showLabel && !isActive && (
         <Sign
           text={label}
@@ -114,6 +98,42 @@ export const Station = ({ id, label, showLabel = true, position, accent, active,
       )}
     </group>
   );
+};
+
+// Each frame, find the station zone the player is standing in (closest center
+// wins if zones overlap) and report changes. Replaces physics sensors, which
+// could leave a stale prompt when zones overlapped.
+export const StationTracker = ({ zones, onZone, offZone }) => {
+  const current = useRef(null);
+  useFrame(() => {
+    const { x, z } = playerState.position;
+    let best = null;
+    let bestD = Infinity;
+    for (const zone of zones) {
+      const dx = x - zone.at[0];
+      const dz = z - zone.at[1];
+      const inside = zone.area
+        ? Math.abs(dx) <= zone.area[0] / 2 && Math.abs(dz) <= zone.area[1] / 2
+        : dx * dx + dz * dz <= zone.radius * zone.radius;
+      const d = dx * dx + dz * dz;
+      if (inside && d < bestD) {
+        best = zone.id;
+        bestD = d;
+      }
+    }
+    if (best !== current.current) {
+      if (current.current) offZone({ kind: "station", id: current.current });
+      if (best) onZone({ kind: "station", id: best });
+      current.current = best;
+    }
+  });
+  useEffect(
+    () => () => {
+      if (current.current) offZone({ kind: "station", id: current.current });
+    },
+    [offZone]
+  );
+  return null;
 };
 
 // Small rounded helper for code-built furniture

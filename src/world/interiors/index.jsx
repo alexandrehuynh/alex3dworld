@@ -1,6 +1,6 @@
 import { CuboidCollider, RigidBody } from "@react-three/rapier";
 
-import { Room, Station } from "./Room";
+import { Room, Station, StationTracker } from "./Room";
 import cafe from "./Cafe";
 import code from "./CodeLab";
 import gym from "./Gym";
@@ -14,6 +14,20 @@ export const INTERIORS = { cafe, code, gym, sales };
 export const Interior = ({ building, sections, active, onZone, offZone }) => {
   const config = INTERIORS[building.id];
   const { Decor } = config;
+  // spot: [x, z] for a ring, or { at: [x, z], area: [w, d] } / { at, radius }
+  const zones = sections
+    .filter((section) => config.stations[section.id])
+    .map((section) => {
+      const spot = config.stations[section.id];
+      return {
+        id: section.id,
+        label: section.title,
+        at: Array.isArray(spot) ? spot : spot.at,
+        area: spot.area,
+        radius: spot.radius ?? 1.1,
+        showLabel: spot.label ?? config.labels !== false,
+      };
+    });
   return (
     <Room
       width={config.width}
@@ -31,27 +45,21 @@ export const Interior = ({ building, sections, active, onZone, offZone }) => {
         ))}
       </RigidBody>
       <Decor />
-      {sections.map((section) => {
-        const spot = config.stations[section.id];
-        if (!spot) return null;
-        // spot: [x, z] for a ring, or { at: [x, z], area: [w, d] } / { at, radius }
-        const at = Array.isArray(spot) ? spot : spot.at;
-        return (
-          <Station
-            key={section.id}
-            id={section.id}
-            label={section.title}
-            showLabel={spot.label ?? config.labels !== false}
-            position={at}
-            area={spot.area}
-            radius={spot.radius}
-            accent={building.accent}
-            active={active}
-            onZone={onZone}
-            offZone={offZone}
-          />
-        );
-      })}
+      {zones.map((zone) => (
+        <Station
+          key={zone.id}
+          id={zone.id}
+          label={zone.label}
+          showLabel={zone.showLabel}
+          showRing={config.rings !== false}
+          position={zone.at}
+          area={zone.area}
+          radius={zone.radius}
+          accent={building.accent}
+          active={active}
+        />
+      ))}
+      <StationTracker zones={zones} onZone={onZone} offZone={offZone} />
     </Room>
   );
 };
