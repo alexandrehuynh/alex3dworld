@@ -109,7 +109,7 @@ const Details = ({ style, w, h, d, b }) => {
       return (
         <>
           {/* giant laptop on the roof */}
-          <group position={[0, h + 0.3, 0.2]}>
+          <group position={[0, h + 0.38, 0.2]}>
             <Box args={[3.2, 0.18, 2.1]} position={[0, 0.09, 0]} color='#cbd5e1' />
             <group position={[0, 0.18, -1.02]} rotation={[-0.32, 0, 0]}>
               <Box args={[3.2, 2, 0.14]} position={[0, 1, 0]} color='#cbd5e1' />
@@ -131,7 +131,8 @@ const Details = ({ style, w, h, d, b }) => {
       return (
         <>
           {/* Giant dumbbell on the roof */}
-          <group position={[0, h + 0.9, 0]} rotation={[0, 0, Math.PI / 2]}>
+          {/* plates rest on the roof slab (top at h + 0.375) */}
+          <group position={[0, h + 1.24, 0]} rotation={[0, 0, Math.PI / 2]}>
             <mesh castShadow>
               <cylinderGeometry args={[0.18, 0.18, 4.2, 24]} />
               <meshStandardMaterial color='#475569' />
@@ -163,7 +164,7 @@ const Details = ({ style, w, h, d, b }) => {
       return (
         <>
           {/* giant steaming coffee cup on the roof */}
-          <group position={[0, h + 0.3, 0]}>
+          <group position={[0, h + 0.38, 0]}>
             <mesh position={[0, 0.08, 0]}>
               <cylinderGeometry args={[1.5, 1.3, 0.16, 48]} />
               <meshStandardMaterial color='#ffffff' roughness={0.4} />

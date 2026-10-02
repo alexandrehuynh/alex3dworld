@@ -592,7 +592,6 @@ export default {
   trim: "#92400e",
   // No floor rings here: each zone covers the area in front of its set piece,
   // so walking up to the bar, patio, board, or grill brings up its prompt.
-  rings: false,
   stations: {
     presidio: { at: [-1.2, -2.7], area: [5.6, 2] },
     magicflute: { at: [-5.2, -0.6], area: [3.6, 4.2] },

@@ -346,14 +346,14 @@ export default {
   trim: "#1f2937",
   // Logos on the walls name each spot, so only the parallettes get a ring + label.
   // Walk-on areas (court, turf, platform, mats) are the trigger themselves;
-  // Equinox and OFFTHEWEIGHTS use rings since you can't stand in them.
+  // Only the parallettes get a ring, since that spot isn't obvious otherwise.
   stations: {
     equinox: { at: [-7, -3.3], area: [5, 2] },
     murray: { at: [1, -3.8], area: [9, 6.4] },
     luxfit: { at: [8.4, 1.4], area: [3.4, 6.2] },
     bayclub: { at: [0.5, 2.7], area: [5, 2.8] },
     skrappack: { at: [-6.6, 4.7], area: [4.4, 4.4] },
-    offtheweights: { at: [-6.6, 0.3], radius: 1.6, label: true },
+    offtheweights: { at: [-6.6, 0.3], radius: 1.6, label: true, ring: true },
   },
   // [x, z, halfWidth, halfDepth] boxes the player can't walk through
   blockers: [

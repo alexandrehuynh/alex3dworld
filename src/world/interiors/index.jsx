@@ -24,8 +24,10 @@ export const Interior = ({ building, sections, active, onZone, offZone }) => {
         label: section.title,
         at: Array.isArray(spot) ? spot : spot.at,
         area: spot.area,
-        radius: spot.radius ?? 1.1,
+        radius: spot.radius ?? 1.6,
         showLabel: spot.label ?? config.labels !== false,
+        // rings only where the spot isn't otherwise obvious (e.g. the parallettes)
+        ring: spot.ring === true,
       };
     });
   return (
@@ -51,7 +53,7 @@ export const Interior = ({ building, sections, active, onZone, offZone }) => {
           id={zone.id}
           label={zone.label}
           showLabel={zone.showLabel}
-          showRing={config.rings !== false}
+          showRing={zone.ring}
           position={zone.at}
           area={zone.area}
           radius={zone.radius}

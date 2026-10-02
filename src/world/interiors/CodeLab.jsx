@@ -64,7 +64,46 @@ const OledPrinter = ({ position }) => {
       {/* control station */}
       <group position={[2, 0, 0.5]}>
         <Soft args={[0.7, 1.05, 0.5]} position={[0, 0.52, 0]} color='#e2e8f0' />
-        <Prop url={PROPS.officeMonitor} height={0.45} position={[0, 1.05, 0]} rotation={[0, -0.4, 0]} />
+        {/* monitor showing the RGB pixel inspection GUI */}
+        <group position={[0, 1.05, 0]} rotation={[0, -0.4, 0]}>
+          <Soft args={[0.06, 0.18, 0.06]} position={[0, 0.09, 0]} color='#1f2937' />
+          <Soft args={[0.66, 0.42, 0.04]} position={[0, 0.38, 0]} color='#111827' radius={0.02} />
+          <TextPanel
+            width={0.6}
+            height={0.36}
+            position={[0, 0.38, 0.022]}
+            emissive
+            draw={(ctx, w, h) => {
+              ctx.fillStyle = "#0f172a";
+              ctx.fillRect(0, 0, w, h);
+              ctx.fillStyle = "#334155";
+              ctx.fillRect(0, 0, w, h * 0.14);
+              ctx.fillStyle = "#e2e8f0";
+              ctx.font = `600 ${h * 0.09}px Poppins, sans-serif`;
+              ctx.textBaseline = "middle";
+              ctx.fillText("Pixel QA · RGB", w * 0.04, h * 0.07);
+              // R / G / B uniformity bars
+              [["#ef4444", 0.92], ["#22c55e", 0.88], ["#3b82f6", 0.95]].forEach(([c, v], i) => {
+                const y = h * (0.26 + i * 0.16);
+                ctx.fillStyle = "#1e293b";
+                ctx.fillRect(w * 0.05, y, w * 0.5, h * 0.09);
+                ctx.fillStyle = c;
+                ctx.fillRect(w * 0.05, y, w * 0.5 * v, h * 0.09);
+              });
+              // pass badge + mini pixel grid
+              ctx.fillStyle = "#16a34a";
+              ctx.fillRect(w * 0.05, h * 0.76, w * 0.22, h * 0.13);
+              ctx.fillStyle = "#ffffff";
+              ctx.fillText("PASS", w * 0.08, h * 0.825);
+              const colors = ["#ef4444", "#22c55e", "#3b82f6"];
+              for (let r = 0; r < 4; r++)
+                for (let c = 0; c < 4; c++) {
+                  ctx.fillStyle = colors[(r + c) % 3];
+                  ctx.fillRect(w * (0.62 + c * 0.085), h * (0.26 + r * 0.15), w * 0.06, h * 0.1);
+                }
+            }}
+          />
+        </group>
       </group>
       <TextPanel
         width={1.5}
@@ -192,7 +231,7 @@ const InternDesk = ({ position, rotation }) => (
     ].map(([x, z]) => (
       <Soft key={`${x}${z}`} args={[0.04, 0.6, 0.04]} position={[x, 0.3, z]} color='#78350f' radius={0.01} />
     ))}
-    {/* old monitor showing a Wi-Fi signal */}
+    {/* old monitor running a Wi-Fi signal-strength logger */}
     <Soft args={[0.42, 0.32, 0.26]} position={[-0.12, 0.79, -0.08]} color='#e7e5e4' radius={0.04} />
     <TextPanel
       width={0.32}
@@ -202,20 +241,34 @@ const InternDesk = ({ position, rotation }) => (
       draw={(ctx, w, h) => {
         ctx.fillStyle = "#0b3b4f";
         ctx.fillRect(0, 0, w, h);
-        const cx = w / 2;
-        const cy = h * 0.82;
-        ctx.fillStyle = "#f2a51a";
-        ctx.beginPath();
-        ctx.arc(cx, cy, h * 0.07, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = "#5eead4";
-        ctx.lineCap = "round";
-        ctx.lineWidth = h * 0.08;
-        [0.25, 0.45, 0.65].forEach((r) => {
+        // gridlines
+        ctx.strokeStyle = "rgba(94,234,212,0.15)";
+        ctx.lineWidth = 1;
+        for (let i = 1; i < 4; i++) {
           ctx.beginPath();
-          ctx.arc(cx, cy, h * r, Math.PI * 1.25, Math.PI * 1.75);
+          ctx.moveTo(0, (h * i) / 4);
+          ctx.lineTo(w, (h * i) / 4);
           ctx.stroke();
+        }
+        // RSSI trace over time
+        const pts = [0.55, 0.5, 0.62, 0.45, 0.4, 0.52, 0.35, 0.42, 0.3, 0.38, 0.33];
+        ctx.strokeStyle = "#5eead4";
+        ctx.lineWidth = h * 0.04;
+        ctx.beginPath();
+        pts.forEach((v, i) => {
+          const x = w * (0.05 + (i / (pts.length - 1)) * 0.62);
+          i ? ctx.lineTo(x, h * v) : ctx.moveTo(x, h * v);
         });
+        ctx.stroke();
+        // signal bars + dBm readout
+        [0.25, 0.45, 0.65, 0.85].forEach((v, i) => {
+          ctx.fillStyle = i < 3 ? "#f2a51a" : "rgba(242,165,26,0.3)";
+          ctx.fillRect(w * (0.74 + i * 0.06), h * (0.6 - v * 0.45), w * 0.04, h * v * 0.45);
+        });
+        ctx.fillStyle = "#e2e8f0";
+        ctx.font = `700 ${h * 0.16}px Poppins, sans-serif`;
+        ctx.textBaseline = "middle";
+        ctx.fillText("-48 dBm", w * 0.06, h * 0.85);
       }}
     />
     {/* Wi-Fi module on a breadboard */}
@@ -319,11 +372,12 @@ export default {
   wall: "#e0f2fe",
   trim: "#0369a1",
   stations: {
-    kateeva: [-4.6, -1.1],
-    gainspan: [-4.9, 2.9],
-    codingtemple: [2.3, -1.7],
-    colab: [4.9, -1.7],
-    projects: [6.1, 1.6],
+    // walk-up zones in front of each set piece
+    kateeva: { at: [-4.6, -1.2], area: [3.8, 2] },
+    gainspan: { at: [-5.3, 2.8], radius: 1.7 },
+    codingtemple: { at: [2.3, -1.8], area: [2.3, 2] },
+    colab: { at: [4.9, -1.8], area: [2.3, 2] },
+    projects: { at: [6.2, 1.6], area: [2.2, 3.2] },
   },
   blockers: [
     [0, 1.8, 1.2, 1.2],

@@ -558,9 +558,10 @@ export default {
   wall: "#f1f5f9",
   trim: "#5b21b6",
   stations: {
-    numeral: [-6, -2.2],
-    revyl: [0, -2.4],
-    daloopa: [6, -1.8],
+    // walk-up zones in front of each company's wall sign
+    numeral: { at: [-6, -2.7], area: [4.2, 2.6] },
+    revyl: { at: [0, -2.9], area: [4.6, 2.6] },
+    daloopa: { at: [6, -1.7], area: [4.4, 2] },
   },
   blockers: [
     [-6.6, -4.9, 1, 0.5],
