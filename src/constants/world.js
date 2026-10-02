@@ -182,10 +182,11 @@ export const rooms = {
       {
         id: "murray",
         title: "Murray Athletic Development",
-        role: "Strength & Conditioning Coach (Intern)",
+        role: "Intern → Assistant Strength & Conditioning Coach",
         dates: "Apr 2021 – Nov 2022",
         place: "San Francisco, CA",
         points: [
+          "Started as an intern, promoted to assistant coach, and ran the program as acting head coach while the head coach was away.",
           "Trained 63 athletes with zero major injuries; 205 lb average strength gained per athlete.",
           "Athletes earned collegiate scholarships and professional contracts overseas and with national teams.",
           "Helped run NBA combines for the G League Ignite, basketball camps, and AAU teams.",
@@ -239,6 +240,7 @@ export const rooms = {
         id: "presidio",
         title: "Presidio Social Club",
         role: "Server, American diner",
+        dates: "Apr 2023 – Dec 2023",
         place: "San Francisco, CA",
         points: ["More details coming soon."],
       },

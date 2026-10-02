@@ -60,7 +60,7 @@ export const tracks = [
     },
     extra: {
       title: "Stack I've run",
-      chips: ["Clay", "n8n", "Claude", "Perplexity", "Apollo", "HeyReach", "Instantly", "HubSpot", "Nooks", "Sumble"],
+      chips: ["Salesforce", "HubSpot", "LinkedIn Sales Navigator", "Clay", "Apollo", "Ocean.io", "Lusha", "Neuron", "Sumble", "Instantly", "HeyReach", "Nooks", "n8n", "Claude", "Perplexity"],
     },
   },
   {
@@ -152,12 +152,16 @@ export const toolkit = [
     tools: [
       { name: "Clay" },
       { name: "Apollo" },
+      { name: "Salesforce", icon: "salesforce" },
       { name: "HubSpot", icon: "hubspot" },
       { name: "Instantly" },
       { name: "HeyReach" },
       { name: "Nooks" },
       { name: "Sumble" },
-      { name: "LinkedIn", icon: "linkedin" },
+      { name: "Ocean.io" },
+      { name: "Lusha" },
+      { name: "Neuron" },
+      { name: "Sales Navigator", icon: "linkedin" },
     ],
   },
   {
