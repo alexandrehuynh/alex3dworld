@@ -253,6 +253,48 @@ const InternDesk = ({ position, rotation }) => (
   </group>
 );
 
+// Round reception desk in the middle of the studio: a curved counter that's
+// open at the back, with a monitor, a "Welcome" plaque, and a plant
+const WelcomeDesk = ({ position }) => (
+  <group position={position}>
+    {/* counter body: 3/4 ring facing the entrance */}
+    <mesh position={[0, 0.5, 0]} rotation={[0, Math.PI * 0.75, 0]} castShadow receiveShadow>
+      <cylinderGeometry args={[1.1, 1.1, 1, 48, 1, true, 0, Math.PI * 1.5]} />
+      <meshStandardMaterial color='#e0f2fe' roughness={0.5} side={2} />
+    </mesh>
+    {/* wood top */}
+    <mesh position={[0, 1.02, 0]} rotation={[-Math.PI / 2, 0, Math.PI * 0.75 + Math.PI / 2]}>
+      <ringGeometry args={[0.75, 1.2, 48, 1, 0, Math.PI * 1.5]} />
+      <meshStandardMaterial color='#c08552' roughness={0.6} side={2} />
+    </mesh>
+    {/* accent stripe */}
+    <mesh position={[0, 0.25, 0]} rotation={[0, Math.PI * 0.75, 0]}>
+      <cylinderGeometry args={[1.105, 1.105, 0.08, 48, 1, true, 0, Math.PI * 1.5]} />
+      <meshStandardMaterial color='#0369a1' side={2} />
+    </mesh>
+    <TextPanel
+      width={0.9}
+      height={0.28}
+      position={[0, 0.65, 1.12]}
+      draw={(ctx, w, h) => {
+        ctx.fillStyle = "#0369a1";
+        ctx.beginPath();
+        ctx.roundRect(0, 0, w, h, h * 0.3);
+        ctx.fill();
+        ctx.fillStyle = "#ffffff";
+        ctx.font = `700 ${h * 0.5}px Poppins, sans-serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("WELCOME", w / 2, h / 2);
+      }}
+    />
+    <Prop url={PROPS.officeMonitor} height={0.42} position={[-0.45, 1.03, 0.6]} rotation={[0, Math.PI - 0.6, 0]} />
+    <Prop url={PROPS.cafeMug} size={0.14} position={[0.55, 1.03, 0.65]} />
+    <Prop url={PROPS.cactus} height={0.4} position={[0.8, 1.03, 0.1]} />
+    <Prop url={PROPS.officeChair} height={1.05} position={[0, 0, -0.35]} />
+  </group>
+);
+
 const DevStudioDecor = () => (
   <>
     <OledPrinter position={[-4.6, 0, -3.3]} />
@@ -261,7 +303,7 @@ const DevStudioDecor = () => (
     <Bootcamp position={[3.6, 0, -3.6]} />
     <BigScreen position={[7.75, 0, 1.6]} rotation={[0, -Math.PI / 2, 0]} />
     <InternDesk position={[-6.2, 0, 2.6]} rotation={[0, 0.5, 0]} />
-    <Prop url={PROPS.rugOval} size={3.6} position={[0, 0.01, 0.6]} />
+    <WelcomeDesk position={[0, 0, 0.4]} />
     <Plant position={[7.2, 0, -4.8]} />
     <Plant url={PROPS.plantPothos} position={[-7.2, 0, -0.6]} />
   </>
@@ -283,6 +325,7 @@ export default {
     projects: [6.1, 1.6],
   },
   blockers: [
+    [0, 0.4, 1.2, 1.2],
     [-4.6, -3.3, 1.6, 1.1],
     [3.6, -3.7, 2.1, 0.6],
     [-6.2, 2.6, 0.5, 0.35],
