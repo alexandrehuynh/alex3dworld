@@ -26,18 +26,79 @@ const Box = ({ args, color, radius, ...props }) => (
   </RoundedBox>
 );
 
-const Windows = ({ width, height, y, z, color, cols = 2 }) => (
-  <>
-    {Array.from({ length: cols }, (_, i) => {
-      const x = -width / 2 + (width / (cols + 1)) * (i + 1);
-      return (
-        <RoundedBox key={i} args={[0.9, height, 0.12]} radius={0.05} position={[x, y, z]}>
-          <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.35} roughness={0.2} />
-        </RoundedBox>
-      );
-    })}
-  </>
+// Storefront: centered door with a frame, matching windows either side with
+// tops level with the door, and a nameplate above the door.
+const DOOR_W = 1.3;
+const DOOR_H = 2.2;
+const WINDOW = { lab: "#38bdf8", gym: "#fca5a5", tower: "#c4b5fd", cafe: "#fde68a" };
+
+const Window = ({ x, y, w, h, z, color }) => (
+  <group position={[x, y, z]}>
+    <RoundedBox args={[w + 0.16, h + 0.16, 0.1]} radius={0.05}>
+      <meshStandardMaterial color='#ffffff' roughness={0.6} />
+    </RoundedBox>
+    <RoundedBox args={[w, h, 0.14]} radius={0.04}>
+      <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.35} roughness={0.2} />
+    </RoundedBox>
+    {/* mullion */}
+    <mesh position={[0, 0, 0.075]}>
+      <boxGeometry args={[0.05, h, 0.01]} />
+      <meshStandardMaterial color='#ffffff' />
+    </mesh>
+  </group>
 );
+
+const Facade = ({ b, w, h, d }) => {
+  const z = d / 2;
+  const color = WINDOW[b.style];
+  const winW = b.style === "gym" ? 1.5 : 1.05;
+  const winH = 1.15;
+  const winY = DOOR_H - winH / 2;
+  const winX = DOOR_W / 2 + 0.55 + winW / 2;
+  return (
+    <>
+      {/* door with frame, handle, and step */}
+      <RoundedBox args={[DOOR_W + 0.2, DOOR_H + 0.12, 0.2]} radius={0.05} position={[0, DOOR_H / 2 + 0.03, z]}>
+        <meshStandardMaterial color='#ffffff' roughness={0.6} />
+      </RoundedBox>
+      <Box args={[DOOR_W, DOOR_H, 0.28]} position={[0, DOOR_H / 2, z]} color={b.accent} />
+      <mesh position={[DOOR_W / 2 - 0.2, 1.05, z + 0.16]}>
+        <sphereGeometry args={[0.06, 16, 12]} />
+        <meshStandardMaterial color='#fbbf24' metalness={0.7} roughness={0.3} />
+      </mesh>
+      <Box args={[DOOR_W + 0.6, 0.08, 0.5]} position={[0, 0.04, z + 0.25]} color='#e5e7eb' />
+      {[-1, 1].map((side) => (
+        <Window key={side} x={side * winX} y={winY} w={winW} h={winH} z={z} color={color} />
+      ))}
+      {/* the AI Sales tower is taller: a centered upper row */}
+      {b.style === "tower" &&
+        [-1.4, 0, 1.4].map((x) => <Window key={x} x={x} y={3.45} w={0.85} h={0.7} z={z} color={color} />)}
+      {/* nameplate above the door */}
+      <group position={[0, DOOR_H + 0.48, z + 0.06]}>
+        <RoundedBox args={[3.3, 0.62, 0.08]} radius={0.07}>
+          <meshStandardMaterial color={b.accent} roughness={0.5} />
+        </RoundedBox>
+        <TextPanel
+          width={3.15}
+          height={0.5}
+          position={[0, 0, 0.045]}
+          deps={[b.name]}
+          draw={(ctx, cw, ch) => {
+            ctx.fillStyle = "#ffffff";
+            ctx.beginPath();
+            ctx.roundRect(0, 0, cw, ch, ch * 0.18);
+            ctx.fill();
+            ctx.fillStyle = "#1e293b";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.font = `700 ${ch * 0.48}px Poppins, sans-serif`;
+            ctx.fillText(b.name.toUpperCase(), cw / 2, ch * 0.54, cw * 0.92);
+          }}
+        />
+      </group>
+    </>
+  );
+};
 
 // Style-specific rooftop and facade details. Each style is a stand-in until
 // real CC0 models replace them.
@@ -64,7 +125,6 @@ const Details = ({ style, w, h, d, b }) => {
               ))}
             </group>
           </group>
-          <Windows width={w} height={1.2} y={h * 0.62} z={front} color='#38bdf8' cols={3} />
         </>
       );
     case "gym":
@@ -83,7 +143,6 @@ const Details = ({ style, w, h, d, b }) => {
               </mesh>
             ))}
           </group>
-          <Windows width={w} height={1.4} y={h * 0.55} z={front} color='#fca5a5' cols={3} />
         </>
       );
     case "tower":
@@ -98,9 +157,6 @@ const Details = ({ style, w, h, d, b }) => {
             <octahedronGeometry args={[0.35, 0]} />
             <meshStandardMaterial color='#a78bfa' emissive='#8b5cf6' emissiveIntensity={0.9} />
           </mesh>
-          {[1.4, 2.9].map((y) => (
-            <Windows key={y} width={w} height={0.9} y={y + 0.6} z={front} color='#c4b5fd' cols={3} />
-          ))}
         </>
       );
     case "cafe":
@@ -138,7 +194,6 @@ const Details = ({ style, w, h, d, b }) => {
               color={i % 2 ? "#ffffff" : b.accent}
             />
           ))}
-          <Windows width={w} height={1.1} y={h * 0.42} z={front} color='#fde68a' cols={2} />
           {/* outdoor tables + OPEN chalkboard */}
           {[-1, 1].map((side) => (
             <group key={side} position={[side * (w / 2 + 0.8), 0, front + 1.2]}>
@@ -239,8 +294,7 @@ const Building = ({ building, isNearby, onEnterZone, onExitZone }) => {
         <CuboidCollider args={[w / 2, h / 2 + 2, d / 2]} position={[0, h / 2, 0]} />
         <Box args={[w, h, d]} position={[0, h / 2, 0]} color={building.color} />
         <Box args={[w + 0.4, 0.45, d + 0.4]} position={[0, h + 0.15, 0]} color={building.roof} />
-        {/* Door */}
-        <Box args={[1.5, 2.3, 0.25]} position={[0, 1.15, d / 2]} color={building.accent} />
+        <Facade b={building} w={w} h={h} d={d} />
         <Details style={building.style} w={w} h={h} d={d} b={building} />
 
         {/* Invisible trigger zone in front of the door */}
