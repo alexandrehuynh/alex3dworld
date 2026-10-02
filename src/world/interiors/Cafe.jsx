@@ -42,7 +42,7 @@ const Bottle = ({ position, color }) => (
 );
 
 /* Presidio Social Club: long white marble bar with a dark navy front, black
-   leather stools, Edison bulbs, and steel cabinets behind (from photos) */
+   leather stools, and steel cabinets behind (from photos) */
 const DinerCounter = ({ position }) => (
   <group position={position}>
     <Soft args={[5.6, 1.1, 0.9]} position={[0, 0.55, 0]} color='#1e2a44' radius={0.3} roughness={0.35} metalness={0.3} />
@@ -61,19 +61,6 @@ const DinerCounter = ({ position }) => (
             <meshStandardMaterial color={["#14532d", "#d6d3d1", "#7c2d12", "#e0f2fe"][i]} roughness={0.2} />
           </mesh>
         ))}
-      </group>
-    ))}
-    {/* Edison bulb pendants */}
-    {[-2.2, -1.1, 0, 1.1, 2.2].map((x, i) => (
-      <group key={x} position={[x, 0, 0.1]}>
-        <mesh position={[0, 2.6 - (i % 2) * 0.15, 0]}>
-          <cylinderGeometry args={[0.006, 0.006, 0.9, 6]} />
-          <meshStandardMaterial color='#1f2937' />
-        </mesh>
-        <mesh position={[0, 2.12 - (i % 2) * 0.15, 0]}>
-          <sphereGeometry args={[0.07, 12, 10]} />
-          <meshStandardMaterial color='#fde68a' emissive='#f59e0b' emissiveIntensity={2} />
-        </mesh>
       </group>
     ))}
     {/* stools */}
@@ -198,6 +185,49 @@ const PatioBackdrop = () => (
   </group>
 );
 
+// Powdered-sugar beignets on a plate
+const Beignets = ({ position }) => (
+  <group position={position}>
+    <mesh>
+      <cylinderGeometry args={[0.17, 0.17, 0.02, 24]} />
+      <meshStandardMaterial color='#ffffff' />
+    </mesh>
+    {[
+      [-0.05, -0.04, 0.3],
+      [0.06, -0.03, -0.4],
+      [0, 0.06, 0.9],
+    ].map(([x, z, r], i) => (
+      <Soft key={i} args={[0.11, 0.06, 0.11]} position={[x, 0.04 + (i === 2 ? 0.04 : 0), z]} rotation={[0, r, 0]} color='#fdf6e3' radius={0.03} roughness={1} />
+    ))}
+  </group>
+);
+
+// Fried calamari rings with a lemon wedge
+const Calamari = ({ position }) => (
+  <group position={position}>
+    <mesh>
+      <cylinderGeometry args={[0.17, 0.17, 0.02, 24]} />
+      <meshStandardMaterial color='#ffffff' />
+    </mesh>
+    {[
+      [-0.06, -0.04],
+      [0.05, -0.05],
+      [0, 0.05],
+      [0.08, 0.06],
+      [-0.08, 0.05],
+    ].map(([x, z], i) => (
+      <mesh key={i} position={[x, 0.03 + (i % 2) * 0.015, z]} rotation={[Math.PI / 2 - 0.3 * (i % 3), 0, i]}>
+        <torusGeometry args={[0.035, 0.014, 8, 16]} />
+        <meshStandardMaterial color='#e0a85a' roughness={0.9} />
+      </mesh>
+    ))}
+    <mesh position={[0.11, 0.03, -0.08]} rotation={[0, 0, Math.PI / 2]}>
+      <sphereGeometry args={[0.035, 12, 8, 0, Math.PI]} />
+      <meshStandardMaterial color='#fde047' />
+    </mesh>
+  </group>
+);
+
 const BrunchTable = ({ position }) => (
   <group position={position}>
     <PatioBackdrop />
@@ -221,8 +251,8 @@ const BrunchTable = ({ position }) => (
     <Glass position={[-0.28, 0.76, -0.35]} liquid='#7f1d1d' height={0.16} />
     <Bottle position={[0.05, 0.76, -0.05]} color='#14532d' />
     <Bottle position={[-0.15, 0.76, 0.12]} color='#a16207' />
-    <Prop url={PROPS.cafeCroissant} size={0.2} position={[0.55, 0.78, 0.05]} />
-    <Prop url={PROPS.cafeMuffin} size={0.16} position={[-0.55, 0.78, 0]} />
+    <Beignets position={[0.55, 0.77, 0.05]} />
+    <Calamari position={[-0.55, 0.77, 0]} />
     {[-1, 1].map((side) => (
       <BistroChair key={side} position={[side * 1.15, 0, 0]} rotation={[0, (side * -Math.PI) / 2, 0]} />
     ))}
@@ -330,7 +360,9 @@ const CafeDecor = () => (
   <>
     <DinerCounter position={[1.1, 0, -4.2]} />
     <BrunchTable position={[-4.6, 0, 1]} />
-    <KbbqTable position={[4.6, 0, 1]} />
+    <group position={[6.2, 0, 1]} rotation={[0, -Math.PI / 2, 0]}>
+      <KbbqTable position={[0, 0, 0]} />
+    </group>
     <FlyerBoard position={[-5.1, 0, -5.38]} />
     <Plant url={PROPS.plantPothos} position={[7.2, 0, -4.6]} />
     <Plant position={[-7.2, 0, 4.4]} />
@@ -347,13 +379,13 @@ export default {
   stations: {
     presidio: [0.8, -2.1],
     magicflute: [-4.6, 2.8],
-    kelements: [4.6, 2.8],
+    kelements: [4.3, 1],
     board: [-5.1, -3.7],
   },
   blockers: [
     [1.1, -4.2, 3, 0.5],
     [-4.6, 1, 1.6, 0.9],
-    [4.6, 1, 1, 0.7],
+    [6.5, 1, 1.2, 1],
   ],
   Decor: CafeDecor,
 };

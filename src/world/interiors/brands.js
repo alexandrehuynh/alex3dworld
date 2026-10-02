@@ -191,16 +191,16 @@ export const magicFlute = (ctx, w, h) => {
   ctx.fillStyle = "#3f4a2a";
   ctx.font = `600 ${h * 0.08}px Georgia, serif`;
   ctx.fillText("3673", w / 2, h * 0.13);
-  ctx.font = `italic 700 ${h * 0.15}px Georgia, serif`;
+  ctx.font = `italic 700 ${h * 0.13}px Georgia, serif`;
   ctx.fillText("The", w / 2, h * 0.28);
-  ctx.fillText("Magic Flute", w / 2, h * 0.43);
+  ctx.fillText("Magic Flute", w / 2, h * 0.43, w * 0.82);
   // the flute
   ctx.fillStyle = "#3b2416";
   roundRect(ctx, w * 0.2, h * 0.53, w * 0.6, h * 0.025, h * 0.01, "#3b2416");
   ctx.fillStyle = "#3f4a2a";
   ctx.font = `700 ${h * 0.09}px Georgia, serif`;
   ctx.fillText("GARDEN", w / 2, h * 0.65);
-  ctx.fillText("RISTORANTE", w / 2, h * 0.76);
+  ctx.fillText("RISTORANTE", w / 2, h * 0.76, w * 0.84);
   ctx.font = `600 ${h * 0.07}px Georgia, serif`;
   ctx.fillText("Est. 1981", w / 2, h * 0.88);
 };
@@ -246,33 +246,33 @@ export const flyerArt = {
     ctx.fillRect(0, 0, w, h);
     ctx.fillStyle = "#0a0a0a";
     ctx.beginPath();
-    ctx.arc(w / 2, h * 0.36, w * 0.4, 0, Math.PI * 2);
+    ctx.arc(w / 2, h * 0.31, w * 0.34, 0, Math.PI * 2);
     ctx.fill();
     ctx.fillStyle = "#ffffff";
     ctx.beginPath();
-    ctx.arc(w / 2, h * 0.36, w * 0.3, 0, Math.PI * 2);
+    ctx.arc(w / 2, h * 0.31, w * 0.26, 0, Math.PI * 2);
     ctx.fill();
     // mountains + red raft
     ctx.fillStyle = "#15803d";
     ctx.beginPath();
-    ctx.moveTo(w * 0.24, h * 0.36);
-    ctx.lineTo(w * 0.38, h * 0.22);
-    ctx.lineTo(w * 0.5, h * 0.33);
-    ctx.lineTo(w * 0.62, h * 0.2);
-    ctx.lineTo(w * 0.76, h * 0.36);
+    ctx.moveTo(w * 0.28, h * 0.32);
+    ctx.lineTo(w * 0.4, h * 0.2);
+    ctx.lineTo(w * 0.5, h * 0.29);
+    ctx.lineTo(w * 0.6, h * 0.18);
+    ctx.lineTo(w * 0.72, h * 0.32);
     ctx.fill();
     ctx.fillStyle = "#dc2626";
-    roundRect(ctx, w * 0.32, h * 0.4, w * 0.36, h * 0.07, h * 0.035, "#dc2626");
+    roundRect(ctx, w * 0.35, h * 0.35, w * 0.3, h * 0.06, h * 0.03, "#dc2626");
     // rainbow wordmark
     const grad = ctx.createLinearGradient(w * 0.25, 0, w * 0.75, 0);
     ["#dc2626", "#f59e0b", "#16a34a", "#2563eb", "#7c3aed"].forEach((c, i) => grad.addColorStop(i / 4, c));
     center(ctx);
     ctx.fillStyle = "#dc2626";
-    ctx.font = `800 ${w * 0.07}px Poppins, sans-serif`;
-    ctx.fillText("SIERRA", w / 2, h * 0.62);
+    ctx.font = `800 ${w * 0.12}px Poppins, sans-serif`;
+    ctx.fillText("SIERRA", w / 2, h * 0.72);
     ctx.fillStyle = grad;
     ctx.font = `800 ${w * 0.13}px Poppins, sans-serif`;
-    ctx.fillText("Adventures", w / 2, h * 0.76);
+    ctx.fillText("Adventures", w / 2, h * 0.86);
   },
   pureBarre: (ctx, w, h) => {
     ctx.fillStyle = "#ffffff";
