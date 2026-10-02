@@ -251,7 +251,7 @@ const Tatami = ({ position }) => (
   </group>
 );
 
-/* OFFTHEWEIGHTS: brand banner, heavy bag, and parallel bars for dips/handstands */
+/* OFFTHEWEIGHTS: brand banner and parallel bars for dips and handstands */
 const ParallelBars = ({ position, rotation }) => (
   <group position={position} rotation={rotation}>
     {[-0.3, 0.3].map((z) => (
@@ -288,24 +288,7 @@ const BrandCorner = ({ position }) => (
         ctx.fillText("OFFTHEWEIGHTS", w / 2, h / 2);
       }}
     />
-    {/* heavy bag on a frame */}
-    <group position={[0.2, 0, -0.9]}>
-      <Soft args={[0.12, 2.6, 0.12]} position={[0, 1.3, -0.6]} color='#334155' />
-      <Soft args={[0.12, 0.12, 1]} position={[0, 2.6, -0.15]} color='#334155' />
-      <mesh position={[0, 2.35, 0.2]}>
-        <cylinderGeometry args={[0.015, 0.015, 0.5, 8]} />
-        <meshStandardMaterial color='#64748b' />
-      </mesh>
-      <mesh position={[0, 1.5, 0.2]} castShadow>
-        <capsuleGeometry args={[0.3, 0.75, 8, 24]} />
-        <meshStandardMaterial color='#111827' roughness={0.45} />
-      </mesh>
-      <mesh position={[0, 1.5, 0.2]}>
-        <cylinderGeometry args={[0.305, 0.305, 0.14, 32]} />
-        <meshStandardMaterial color='#facc15' roughness={0.5} />
-      </mesh>
-    </group>
-    <ParallelBars position={[2.1, 0, 0.6]} />
+    <ParallelBars position={[2.1, 0, 0.9]} rotation={[0, Math.PI / 2, 0]} />
   </group>
 );
 
@@ -314,9 +297,9 @@ const GymDecor = () => (
     <Sauna position={[-7, 0, -5.6]} />
     <HalfCourt position={[1, 0, -3.8]} />
     <OutdoorPlatform position={[8.4, 0, 1.4]} />
-    <TurfLane position={[3.2, 0, 4.6]} />
+    <TurfLane position={[0.5, 0, 2.7]} />
     <DumbbellRack position={[9.3, 0, -4.8]} rotation={[0, -Math.PI / 2, 0]} />
-    <Tatami position={[-6.6, 0, 4.4]} />
+    <Tatami position={[-6.6, 0, 4.7]} />
     <BrandCorner position={[-8.7, 0, -0.6]} />
   </>
 );
@@ -327,21 +310,22 @@ export default {
   floor: "#64748b",
   wall: "#f8fafc",
   trim: "#1f2937",
+  // Walk-on areas (court, turf, platform, mats) are the trigger themselves;
+  // Equinox and OFFTHEWEIGHTS use rings since you can't stand in them.
   stations: {
-    equinox: [-7, -3],
-    murray: [1, -2.2],
-    luxfit: [7.2, 1],
-    bayclub: [3.2, 4.6],
-    skrappack: [-6.6, 4.4],
-    offtheweights: [-5.6, 1.4],
+    equinox: [-7, -3.3],
+    murray: { at: [1, -3.8], area: [9, 6.4] },
+    luxfit: { at: [8.4, 1.4], area: [3.4, 6.2] },
+    bayclub: { at: [0.5, 2.7], area: [5, 2.8] },
+    skrappack: { at: [-6.6, 4.7], area: [4.4, 4.4] },
+    offtheweights: { at: [-6.6, 0.3], radius: 1.6 },
   },
   // [x, z, halfWidth, halfDepth] boxes the player can't walk through
   blockers: [
     [-7, -5.8, 2.1, 1.5],
     [9.45, 1, 0.6, 0.9],
     [9.3, -4.8, 0.35, 1.3],
-    [-8.5, -1.6, 0.4, 0.8],
-    [-6.6, 0, 1, 0.4],
+    [-6.6, 0.3, 0.45, 1.05],
   ],
   Decor: GymDecor,
 };

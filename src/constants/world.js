@@ -15,9 +15,9 @@ const ring = (angle) => [
 export const buildings = [
   {
     id: "code",
-    name: "Code Lab",
+    name: "Dev Studio",
     emoji: "💻",
-    tagline: "Where I build things",
+    tagline: "Software development",
     angle: Math.PI * (5 / 6), // north-northeast
     color: "#e0f2fe",
     accent: "#0284c7",
@@ -26,9 +26,9 @@ export const buildings = [
   },
   {
     id: "gym",
-    name: "The Gym",
+    name: "Performance Lab",
     emoji: "🏋️",
-    tagline: "Coaching athletes, youth to pro",
+    tagline: "Fitness & coaching",
     angle: Math.PI / 2, // east
     color: "#fee2e2",
     accent: "#dc2626",
@@ -39,7 +39,7 @@ export const buildings = [
     id: "sales",
     name: "AI Sales HQ",
     emoji: "📈",
-    tagline: "Selling AI to real teams",
+    tagline: "AI sales & go-to-market",
     angle: -Math.PI / 2, // west
     color: "#ede9fe",
     accent: "#7c3aed",
@@ -48,9 +48,9 @@ export const buildings = [
   },
   {
     id: "cafe",
-    name: "The Café",
+    name: "Front of House Café",
     emoji: "☕",
-    tagline: "Every job that shaped me",
+    tagline: "Customer service",
     angle: -Math.PI * (5 / 6), // north-northwest
     color: "#fef3c7",
     accent: "#d97706",
@@ -66,7 +66,7 @@ const SOON = "Details coming soon";
 
 export const rooms = {
   code: {
-    intro: "QA automation, bootcamps, and the AI apps I've shipped since.",
+    intro: "From a QA lab and an intern desk to two bootcamps and the AI apps I've shipped since.",
     sections: [
       {
         id: "kateeva",
@@ -78,6 +78,17 @@ export const rooms = {
           "Built automated test frameworks in Python, Perl, and C# for five industrial inkjet printer systems.",
           "Cut manual test time roughly 70% and expanded regression coverage across 10+ major releases and 50+ patches.",
           "Wrote the API and GUI testing protocols the team used for every build.",
+        ],
+      },
+      {
+        id: "gainspan",
+        title: "GainSpan",
+        role: "Software Engineer Intern",
+        dates: "May 2015 – Aug 2015",
+        place: "San Jose, CA",
+        points: [
+          "Automated IoT sensor data processing and reporting with Python and Pandas.",
+          "Wrote a program to record Wi-Fi module interference and plotted it as histograms.",
         ],
       },
       {

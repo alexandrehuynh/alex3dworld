@@ -31,20 +31,26 @@ export const Interior = ({ building, sections, active, onZone, offZone }) => {
         ))}
       </RigidBody>
       <Decor />
-      {sections.map((section) =>
-        config.stations[section.id] ? (
+      {sections.map((section) => {
+        const spot = config.stations[section.id];
+        if (!spot) return null;
+        // spot: [x, z] for a ring, or { at: [x, z], area: [w, d] } / { at, radius }
+        const at = Array.isArray(spot) ? spot : spot.at;
+        return (
           <Station
             key={section.id}
             id={section.id}
             label={section.title}
-            position={config.stations[section.id]}
+            position={at}
+            area={spot.area}
+            radius={spot.radius}
             accent={building.accent}
             active={active}
             onZone={onZone}
             offZone={offZone}
           />
-        ) : null
-      )}
+        );
+      })}
     </Room>
   );
 };

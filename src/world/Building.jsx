@@ -2,6 +2,14 @@ import { RoundedBox } from "@react-three/drei";
 import { CuboidCollider, RigidBody } from "@react-three/rapier";
 
 import Sign from "./Sign";
+import { Puffs, TextPanel } from "./interiors/shared";
+import { BUILDING_RING } from "../constants/world";
+
+// Spot on the path just outside the door (click-to-walk destination)
+const doorPoint = (b) => {
+  const k = (BUILDING_RING - 4.2) / BUILDING_RING;
+  return [b.position[0] * k, b.position[2] * k];
+};
 
 // Soft, rounded box: radius scales with the smallest side so thin parts stay valid
 const Box = ({ args, color, radius, ...props }) => (
@@ -38,15 +46,23 @@ const Details = ({ style, w, h, d, b }) => {
     case "lab":
       return (
         <>
-          <mesh position={[0, h, 0]} castShadow>
-            <sphereGeometry args={[1.8, 48, 24, 0, Math.PI * 2, 0, Math.PI / 2]} />
-            <meshStandardMaterial color='#7dd3fc' transparent opacity={0.8} roughness={0.1} metalness={0.1} />
-          </mesh>
-          <Box args={[0.1, 2, 0.1]} position={[1.8, h + 1, -1]} color='#64748b' />
-          <mesh position={[1.8, h + 2.1, -1]}>
-            <sphereGeometry args={[0.18, 24, 16]} />
-            <meshStandardMaterial color='#ef4444' emissive='#ef4444' emissiveIntensity={1} />
-          </mesh>
+          {/* giant laptop on the roof */}
+          <group position={[0, h + 0.3, 0.2]}>
+            <Box args={[3.2, 0.18, 2.1]} position={[0, 0.09, 0]} color='#cbd5e1' />
+            <group position={[0, 0.18, -1.02]} rotation={[-0.32, 0, 0]}>
+              <Box args={[3.2, 2, 0.14]} position={[0, 1, 0]} color='#cbd5e1' />
+              <mesh position={[0, 1, 0.08]}>
+                <planeGeometry args={[2.8, 1.65]} />
+                <meshStandardMaterial color='#0f172a' emissive='#0c4a6e' emissiveIntensity={0.5} />
+              </mesh>
+              {[0.45, 0.2, -0.05, -0.3].map((y, i) => (
+                <mesh key={y} position={[-0.5 + (i % 2) * 0.25, 1 + y, 0.09]}>
+                  <planeGeometry args={[1.4 - i * 0.2, 0.1]} />
+                  <meshBasicMaterial color={["#38bdf8", "#e2e8f0", "#fbbf24", "#a78bfa"][i]} toneMapped={false} />
+                </mesh>
+              ))}
+            </group>
+          </group>
           <Windows width={w} height={1.2} y={h * 0.62} z={front} color='#38bdf8' cols={3} />
         </>
       );
@@ -72,30 +88,43 @@ const Details = ({ style, w, h, d, b }) => {
     case "tower":
       return (
         <>
-          <Box args={[w * 0.7, 2.5, d * 0.7]} position={[0, h + 1.25, 0]} color={b.color} />
-          {/* Rising bar chart sign */}
-          {[0.8, 1.4, 2.1].map((bh, i) => (
-            <Box
-              key={i}
-              args={[0.45, bh, 0.2]}
-              position={[-0.7 + i * 0.7, h + 2.5 + bh / 2, d * 0.35 + 0.1]}
-              color={b.accent}
-            />
+          {/* rising bar chart + AI sparkle on the roof */}
+          {[0.9, 1.6, 2.4].map((bh, i) => (
+            <Box key={i} args={[0.7, bh, 0.7]} position={[-1 + i * 1, h + 0.3 + bh / 2, 0]} color={b.accent} />
           ))}
-          {[1.4, 2.8, 4.2, 5.6].map((y) => (
-            <Windows key={y} width={w} height={0.8} y={y + 0.6} z={front} color='#c4b5fd' cols={3} />
+          <mesh position={[1.4, h + 3.5, 0]} rotation={[0, Math.PI / 4, Math.PI / 4]}>
+            <octahedronGeometry args={[0.45, 0]} />
+            <meshStandardMaterial color='#facc15' emissive='#facc15' emissiveIntensity={0.8} />
+          </mesh>
+          {[1.4, 2.9].map((y) => (
+            <Windows key={y} width={w} height={0.9} y={y + 0.6} z={front} color='#c4b5fd' cols={3} />
           ))}
         </>
       );
     case "cafe":
       return (
         <>
-          {/* Rounded barrel roof */}
-          <mesh position={[0, h + 0.2, 0]} rotation={[0, 0, Math.PI / 2]} scale={[1, 1, 0.55]} castShadow>
-            <cylinderGeometry args={[d * 0.62, d * 0.62, w + 0.6, 48, 1, false, 0, Math.PI]} />
-            <meshStandardMaterial color={b.roof} roughness={0.7} side={2} />
-          </mesh>
-          {/* Striped awning */}
+          {/* giant steaming coffee cup on the roof */}
+          <group position={[0, h + 0.3, 0]}>
+            <mesh position={[0, 0.08, 0]}>
+              <cylinderGeometry args={[1.5, 1.3, 0.16, 48]} />
+              <meshStandardMaterial color='#ffffff' roughness={0.4} />
+            </mesh>
+            <mesh position={[0, 0.9, 0]} castShadow>
+              <cylinderGeometry args={[1, 0.8, 1.5, 48]} />
+              <meshStandardMaterial color='#ffffff' roughness={0.35} />
+            </mesh>
+            <mesh position={[0, 1.6, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+              <circleGeometry args={[0.92, 48]} />
+              <meshStandardMaterial color='#78350f' />
+            </mesh>
+            <mesh position={[1.05, 0.95, 0]} rotation={[0, 0, Math.PI / 2]}>
+              <torusGeometry args={[0.38, 0.1, 16, 32, Math.PI]} />
+              <meshStandardMaterial color='#ffffff' roughness={0.35} />
+            </mesh>
+            <Puffs position={[0, 1.7, 0]} count={6} height={1.8} spread={0.9} size={0.35} />
+          </group>
+          {/* striped awning */}
           {Array.from({ length: 6 }, (_, i) => (
             <Box
               key={i}
@@ -107,20 +136,44 @@ const Details = ({ style, w, h, d, b }) => {
             />
           ))}
           <Windows width={w} height={1.1} y={h * 0.42} z={front} color='#fde68a' cols={2} />
-          {/* Job board out front */}
-          <group position={[w / 2 + 0.9, 0, front + 0.8]} rotation={[0, -0.4, 0]}>
-            <Box args={[0.12, 1.6, 0.12]} position={[-0.6, 0.8, 0]} color='#78350f' />
-            <Box args={[0.12, 1.6, 0.12]} position={[0.6, 0.8, 0]} color='#78350f' />
-            <Box args={[1.5, 1, 0.1]} position={[0, 1.4, 0]} color='#b45309' />
-            {[
-              [-0.4, 1.55, "#fef08a"],
-              [0.1, 1.3, "#bbf7d0"],
-              [0.45, 1.6, "#fbcfe8"],
-            ].map(([x, y, c]) => (
-              <RoundedBox key={x} args={[0.35, 0.35, 0.03]} radius={0.012} position={[x, y, 0.07]}>
-                <meshStandardMaterial color={c} />
-              </RoundedBox>
-            ))}
+          {/* outdoor tables + OPEN chalkboard */}
+          {[-1, 1].map((side) => (
+            <group key={side} position={[side * (w / 2 + 0.8), 0, front + 1.2]}>
+              <mesh position={[0, 0.38, 0]}>
+                <cylinderGeometry args={[0.05, 0.12, 0.76, 12]} />
+                <meshStandardMaterial color='#334155' />
+              </mesh>
+              <mesh position={[0, 0.77, 0]} castShadow>
+                <cylinderGeometry args={[0.45, 0.45, 0.05, 32]} />
+                <meshStandardMaterial color='#ffffff' />
+              </mesh>
+              <mesh position={[0, 1.4, 0]}>
+                <cylinderGeometry args={[0.02, 0.02, 1.3, 8]} />
+                <meshStandardMaterial color='#e5e7eb' />
+              </mesh>
+              <mesh position={[0, 2.05, 0]} castShadow>
+                <coneGeometry args={[0.8, 0.35, 24, 1, true]} />
+                <meshStandardMaterial color={b.accent} side={2} />
+              </mesh>
+            </group>
+          ))}
+          <group position={[1.6, 0, front + 1.9]} rotation={[0, -0.3, 0]}>
+            <Box args={[0.6, 0.85, 0.05]} position={[0, 0.5, 0]} rotation={[-0.15, 0, 0]} color='#1f2937' radius={0.02} />
+            <TextPanel
+              width={0.48}
+              height={0.3}
+              position={[0, 0.62, 0.05]}
+              rotation={[-0.15, 0, 0]}
+              draw={(ctx, cw, ch) => {
+                ctx.fillStyle = "#1f2937";
+                ctx.fillRect(0, 0, cw, ch);
+                ctx.fillStyle = "#f8fafc";
+                ctx.font = `700 ${ch * 0.5}px Poppins, sans-serif`;
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText("OPEN", cw / 2, ch / 2);
+              }}
+            />
           </group>
         </>
       );
@@ -132,7 +185,7 @@ const Details = ({ style, w, h, d, b }) => {
 const SIZES = {
   lab: [6, 4, 5],
   gym: [7.5, 3.6, 5.5],
-  tower: [5, 7.5, 5],
+  tower: [5.5, 4.4, 5],
   cafe: [6, 3.2, 5],
 };
 
@@ -141,13 +194,15 @@ const Building = ({ building, isNearby, onEnterZone, onExitZone }) => {
   const isPlayer = ({ other }) => other.rigidBodyObject?.name === "player";
 
   return (
-    <group position={building.position} rotation={[0, building.angle + Math.PI, 0]}>
+    <group
+      position={building.position}
+      rotation={[0, building.angle + Math.PI, 0]}
+      userData={{ walkTo: doorPoint(building) }}
+    >
       <RigidBody type='fixed' colliders={false}>
         <CuboidCollider args={[w / 2, h / 2 + 2, d / 2]} position={[0, h / 2, 0]} />
         <Box args={[w, h, d]} position={[0, h / 2, 0]} color={building.color} />
-        {building.style !== "cafe" && (
-          <Box args={[w + 0.4, 0.45, d + 0.4]} position={[0, h + 0.15, 0]} color={building.roof} />
-        )}
+        <Box args={[w + 0.4, 0.45, d + 0.4]} position={[0, h + 0.15, 0]} color={building.roof} />
         {/* Door */}
         <Box args={[1.5, 2.3, 0.25]} position={[0, 1.15, d / 2]} color={building.accent} />
         <Details style={building.style} w={w} h={h} d={d} b={building} />
@@ -175,7 +230,9 @@ const Building = ({ building, isNearby, onEnterZone, onExitZone }) => {
       <Sign
         text={`${building.emoji} ${building.name}`}
         accent={building.accent}
-        position={[0, building.style === "tower" ? h + 4.5 : h + 2.2, 0]}
+        position={[0, h + 0.9, d / 2 + 1.4]}
+        width={5}
+        reveal={10}
       />
     </group>
   );

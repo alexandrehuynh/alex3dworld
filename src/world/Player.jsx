@@ -6,6 +6,7 @@ import { Ecctrl } from "ecctrl";
 import { useJoystickStore } from "ecctrl/input";
 
 import CharacterModel from "./CharacterModel";
+import { playerState } from "./playerState";
 
 export const SPAWN = [0, 2, 9];
 const CAMERA_OFFSET = new THREE.Vector3(0, 7.5, 10);
@@ -15,42 +16,87 @@ const LOOK_OFFSET = new THREE.Vector3(0, 0.5, -3);
 // Close-up while choosing a character
 // Indoors the rooms are small, so sit closer
 const CAMERA_OFFSET_INDOOR = new THREE.Vector3(0, 6, 8.5);
+// Standing at a station: ease in so the set piece fills the view
+const CAMERA_OFFSET_STATION = new THREE.Vector3(0, 4.2, 6.4);
 const CAMERA_OFFSET_PICK = new THREE.Vector3(0, 1.6, 5);
 const LOOK_OFFSET_PICK = new THREE.Vector3(0, 0.2, 0);
+
+const STILL = { forward: false, backward: false, leftward: false, rightward: false, run: false, jump: false, joystick: { x: 0, y: 0 } };
+const camForward = new THREE.Vector3();
+const camRight = new THREE.Vector3();
+const toTarget = new THREE.Vector3();
+
+// Turn a click-to-walk destination into a camera-relative joystick vector
+// (Ecctrl moves relative to the camera). Returns null once arrived or stuck.
+const steerToward = (camera, from, nav, delta) => {
+  toTarget.set(nav.target.x - from.x, 0, nav.target.z - from.z);
+  const dist = toTarget.length();
+  if (dist < 0.7) return null;
+  // give up if we stop making progress (blocked by a wall or prop)
+  if (dist < nav.best - 0.05) {
+    nav.best = dist;
+    nav.stuck = 0;
+  } else if ((nav.stuck += delta) > 1.2) return null;
+  camera.getWorldDirection(camForward).setY(0).normalize();
+  camRight.crossVectors(camForward, camera.up).normalize();
+  toTarget.normalize();
+  return { x: toTarget.dot(camRight), y: toTarget.dot(camForward) };
+};
 
 // Feet sit at the bottom of the capsule plus Ecctrl's float height
 const FEET_Y = -(0.3 + 0.35 + 0.2);
 
-const Player = ({ characterUrl, frozen, pose, closeUp, indoor, freeCam, focusRef, spawn = SPAWN }) => {
+const Player = ({ characterUrl, frozen, pose, closeUp, indoor, atStation, freeCam, focusRef, spawn = SPAWN }) => {
   const ecctrl = useRef();
   const [, getKeys] = useKeyboardControls();
   const [animation, setAnimation] = useState("idle");
   const animationRef = useRef("idle");
   const cameraTarget = useRef(new THREE.Vector3());
   const lookTarget = useRef(new THREE.Vector3());
+  const nav = useRef(null);
 
   useFrame(({ camera, size }, delta) => {
     const player = ecctrl.current;
     if (!player) return;
     // Dev-only handle for automated walkthrough tests (stripped from production builds)
-    if (import.meta.env.DEV) window.__player = player;
+    if (import.meta.env.DEV) {
+      window.__player = player;
+      window.__playerState = playerState;
+    }
 
-    // Feed keyboard + touch joystick into the controller each frame
+    // Feed keyboard + touch joystick (or a click-to-walk target) into the controller
     const keys = getKeys();
     const joystick = Object.values(useJoystickStore.getState().joysticks)[0];
+    const manual =
+      keys.forward || keys.backward || keys.leftward || keys.rightward || keys.jump || joystick?.active;
+
+    if (playerState.moveTarget && (!nav.current || nav.current.target !== playerState.moveTarget)) {
+      nav.current = { target: playerState.moveTarget, best: Infinity, stuck: 0 };
+    }
+    let auto = null;
+    if (nav.current && !manual && !frozen) {
+      auto = steerToward(camera, player.currPos, nav.current, delta);
+      if (!auto) nav.current = playerState.moveTarget = null;
+    } else if (manual || frozen) {
+      nav.current = playerState.moveTarget = null;
+    }
+
     player.setMovement(
       frozen
-        ? { forward: false, backward: false, leftward: false, rightward: false, run: false, jump: false, joystick: { x: 0, y: 0 } }
-        : {
-            forward: keys.forward,
-            backward: keys.backward,
-            leftward: keys.leftward,
-            rightward: keys.rightward,
-            run: keys.run,
-            jump: keys.jump,
-            joystick: joystick?.active ? { x: joystick.x, y: joystick.y } : { x: 0, y: 0 },
-          }
+        ? STILL
+        : auto
+          ? { ...STILL, joystick: auto }
+          : {
+              forward: keys.forward,
+              backward: keys.backward,
+              leftward: keys.leftward,
+              rightward: keys.rightward,
+              run: keys.run,
+              jump: keys.jump,
+              joystick: joystick?.active ? { x: joystick.x, y: joystick.y } : { x: 0, y: 0 },
+            }
     );
+    playerState.position.copy(player.currPos);
 
     // Fell off the island: put them back on the plaza
     if (player.currPos.y < -25) {
@@ -77,7 +123,9 @@ const Player = ({ characterUrl, frozen, pose, closeUp, indoor, freeCam, focusRef
         closeUp
           ? CAMERA_OFFSET_PICK
           : indoor
-            ? CAMERA_OFFSET_INDOOR
+            ? atStation
+              ? CAMERA_OFFSET_STATION
+              : CAMERA_OFFSET_INDOOR
             : size.width < size.height
               ? CAMERA_OFFSET_NARROW
               : CAMERA_OFFSET

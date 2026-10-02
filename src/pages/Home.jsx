@@ -18,6 +18,7 @@ import { soundoff, soundon } from "../assets/icons";
 import StationCard from "../components/StationCard";
 import { BUILDING_RING, buildings, rooms } from "../constants/world";
 import { Building, Clouds, Island, Player } from "../world";
+import ClickToWalk from "../world/ClickToWalk";
 import { Interior, interiorSpawn } from "../world/interiors";
 import { SPAWN } from "../world/Player";
 
@@ -241,10 +242,12 @@ const Home = () => {
                 closeUp={picking}
                 indoor={!!inside}
                 spawn={spawn}
+                atStation={target?.kind === "station"}
                 freeCam={lookAround}
                 focusRef={focusRef}
               />
             </Physics>
+            <ClickToWalk enabled={!lookAround && !card && !picking && !fading} />
 
             {lookAround && (
               <OrbitControls
@@ -277,7 +280,7 @@ const Home = () => {
         <div className='absolute bottom-24 sm:bottom-10 left-0 right-0 z-20 flex justify-center px-4'>
           <button onClick={activate} className='neo-brutalism-white neo-btn !text-base'>
             {prompt}
-            {!touch && <kbd className='ml-2 rounded bg-slate-100 px-1.5 text-xs'>E</kbd>}
+            {!touch && <kbd className='ml-2 rounded bg-slate-100 px-1.5 text-xs'>↵ Enter</kbd>}
           </button>
         </div>
       )}

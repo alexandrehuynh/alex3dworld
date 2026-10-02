@@ -1,5 +1,8 @@
 import * as THREE from "three";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
+import { useFrame } from "@react-three/fiber";
+
+import { playerState } from "./playerState";
 
 const WIDTH = 512;
 const HEIGHT = 128;
@@ -29,9 +32,14 @@ const draw = (ctx, text, accent) => {
   ctx.fillText(text, WIDTH / 2, HEIGHT / 2 + 4);
 };
 
+const worldPos = new THREE.Vector3();
+
 // Camera-facing name sign drawn to a canvas texture. Lives in the 3D scene,
-// so buildings can hide it and it never overlaps the page UI.
-const Sign = ({ text, accent, position, width = 5.5 }) => {
+// so buildings can hide it and it never overlaps the page UI. With `reveal`,
+// it stays hidden until the player is within that distance, then rises in.
+const Sign = ({ text, accent, position, width = 5.5, reveal }) => {
+  const sprite = useRef();
+  const shown = useRef(reveal ? 0 : 1);
   const { canvas, texture } = useMemo(() => {
     const canvas = document.createElement("canvas");
     canvas.width = WIDTH;
@@ -54,8 +62,24 @@ const Sign = ({ text, accent, position, width = 5.5 }) => {
     return () => texture.dispose();
   }, [canvas, texture, text, accent]);
 
+  const height = (width * HEIGHT) / WIDTH;
+
+  useFrame((_, delta) => {
+    if (!reveal || !sprite.current) return;
+    sprite.current.getWorldPosition(worldPos);
+    const dx = worldPos.x - playerState.position.x;
+    const dz = worldPos.z - playerState.position.z;
+    const target = dx * dx + dz * dz < reveal * reveal ? 1 : 0;
+    shown.current += (target - shown.current) * Math.min(1, delta * 6);
+    const v = shown.current;
+    sprite.current.visible = v > 0.02;
+    sprite.current.material.opacity = v;
+    sprite.current.scale.set(width * (0.6 + 0.4 * v), height * (0.6 + 0.4 * v), 1);
+    sprite.current.position.y = position[1] - 0.5 * (1 - v);
+  });
+
   return (
-    <sprite position={position} scale={[width, (width * HEIGHT) / WIDTH, 1]}>
+    <sprite ref={sprite} position={position} scale={[width, height, 1]} visible={!reveal}>
       <spriteMaterial map={texture} transparent toneMapped={false} />
     </sprite>
   );

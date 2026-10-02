@@ -210,46 +210,113 @@ const RevylLoop = ({ position }) => {
 /* Daloopa: the data layer for financial models                             */
 /* ------------------------------------------------------------------------ */
 
-const CANDLES = [3, 4.2, 3.6, 5, 4.4, 5.6, 6.1, 5.4, 6.8, 7.4, 6.9, 8.2];
-const ChartScreen = ({ position, rotation }) => (
+// Filings flow into the data layer, which feeds a spreadsheet model; thin
+// threads tie model cells back to their source documents.
+const PAGES = 3;
+const FilingStack = ({ position }) => {
+  const pages = useRef();
+  useFrame(({ clock }) => {
+    pages.current?.children.forEach((page, i) => {
+      const t = (clock.elapsedTime * 0.3 + i / PAGES) % 1;
+      page.position.set(t * 1.1, 0.75 + Math.sin(t * Math.PI) * 0.7, -t * 0.25);
+      page.rotation.set(-Math.PI / 2 + t * 0.6, 0, t * 0.8);
+      page.material.opacity = t < 0.85 ? 1 : (1 - t) / 0.15;
+    });
+  });
+  return (
+    <group position={position}>
+      {[0, 1, 2, 3, 4].map((i) => (
+        <Soft key={i} args={[0.5, 0.05, 0.66]} position={[0, 0.08 + i * 0.06, 0]} rotation={[0, i * 0.08, 0]} color='#ffffff' radius={0.01} roughness={0.95} />
+      ))}
+      <TextPanel
+        width={0.46}
+        height={0.6}
+        position={[0, 0.39, 0]}
+        rotation={[-Math.PI / 2, 0, 0]}
+        draw={(ctx, w, h) => {
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(0, 0, w, h);
+          ctx.fillStyle = "#0f172a";
+          ctx.font = `700 ${w * 0.2}px Poppins, sans-serif`;
+          ctx.textAlign = "center";
+          ctx.fillText("10-K", w / 2, h * 0.28);
+          ctx.fillStyle = "#cbd5e1";
+          for (let i = 0; i < 5; i++) ctx.fillRect(w * 0.12, h * (0.42 + i * 0.1), w * (0.76 - (i % 2) * 0.2), h * 0.035);
+        }}
+      />
+      <group ref={pages}>
+        {Array.from({ length: PAGES }, (_, i) => (
+          <mesh key={i}>
+            <planeGeometry args={[0.32, 0.42]} />
+            <meshStandardMaterial color='#f8fafc' side={2} transparent />
+          </mesh>
+        ))}
+      </group>
+    </group>
+  );
+};
+
+const ModelScreen = ({ position, rotation }) => (
   <group position={position} rotation={rotation}>
-    <Soft args={[0.1, 1, 0.1]} position={[0, 0.5, 0]} color='#475569' />
-    <Soft args={[0.7, 0.06, 0.5]} position={[0, 0.03, 0]} color='#475569' />
-    <Soft args={[2.4, 1.45, 0.1]} position={[0, 1.65, 0]} color='#0f172a' />
+    <Soft args={[0.08, 0.9, 0.08]} position={[0, 0.45, 0]} color='#475569' />
+    <Soft args={[1.7, 1.1, 0.08]} position={[0, 1.4, 0]} color='#0f172a' />
     <TextPanel
-      width={2.25}
-      height={1.3}
-      position={[0, 1.65, 0.055]}
+      width={1.6}
+      height={1}
+      position={[0, 1.4, 0.045]}
       emissive
       draw={(ctx, w, h) => {
-        ctx.fillStyle = "#020617";
+        ctx.fillStyle = "#f8fafc";
         ctx.fillRect(0, 0, w, h);
-        ctx.strokeStyle = "#1e293b";
-        ctx.lineWidth = 2;
-        for (let i = 1; i < 5; i++) {
-          ctx.beginPath();
-          ctx.moveTo(0, (h * i) / 5);
-          ctx.lineTo(w, (h * i) / 5);
-          ctx.stroke();
-        }
-        const cw = w / (CANDLES.length + 1);
-        const y = (v) => h * 0.9 - (v / 9) * h * 0.72;
-        CANDLES.forEach((v, i) => {
-          const prev = i ? CANDLES[i - 1] : v - 0.5;
-          ctx.fillStyle = ctx.strokeStyle = v >= prev ? "#22c55e" : "#ef4444";
-          const x = cw * (i + 0.6);
-          ctx.beginPath();
-          ctx.moveTo(x + cw * 0.25, y(Math.max(v, prev) + 0.5));
-          ctx.lineTo(x + cw * 0.25, y(Math.min(v, prev) - 0.5));
-          ctx.stroke();
-          ctx.fillRect(x, y(Math.max(v, prev)), cw * 0.5, Math.max(4, y(Math.min(v, prev)) - y(Math.max(v, prev))));
-        });
-        ctx.fillStyle = "#e2e8f0";
+        ctx.fillStyle = "#0f766e";
+        ctx.fillRect(0, 0, w, h * 0.14);
+        ctx.fillStyle = "#ffffff";
         ctx.font = `600 ${h * 0.08}px Poppins, sans-serif`;
         ctx.textAlign = "left";
-        ctx.fillText("Financial data → models", w * 0.04, h * 0.11);
+        ctx.fillText("Model.xlsx", w * 0.04, h * 0.095);
+        const cols = 5;
+        const rows = 7;
+        const cw = w / cols;
+        const ch = (h * 0.86) / rows;
+        ctx.font = `500 ${ch * 0.42}px 'Work Sans', sans-serif`;
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            const x = c * cw;
+            const y = h * 0.14 + r * ch;
+            ctx.fillStyle = r === 0 || c === 0 ? "#e2e8f0" : (r + c) % 4 === 0 ? "#ccfbf1" : "#ffffff";
+            ctx.fillRect(x + 1, y + 1, cw - 2, ch - 2);
+            ctx.fillStyle = "#334155";
+            const label = r === 0 ? ["", "FY22", "FY23", "FY24", "FY25"][c] : c === 0 ? ["Rev", "COGS", "GP", "Opex", "EBIT", "EPS"][r - 1] : (100 + r * 37 + c * 13).toString();
+            ctx.fillText(label, x + cw * 0.12, y + ch * 0.65);
+          }
+        }
       }}
     />
+  </group>
+);
+
+const DaloopaHub = ({ position }) => (
+  <group position={position}>
+    <mesh position={[0, 0.06, 0]} receiveShadow>
+      <cylinderGeometry args={[1.9, 1.95, 0.12, 64]} />
+      <meshStandardMaterial color='#0f172a' roughness={0.5} />
+    </mesh>
+    <mesh position={[0, 0.125, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+      <ringGeometry args={[1.75, 1.85, 64]} />
+      <meshBasicMaterial color='#2dd4bf' toneMapped={false} />
+    </mesh>
+    <FilingStack position={[-1.15, 0.12, 0.2]} />
+    <group scale={0.8} position={[0, 0.1, -0.1]}>
+      <DataStack position={[0, 0, 0]} />
+    </group>
+    <ModelScreen position={[1.15, 0.12, -0.2]} rotation={[0, -0.35, 0]} />
+    {/* source-link threads from model cells back to the filings */}
+    {[0.15, 0.35, 0.55].map((dy, i) => (
+      <mesh key={i} position={[0, 1.3 + dy, -0.05]} rotation={[0, 0, Math.PI / 2 + (i - 1) * 0.12]}>
+        <cylinderGeometry args={[0.008, 0.008, 2.2, 6]} />
+        <meshBasicMaterial color='#5eead4' toneMapped={false} transparent opacity={0.6} />
+      </mesh>
+    ))}
   </group>
 );
 
@@ -309,21 +376,19 @@ const SalesDecor = () => (
     <ShopAndTower position={[-4.3, 0, -2.6]} />
 
     {/* Revyl: back center */}
-    <RevylLoop position={[0, 0, -4.7]} />
+    <RevylLoop position={[0, 0, -5.2]} />
 
-    {/* Daloopa: right side */}
-    <ChartScreen position={[6.2, 0, -1.8]} rotation={[0, -0.35, 0]} />
-    <DataStack position={[4.5, 0, -2.6]} />
-    <ServerRack position={[8.1, 0, -3.4]} />
+    {/* Daloopa: center of the room, current role */}
+    <DaloopaHub position={[0, 0, 0.2]} />
+    <ServerRack position={[8.1, 0, -4.9]} />
 
-    {/* lounge, front right */}
-    <group position={[5.6, 0, 3.4]}>
-      <Prop url={PROPS.rugStripes} size={3.6} position={[0, 0.01, 0.2]} />
-      <Prop url={PROPS.couch} size={2.4} position={[0, 0, -0.9]} />
-      <Prop url={PROPS.armchair} size={1.1} position={[-1.6, 0, 0.6]} rotation={[0, Math.PI / 2, 0]} />
-      <Prop url={PROPS.tableLow} size={1.2} position={[0, 0, 0.4]} />
+    {/* lounge along the right wall */}
+    <group position={[7.4, 0, 1.6]} rotation={[0, -Math.PI / 2, 0]}>
+      <Prop url={PROPS.rugStripes} size={3.6} position={[0, 0.01, 0.4]} />
+      <Prop url={PROPS.couch} size={2.4} position={[0, 0, -0.5]} />
+      <Prop url={PROPS.tableLow} size={1.2} position={[0, 0, 0.7]} />
     </group>
-    <Plant position={[8.2, 0, 1.2]} />
+    <Plant position={[8.2, 0, 4.6]} />
     <Plant url={PROPS.plantPothos} position={[-8.2, 0, 4.6]} />
     <Prop url={PROPS.cactus} height={0.9} position={[-8.3, 0, -5.3]} />
   </>
@@ -331,25 +396,23 @@ const SalesDecor = () => (
 
 export default {
   width: 18,
-  depth: 12,
+  depth: 13,
   floor: "#f5f3ff",
   wall: "#ede9fe",
   trim: "#5b21b6",
   stations: {
     numeral: [-6.2, -0.2],
-    revyl: [0, -2.6],
-    daloopa: [6, -0.2],
+    revyl: [0, -3.1],
+    daloopa: [0, 2.7],
   },
   blockers: [
     [-6.2, -1.6, 1, 0.5],
     [-7.9, -3.6, 1.1, 0.4],
     [-4.3, -2.6, 0.7, 0.45],
-    [-0.1, -4.7, 3.5, 0.6],
-    [6.2, -1.8, 0.4, 0.4],
-    [4.5, -2.6, 0.5, 0.5],
-    [8.1, -3.4, 0.5, 0.45],
-    [5.6, 2.5, 1.3, 0.5],
-    [5.6, 3.6, 0.6, 0.4],
+    [-0.1, -5.2, 3.5, 0.6],
+    [0, 0.2, 1.6, 1.1],
+    [8.1, -4.9, 0.5, 0.45],
+    [8, 1.6, 0.6, 1.3],
   ],
   Decor: SalesDecor,
 };
