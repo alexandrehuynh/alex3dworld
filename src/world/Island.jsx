@@ -117,9 +117,11 @@ const FountainWater = () => {
     }
     // little splash domes that pop up where each stream lands
     splashes.current?.children.forEach((dome, i) => {
-      const t = (t0 * 2.2 + i * 0.37) % 1;
-      dome.scale.set(0.12 + t * 0.08, 0.25 * Math.sin(t * Math.PI), 0.12 + t * 0.08);
-      dome.material.opacity = 0.9 * (1 - t);
+      // small, gentle bulge that eases in and out
+      const t = (t0 * 1.4 + i * 0.37) % 1;
+      const ease = Math.sin(t * Math.PI);
+      dome.scale.set(0.07 + t * 0.04, 0.07 * ease, 0.07 + t * 0.04);
+      dome.material.opacity = 0.45 * ease;
     });
     ripples.current?.children.forEach((ring, i) => {
       const t = (clock.elapsedTime * 0.6 + (i % 3) / 3) % 1;
@@ -164,7 +166,7 @@ const FountainWater = () => {
           return (
             <mesh key={i} position={[Math.cos(a) * REACH, POOL_Y, Math.sin(a) * REACH]}>
               <sphereGeometry args={[1, 12, 8, 0, Math.PI * 2, 0, Math.PI / 2]} />
-              <meshBasicMaterial color='#ffffff' transparent opacity={0.8} depthWrite={false} />
+              <meshBasicMaterial color='#e0f2fe' transparent opacity={0.45} depthWrite={false} />
             </mesh>
           );
         })}
