@@ -1,43 +1,25 @@
 import * as THREE from "three";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
-import { useAnimations, useGLTF, useKeyboardControls } from "@react-three/drei";
+import { useKeyboardControls } from "@react-three/drei";
 import { Ecctrl } from "ecctrl";
 import { useJoystickStore } from "ecctrl/input";
-import { clone as cloneSkinned } from "three/examples/jsm/utils/SkeletonUtils.js";
 
-import foxScene from "../assets/3d/fox.glb";
+import CharacterModel from "./CharacterModel";
 
 export const SPAWN = [0, 2, 9];
-const CAMERA_OFFSET = new THREE.Vector3(0, 12, 14);
+const CAMERA_OFFSET = new THREE.Vector3(0, 7.5, 10);
 // Portrait phones see less width, so pull the camera further back
-const CAMERA_OFFSET_NARROW = new THREE.Vector3(0, 17, 20);
+const CAMERA_OFFSET_NARROW = new THREE.Vector3(0, 11, 15);
 const LOOK_OFFSET = new THREE.Vector3(0, 0.5, -3);
+// Close-up while choosing a character
+const CAMERA_OFFSET_PICK = new THREE.Vector3(0, 1.6, 5);
+const LOOK_OFFSET_PICK = new THREE.Vector3(0, 0.2, 0);
 
-// Placeholder character: the fox from the contact page, until a CC0 humanoid
-// replaces it. Clip names: idle, walk, hit (used as the run).
-const Character = ({ animation }) => {
-  const group = useRef();
-  const { scene, animations } = useGLTF(foxScene);
-  // The contact page renders the same cached glTF, so walk with our own copy
-  const model = useMemo(() => cloneSkinned(scene), [scene]);
-  const { actions } = useAnimations(animations, group);
+// Feet sit at the bottom of the capsule plus Ecctrl's float height
+const FEET_Y = -(0.3 + 0.35 + 0.2);
 
-  useEffect(() => {
-    const action = actions[animation];
-    if (!action) return;
-    action.reset().fadeIn(0.15).play();
-    return () => action.fadeOut(0.15);
-  }, [actions, animation]);
-
-  return (
-    <group ref={group} position={[0, -0.6, 0]} rotation={[0, 0, 0]} scale={0.35}>
-      <primitive object={model} />
-    </group>
-  );
-};
-
-const Player = ({ frozen }) => {
+const Player = ({ characterUrl, frozen, pose, closeUp }) => {
   const ecctrl = useRef();
   const [, getKeys] = useKeyboardControls();
   const [animation, setAnimation] = useState("idle");
@@ -73,7 +55,7 @@ const Player = ({ frozen }) => {
     }
 
     // Pick a clip from the controller's state
-    const next = !player.isMoving ? "idle" : player.moveSpeed > 3 ? "hit" : "walk";
+    const next = !player.isMoving ? pose ?? "idle" : player.moveSpeed > 3.8 ? "run" : "walk";
     if (next !== animationRef.current) {
       animationRef.current = next;
       setAnimation(next);
@@ -83,8 +65,8 @@ const Player = ({ frozen }) => {
     const t = 1 - Math.pow(0.001, delta);
     cameraTarget.current
       .copy(player.currPos)
-      .add(size.width < size.height ? CAMERA_OFFSET_NARROW : CAMERA_OFFSET);
-    lookTarget.current.lerp(LOOK_OFFSET.clone().add(player.currPos), t);
+      .add(closeUp ? CAMERA_OFFSET_PICK : size.width < size.height ? CAMERA_OFFSET_NARROW : CAMERA_OFFSET);
+    lookTarget.current.lerp((closeUp ? LOOK_OFFSET_PICK : LOOK_OFFSET).clone().add(player.currPos), t);
     camera.position.lerp(cameraTarget.current, t);
     camera.lookAt(lookTarget.current);
   });
@@ -99,11 +81,9 @@ const Player = ({ frozen }) => {
       maxWalkVel={3.5}
       maxRunVel={7}
     >
-      <Character animation={animation} />
+      <CharacterModel url={characterUrl} animation={animation} position={[0, FEET_Y, 0]} />
     </Ecctrl>
   );
 };
-
-useGLTF.preload(foxScene);
 
 export default Player;

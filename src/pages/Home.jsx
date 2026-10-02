@@ -1,5 +1,5 @@
 import { Canvas } from "@react-three/fiber";
-import { Environment, KeyboardControls, Lightformer, Sky } from "@react-three/drei";
+import { Environment, KeyboardControls, Lightformer } from "@react-three/drei";
 import { Bloom, EffectComposer, N8AO, SMAA, ToneMapping, Vignette } from "@react-three/postprocessing";
 import { ToneMappingMode } from "postprocessing";
 import { Physics } from "@react-three/rapier";
@@ -7,7 +7,11 @@ import { Joystick, useJoystickStore } from "ecctrl/input";
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
-import sakura from "../assets/sakura.mp3";
+import lofiOgg from "../assets/audio/lofi_loop.ogg";
+import lofiMp3 from "../assets/audio/lofi.mp3";
+import skyHdr from "../assets/sky/kloofendal_partly_cloudy_1k.hdr";
+import CharacterPicker from "../components/CharacterPicker";
+import { characters, loadCharacterId, saveCharacterId } from "../constants/characters";
 import { Loader, RoomPanel } from "../components";
 import { soundoff, soundon } from "../assets/icons";
 import { buildings } from "../constants/world";
@@ -32,13 +36,27 @@ const Home = () => {
   const [nearbyId, setNearbyId] = useState(null);
   const [openId, setOpenId] = useState(null);
   const touch = useMemo(isTouch, []);
+  const [characterId, setCharacterId] = useState(
+    () => characters.find((c) => c.id === loadCharacterId())?.id ?? null
+  );
+  const [picking, setPicking] = useState(characterId === null);
+  const [previewId, setPreviewId] = useState(characterId ?? characters[0].id);
+  const activeCharacter = characters.find((c) => c.id === (picking ? previewId : characterId));
+
+  const confirmCharacter = useCallback(() => {
+    saveCharacterId(previewId);
+    setCharacterId(previewId);
+    setPicking(false);
+  }, [previewId]);
 
   const nearby = buildings.find((b) => b.id === nearbyId);
   const open = buildings.find((b) => b.id === openId);
 
   useEffect(() => {
     if (!audioRef.current) {
-      audioRef.current = new Audio(sakura);
+      // CC0 lofi loop; older Safari can't play Ogg, so fall back to the MP3
+      const canOgg = new Audio().canPlayType("audio/ogg") !== "";
+      audioRef.current = new Audio(canOgg ? lofiOgg : lofiMp3);
       audioRef.current.volume = 0.4;
       audioRef.current.loop = true;
     }
@@ -68,7 +86,7 @@ const Home = () => {
 
   // Hide the intro card once they start moving
   useEffect(() => {
-    if (!showIntro) return;
+    if (!showIntro || picking) return;
     const hide = (e) => {
       if (KEYBOARD_MAP.some((k) => k.keys.includes(e.code))) setShowIntro(false);
     };
@@ -80,11 +98,20 @@ const Home = () => {
       window.removeEventListener("keydown", hide);
       unsubscribe();
     };
-  }, [showIntro]);
+  }, [showIntro, picking]);
 
   return (
     <section className='w-full h-screen relative overflow-hidden'>
-      {showIntro && (
+      {picking && (
+        <CharacterPicker
+          characters={characters}
+          selectedId={previewId}
+          onSelect={setPreviewId}
+          onConfirm={confirmCharacter}
+        />
+      )}
+
+      {showIntro && !picking && (
         <div className='absolute top-24 left-0 right-0 z-10 flex justify-center px-4 pointer-events-none'>
           <div className='neo-brutalism-blue py-4 px-6 text-white text-center sm:text-lg max-w-md pointer-events-auto'>
             Hi, I'm <span className='font-semibold'>Alex Huynh</span> 👋
@@ -106,7 +133,8 @@ const Home = () => {
           camera={{ fov: 50, near: 0.1, far: 500, position: [0, 12, 26] }}
         >
           <Suspense fallback={null}>
-            <Sky sunPosition={[60, 40, 30]} turbidity={2} rayleigh={0.6} />
+            {/* CC0 sky from Poly Haven, used as the backdrop only */}
+            <Environment files={skyHdr} background='only' backgroundRotation={[0, Math.PI / 2, 0]} />
             <fog attach='fog' args={["#dbeafe", 60, 140]} />
 
             {/* Soft studio-style ambient light, generated in code (no HDRI download) */}
@@ -143,7 +171,12 @@ const Home = () => {
                   onExitZone={onExitZone}
                 />
               ))}
-              <Player frozen={!!openId} />
+              <Player
+                characterUrl={activeCharacter.url}
+                frozen={!!openId || picking}
+                pose={picking ? "wave" : undefined}
+                closeUp={picking}
+              />
             </Physics>
 
             {/* Soft contact shading + gentle glow; skipped on phones to keep it smooth */}
@@ -176,7 +209,7 @@ const Home = () => {
 
       {open && <RoomPanel building={open} onClose={closeRoom} />}
 
-      {touch && !open && (
+      {touch && !open && !picking && (
         <Joystick joystickWrapperStyle={{ left: 24, bottom: 72, width: 140, height: 140 }} />
       )}
 
@@ -186,6 +219,18 @@ const Home = () => {
       >
         Skip to résumé →
       </Link>
+
+      {!picking && !open && (
+        <button
+          onClick={() => {
+            setPreviewId(characterId);
+            setPicking(true);
+          }}
+          className='absolute bottom-3 left-14 z-20 rounded-full bg-white/85 px-3 py-1.5 text-sm font-medium shadow hover:bg-white'
+        >
+          Change character
+        </button>
+      )}
 
       <div className='absolute bottom-2 left-2 z-20'>
         <img

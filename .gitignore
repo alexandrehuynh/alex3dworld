@@ -24,3 +24,6 @@ dist-ssr
 *.sw?
 
 .env
+
+# Downloaded asset packs; only the files we use are copied into src/
+asset-inbox/
