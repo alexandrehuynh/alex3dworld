@@ -132,6 +132,17 @@ const Home = () => {
     return () => window.removeEventListener("click", blur);
   }, []);
 
+  // Esc or a movement key ends Look around and hands control back
+  useEffect(() => {
+    if (!lookAround) return;
+    const EXIT = ["Escape", "KeyW", "KeyA", "KeyS", "KeyD", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
+    const onKey = (e) => {
+      if (EXIT.includes(e.code) || e.key === "Escape") setLookAround(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [lookAround]);
+
   // Shift flips between walking and running
   useEffect(() => {
     const onKey = (e) => {
@@ -336,7 +347,7 @@ const Home = () => {
               lookAround ? "bg-blue-600 text-white" : "bg-white/85 backdrop-blur hover:bg-white"
             }`}
           >
-            {lookAround ? "Done looking" : "🔍 Look around"}
+            {lookAround ? (touch ? "Done looking" : "Done looking · Esc") : "🔍 Look around"}
           </button>
           <button
             onClick={() => travel("island", doorSpawn(inside))}
@@ -381,7 +392,7 @@ const Home = () => {
             lookAround ? "bg-blue-600 text-white" : "bg-white/85 backdrop-blur hover:bg-white"
           }`}
         >
-          {lookAround ? "Done looking" : "🔍 Look around"}
+          {lookAround ? (touch ? "Done looking" : "Done looking · Esc") : "🔍 Look around"}
         </button>
       )}
 
