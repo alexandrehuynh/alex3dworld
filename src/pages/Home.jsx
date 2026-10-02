@@ -321,6 +321,17 @@ const Home = () => {
 
       <Loader />
 
+      {/* how to use Look around, shown while it's on */}
+      {lookAround && (
+        <div className='pointer-events-none absolute left-0 right-0 top-32 z-20 flex justify-center px-4'>
+          <div className='rounded-full bg-slate-900/80 px-4 py-2 text-center text-sm font-medium text-white shadow backdrop-blur'>
+            {touch
+              ? "Drag to look around · pinch to zoom · two fingers to pan"
+              : "Drag to look around · scroll to zoom · right-drag to pan"}
+          </div>
+        </div>
+      )}
+
       {prompt && !card && !fading && !picking && (
         <div className='absolute bottom-24 sm:bottom-10 left-0 right-0 z-20 flex justify-center px-4'>
           <button onClick={activate} className='neo-brutalism-white neo-btn !text-base'>
