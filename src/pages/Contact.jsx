@@ -137,7 +137,8 @@ const Contact = () => {
         </form>
       </div>
 
-      <div className='lg:w-1/2 w-full lg:h-auto md:h-[550px] h-[350px]'>
+      <div className='relative lg:w-1/2 w-full lg:h-auto md:h-[550px] h-[350px]'>
+        <Loader />
         <Canvas
           camera={{
             position: [0, 0, 5],
@@ -156,7 +157,7 @@ const Contact = () => {
             intensity={2}
           />
 
-          <Suspense fallback={<Loader />}>
+          <Suspense fallback={null}>
             <Fox
               currentAnimation={currentAnimation}
               position={[0.5, 0.35, 0]}
