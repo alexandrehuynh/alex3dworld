@@ -108,25 +108,28 @@ export const luxfit = (ctx, w, h) => {
   });
 };
 
+// Navy circle with stacked serif "Bay / Club", matching their logo
 export const bayClubBadge = (ctx, w, h) => {
   ctx.clearRect(0, 0, w, h);
-  ctx.fillStyle = "#1e3a5f";
+  ctx.fillStyle = "#26386b";
   ctx.beginPath();
   ctx.arc(w / 2, h / 2, Math.min(w, h) * 0.48, 0, Math.PI * 2);
   ctx.fill();
-  center(ctx);
   ctx.fillStyle = "#ffffff";
-  ctx.font = `600 ${h * 0.22}px Poppins, sans-serif`;
-  ctx.fillText("Bay", w / 2, h * 0.4);
-  ctx.fillText("Club", w / 2, h * 0.62);
+  ctx.textAlign = "right";
+  ctx.textBaseline = "alphabetic";
+  ctx.font = `400 ${h * 0.3}px Georgia, 'Times New Roman', serif`;
+  ctx.fillText("Bay", w * 0.86, h * 0.5);
+  ctx.fillText("Club", w * 0.86, h * 0.78);
 };
 
-// Painted on the turf itself
+// Painted on the turf itself, in the logo's serif
 export const bayClubTurf = (ctx, w, h) => {
   ctx.clearRect(0, 0, w, h);
-  center(ctx);
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
   ctx.fillStyle = "rgba(255,255,255,0.92)";
-  ctx.font = `600 ${h * 0.55}px Poppins, sans-serif`;
+  ctx.font = `400 ${h * 0.6}px Georgia, 'Times New Roman', serif`;
   ctx.fillText("Bay Club", w / 2, h / 2);
 };
 

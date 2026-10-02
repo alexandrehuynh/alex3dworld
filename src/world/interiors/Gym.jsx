@@ -1,7 +1,8 @@
 import Prop from "../Prop";
 import { PROPS } from "../props";
-import { Plant, Puffs, Soft, TextPanel } from "./shared";
-import { bayClubTurf, equinox, luxfit, murray, skrapPack } from "./brands";
+import { LogoDecal, Plant, Puffs, Soft, TextPanel } from "./shared";
+import murrayLogo from "../../assets/logos/murray.png";
+import { bayClubBadge, equinox, luxfit, skrapPack } from "./brands";
 
 /* Equinox: black-and-white luxury spa with a sauna, glowing heater and steam */
 const Sauna = ({ position }) => (
@@ -71,7 +72,7 @@ const HalfCourt = ({ position }) => (
       <ringGeometry args={[3.9, 4, 64, 1, Math.PI, Math.PI]} />
       <meshStandardMaterial color='#ffffff' />
     </mesh>
-    <TextPanel width={3.4} height={1.15} position={[3.2, 2.05, -3.12]} draw={murray} />
+    <LogoDecal url={murrayLogo} width={2} position={[3.6, 1.8, -3.12]} />
     {/* backboard + rim + net, mounted on the back wall */}
     <Soft args={[0.12, 1.2, 0.12]} position={[0, 2.2, -3.1]} color='#475569' />
     <Soft args={[1.6, 1, 0.08]} position={[0, 2.8, -2.95]} color='#ffffff' radius={0.04} />
@@ -109,9 +110,8 @@ const HalfCourt = ({ position }) => (
 /* LuxFit: outdoor lifting platform with a squat rack, on grass */
 const SquatRack = ({ position, rotation, plate }) => (
   <group position={position} rotation={rotation}>
+    {/* front uprights only; the back pair would stand in front of the wall sign */}
     {[
-      [-0.75, -0.5],
-      [0.75, -0.5],
       [-0.75, 0.5],
       [0.75, 0.5],
     ].map(([x, z]) => (
@@ -135,9 +135,10 @@ const Barbell = ({ position, plate = "#ef4444" }) => (
           <cylinderGeometry args={[0.42, 0.42, 0.1, 40]} />
           <meshStandardMaterial color={plate} roughness={0.5} />
         </mesh>
-        <mesh position={[0, side * 0.12, 0]} castShadow>
-          <cylinderGeometry args={[0.32, 0.32, 0.08, 40]} />
-          <meshStandardMaterial color='#1e293b' roughness={0.5} />
+        {/* lighter plate loaded outside the heavy one (local -y points outward here) */}
+        <mesh position={[0, -side * 0.1, 0]} castShadow>
+          <cylinderGeometry args={[0.3, 0.3, 0.08, 40]} />
+          <meshStandardMaterial color='#facc15' roughness={0.5} />
         </mesh>
       </group>
     ))}
@@ -209,7 +210,7 @@ const TurfLane = ({ position }) => (
         <meshStandardMaterial color='#ffffff' />
       </mesh>
     ))}
-    <TextPanel width={2.2} height={0.6} position={[0.9, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]} draw={bayClubTurf} transparent />
+    <TextPanel width={0.9} height={0.9} position={[1.95, 0.021, 0]} rotation={[-Math.PI / 2, 0, 0]} draw={bayClubBadge} transparent />
     {/* push sled at the start of the lane */}
     <group position={[-1.9, 0, 0]} rotation={[0, -Math.PI / 2, 0]}>
       <Soft args={[0.9, 0.1, 1.1]} position={[0, 0.06, 0]} color='#1f2937' />

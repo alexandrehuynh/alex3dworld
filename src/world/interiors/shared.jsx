@@ -1,3 +1,5 @@
+import * as THREE from "three";
+import { useTexture } from "@react-three/drei";
 import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 
@@ -59,3 +61,18 @@ export const Puffs = ({ position, color = "#ffffff", count = 5, height = 1.6, sp
 };
 
 export { Soft };
+
+// A real logo image (transparent PNG) mounted flat on a wall or floor.
+// Height is derived from the image's aspect ratio.
+export const LogoDecal = ({ url, width, ...props }) => {
+  const texture = useTexture(url);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.anisotropy = 8;
+  const aspect = texture.image ? texture.image.height / texture.image.width : 1;
+  return (
+    <mesh {...props}>
+      <planeGeometry args={[width, width * aspect]} />
+      <meshBasicMaterial map={texture} transparent toneMapped={false} />
+    </mesh>
+  );
+};

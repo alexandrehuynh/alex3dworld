@@ -4,6 +4,7 @@ import { useFrame } from "@react-three/fiber";
 import Prop from "../Prop";
 import { PROPS } from "../props";
 import { Plant, Soft, TextPanel } from "./shared";
+import { coLab, codingTemple, gainSpan, kateeva } from "./brands";
 
 /* Kateeva: an OLED inkjet printer laying RGB pixels onto a glass panel */
 const COLS = 12;
@@ -134,11 +135,9 @@ const Bootcamp = ({ position }) => (
     />
     <StudentDesk position={[-1.3, 0, 0]} accent='#f472b6' />
     <StudentDesk position={[1.3, 0, 0]} accent='#34d399' />
-    {/* little whiteboard between them */}
-    <group position={[0, 0, -0.55]}>
-      <Soft args={[0.06, 1.2, 0.06]} position={[0, 0.6, 0]} color='#94a3b8' />
-      <Soft args={[0.9, 0.6, 0.04]} position={[0, 1.45, 0]} color='#ffffff' radius={0.02} />
-    </group>
+    {/* each bootcamp's logo above its desk */}
+    <TextPanel width={1.7} height={0.62} position={[-1.3, 1.75, -0.9]} draw={codingTemple} />
+    <TextPanel width={1.7} height={0.62} position={[1.3, 1.75, -0.9]} draw={coLab} />
   </group>
 );
 
@@ -150,12 +149,24 @@ const BigScreen = ({ position, rotation }) => (
       <planeGeometry args={[2.55, 1.45]} />
       <meshStandardMaterial color='#38bdf8' emissive='#0ea5e9' emissiveIntensity={0.9} />
     </mesh>
-    {[0.25, -0.05, -0.35].map((y, i) => (
-      <mesh key={y} position={[-0.3 + i * 0.15, 1.7 + y, 0.08]}>
-        <planeGeometry args={[1.6 - i * 0.3, 0.12]} />
-        <meshStandardMaterial color='#e0f2fe' emissive='#e0f2fe' emissiveIntensity={0.6} />
-      </mesh>
-    ))}
+    <TextPanel
+      width={2.45}
+      height={1.35}
+      position={[0, 1.7, 0.075]}
+      emissive
+      draw={(ctx, w, h) => {
+        ctx.fillStyle = "#0ea5e9";
+        ctx.fillRect(0, 0, w, h);
+        ctx.fillStyle = "#ffffff";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.font = `800 ${h * 0.16}px Poppins, sans-serif`;
+        ctx.fillText("PROJECTS &", w / 2, h * 0.3);
+        ctx.fillText("HACKATHONS", w / 2, h * 0.5);
+        ctx.fillStyle = "#e0f2fe";
+        [0.68, 0.78, 0.88].forEach((y, i) => ctx.fillRect(w * (0.2 + i * 0.05), h * y, w * (0.6 - i * 0.1), h * 0.04));
+      }}
+    />
   </group>
 );
 
@@ -171,7 +182,7 @@ const InternDesk = ({ position, rotation }) => (
     ].map(([x, z]) => (
       <Soft key={`${x}${z}`} args={[0.04, 0.6, 0.04]} position={[x, 0.3, z]} color='#78350f' radius={0.01} />
     ))}
-    {/* old monitor with a Wi-Fi interference histogram */}
+    {/* old monitor showing a Wi-Fi signal */}
     <Soft args={[0.42, 0.32, 0.26]} position={[-0.12, 0.79, -0.08]} color='#e7e5e4' radius={0.04} />
     <TextPanel
       width={0.32}
@@ -179,11 +190,21 @@ const InternDesk = ({ position, rotation }) => (
       position={[-0.12, 0.8, 0.055]}
       emissive
       draw={(ctx, w, h) => {
-        ctx.fillStyle = "#14532d";
+        ctx.fillStyle = "#0b3b4f";
         ctx.fillRect(0, 0, w, h);
-        ctx.fillStyle = "#86efac";
-        [0.2, 0.45, 0.8, 0.6, 0.35, 0.15].forEach((v, i) => {
-          ctx.fillRect(w * (0.1 + i * 0.14), h * (0.9 - v * 0.75), w * 0.1, h * v * 0.75);
+        const cx = w / 2;
+        const cy = h * 0.82;
+        ctx.fillStyle = "#f2a51a";
+        ctx.beginPath();
+        ctx.arc(cx, cy, h * 0.07, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#5eead4";
+        ctx.lineCap = "round";
+        ctx.lineWidth = h * 0.08;
+        [0.25, 0.45, 0.65].forEach((r) => {
+          ctx.beginPath();
+          ctx.arc(cx, cy, h * r, Math.PI * 1.25, Math.PI * 1.75);
+          ctx.stroke();
         });
       }}
     />
@@ -225,6 +246,8 @@ const InternDesk = ({ position, rotation }) => (
 const DevStudioDecor = () => (
   <>
     <OledPrinter position={[-4.6, 0, -3.3]} />
+    <TextPanel width={3} height={0.55} position={[-4.6, 2.3, -5.48]} draw={kateeva} />
+    <TextPanel width={1.9} height={0.95} position={[-7.97, 1.6, 2.7]} rotation={[0, Math.PI / 2, 0]} draw={gainSpan} />
     <Bootcamp position={[3.6, 0, -3.6]} />
     <BigScreen position={[7.75, 0, 1.6]} rotation={[0, -Math.PI / 2, 0]} />
     <InternDesk position={[-6.2, 0, 2.6]} rotation={[0, 0.5, 0]} />
@@ -235,6 +258,8 @@ const DevStudioDecor = () => (
 );
 
 export default {
+  // Logos on the walls name every station, so no floating labels
+  labels: false,
   width: 16,
   depth: 11,
   floor: "#e2e8f0",
