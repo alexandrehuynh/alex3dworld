@@ -403,9 +403,10 @@ const KbbqTable = ({ position }) => (
     ))}
     <pointLight position={[0, 1.1, 0]} color='#fb923c' intensity={3} distance={2.5} />
     <Puffs position={[0, 0.9, 0]} color='#e5e7eb' count={5} height={1.2} spread={0.3} size={0.12} />
-    {[-0.6, 0.6].map((x) => (
-      <Prop key={x} url={PROPS.stool} height={0.6} position={[x, 0, -1]} />
-    ))}
+    {/* seats for four: two stools on each long side */}
+    {[-1, 1].flatMap((side) =>
+      [-0.6, 0.6].map((x) => <Prop key={`${side}${x}`} url={PROPS.stool} height={0.6} position={[x, 0, side]} />)
+    )}
   </group>
 );
 
@@ -601,7 +602,7 @@ export default {
   blockers: [
     [-1.2, -4.2, 3, 0.5],
     [-6.2, -0.6, 1.25, 1.45],
-    [6.5, 1, 1.2, 1],
+    [6.35, 1, 1.35, 1],
     [-2, 3.7, 0.45, 0.35],
   ],
   Decor: CafeDecor,
