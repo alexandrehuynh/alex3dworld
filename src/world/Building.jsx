@@ -3,7 +3,6 @@ import { useFrame } from "@react-three/fiber";
 import { RoundedBox } from "@react-three/drei";
 import { CuboidCollider, RigidBody } from "@react-three/rapier";
 
-import Sign from "./Sign";
 import { Puffs, TextPanel } from "./interiors/shared";
 import { BUILDING_RING } from "../constants/world";
 
@@ -264,13 +263,6 @@ const Building = ({ building, isNearby, onEnterZone, onExitZone }) => {
         />
       </mesh>
 
-      <Sign
-        text={`${building.emoji} ${building.name}`}
-        accent={building.accent}
-        position={[0, h + 0.9, d / 2 + 1.4]}
-        width={5}
-        reveal={10}
-      />
     </group>
   );
 };

@@ -398,6 +398,126 @@ const ZoneSign = ({ x, draw, logo }) => (
   </group>
 );
 
+/* Front-left: call center with headset desks and a deal gong */
+const Headset = ({ position, rotation }) => (
+  <group position={position} rotation={rotation}>
+    <mesh position={[0, 0.1, 0]} rotation={[0, 0, 0]}>
+      <torusGeometry args={[0.09, 0.012, 8, 20, Math.PI]} />
+      <meshStandardMaterial color='#111827' />
+    </mesh>
+    {[-1, 1].map((side) => (
+      <mesh key={side} position={[side * 0.09, 0.09, 0]} rotation={[0, 0, Math.PI / 2]}>
+        <cylinderGeometry args={[0.04, 0.04, 0.03, 16]} />
+        <meshStandardMaterial color='#7c3aed' />
+      </mesh>
+    ))}
+    <mesh position={[-0.05, 0.03, 0.06]} rotation={[0.3, 0, 0.6]}>
+      <cylinderGeometry args={[0.006, 0.006, 0.14, 6]} />
+      <meshStandardMaterial color='#111827' />
+    </mesh>
+  </group>
+);
+
+const CallCenter = ({ position }) => (
+  <group position={position}>
+    {/* low divider behind the row of desks */}
+    <Soft args={[4.6, 1.1, 0.1]} position={[0, 0.55, -0.75]} color='#c4b5fd' radius={0.04} />
+    {[-1.15, 1.15].map((x) => (
+      <DeskSetup key={x} position={[x, 0]}>
+        <Headset position={[-0.55, 0.78, 0.1]} rotation={[0, 0.4, 0]} />
+      </DeskSetup>
+    ))}
+  </group>
+);
+
+const Gong = ({ position, rotation }) => (
+  <group position={position} rotation={rotation}>
+    {[-0.75, 0.75].map((x) => (
+      <Soft key={x} args={[0.1, 1.9, 0.1]} position={[x, 0.95, 0]} color='#7f1d1d' radius={0.03} />
+    ))}
+    <Soft args={[1.75, 0.12, 0.12]} position={[0, 1.9, 0]} color='#7f1d1d' radius={0.04} />
+    {[-0.75, 0.75].map((x) => (
+      <Soft key={`f${x}`} args={[0.3, 0.06, 0.5]} position={[x, 0.03, 0]} color='#450a0a' radius={0.02} />
+    ))}
+    {[-0.25, 0.25].map((x) => (
+      <mesh key={`c${x}`} position={[x, 1.75, 0]}>
+        <cylinderGeometry args={[0.006, 0.006, 0.25, 6]} />
+        <meshStandardMaterial color='#1f2937' />
+      </mesh>
+    ))}
+    <mesh position={[0, 1.1, 0]} rotation={[Math.PI / 2, 0, 0]} castShadow>
+      <cylinderGeometry args={[0.55, 0.55, 0.05, 48]} />
+      <meshStandardMaterial color='#d4a017' metalness={0.85} roughness={0.25} />
+    </mesh>
+    <mesh position={[0, 1.1, 0.03]}>
+      <torusGeometry args={[0.18, 0.02, 8, 32]} />
+      <meshStandardMaterial color='#a16207' metalness={0.8} roughness={0.3} />
+    </mesh>
+    {/* mallet leaning on the stand */}
+    <group position={[0.95, 0, 0.15]} rotation={[0, 0, 0.2]}>
+      <mesh position={[0, 0.5, 0]}>
+        <cylinderGeometry args={[0.02, 0.02, 1, 8]} />
+        <meshStandardMaterial color='#78350f' />
+      </mesh>
+      <mesh position={[0, 1.02, 0]}>
+        <sphereGeometry args={[0.08, 16, 12]} />
+        <meshStandardMaterial color='#f5f5f4' roughness={0.9} />
+      </mesh>
+    </group>
+  </group>
+);
+
+/* Front-right: lounge with a couch facing a wall TV showing the sales board */
+const SalesBoardTv = ({ position, rotation }) => (
+  <group position={position} rotation={rotation}>
+    <Soft args={[2.6, 1.55, 0.1]} position={[0, 1.75, 0]} color='#0f172a' radius={0.05} />
+    <TextPanel
+      width={2.45}
+      height={1.4}
+      position={[0, 1.75, 0.055]}
+      emissive
+      draw={(ctx, w, h) => {
+        ctx.fillStyle = "#1e1b4b";
+        ctx.fillRect(0, 0, w, h);
+        ctx.fillStyle = "#c4b5fd";
+        ctx.font = `800 ${h * 0.1}px Poppins, sans-serif`;
+        ctx.textAlign = "left";
+        ctx.textBaseline = "middle";
+        ctx.fillText("SALES BOARD", w * 0.06, h * 0.12);
+        const rows = [
+          ["Top SDR", "Dec 2025"],
+          ["Quota", "280%"],
+          ["Pipeline sourced", "$178.5K"],
+          ["Meetings booked", "52"],
+        ];
+        rows.forEach(([k, v], i) => {
+          const y = h * (0.32 + i * 0.17);
+          ctx.fillStyle = i % 2 ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.08)";
+          ctx.fillRect(w * 0.04, y - h * 0.075, w * 0.92, h * 0.15);
+          ctx.fillStyle = "#e2e8f0";
+          ctx.font = `500 ${h * 0.075}px Poppins, sans-serif`;
+          ctx.textAlign = "left";
+          ctx.fillText(k, w * 0.08, y);
+          ctx.fillStyle = "#4ade80";
+          ctx.font = `700 ${h * 0.09}px Poppins, sans-serif`;
+          ctx.textAlign = "right";
+          ctx.fillText(v, w * 0.92, y);
+        });
+      }}
+    />
+  </group>
+);
+
+const Lounge = () => (
+  <>
+    <SalesBoardTv position={[8.95, 0, 2.6]} rotation={[0, -Math.PI / 2, 0]} />
+    <Prop url={PROPS.rugStripes} size={3.4} position={[6.6, 0.01, 2.6]} rotation={[0, Math.PI / 2, 0]} />
+    <Prop url={PROPS.couch} size={2.4} position={[5.2, 0, 2.6]} rotation={[0, Math.PI / 2, 0]} />
+    <Prop url={PROPS.tableLow} size={1.1} position={[6.8, 0, 2.6]} />
+    <Plant position={[8.3, 0, 4.8]} />
+  </>
+);
+
 const SalesDecor = () => (
   <>
     {/* Numeral, left */}
@@ -419,8 +539,12 @@ const SalesDecor = () => (
     <DaloopaHub position={[6, 0, -4.4]} />
     <ServerRack position={[8.3, 0, -5.8]} />
 
-    <Plant position={[8.2, 0, 4.8]} />
-    <Plant url={PROPS.plantPothos} position={[-8.2, 0, 4.8]} />
+    {/* call center + gong, front-left */}
+    <CallCenter position={[-5.4, 0, 2.2]} />
+    <Gong position={[-7.6, 0, 4.4]} rotation={[0, 0.6, 0]} />
+
+    {/* lounge, front-right */}
+    <Lounge />
   </>
 );
 
@@ -443,6 +567,10 @@ export default {
     [0, -4.9, 3, 0.55],
     [6, -4.4, 1.6, 1.1],
     [8.3, -5.8, 0.5, 0.45],
+    [-5.4, 2.2, 2.4, 0.9],
+    [-7.6, 4.4, 0.9, 0.5],
+    [5.2, 2.6, 0.5, 1.2],
+    [6.8, 2.6, 0.5, 0.5],
   ],
   Decor: SalesDecor,
 };
