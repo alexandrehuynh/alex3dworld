@@ -60,7 +60,7 @@ export const tracks = [
     },
     extra: {
       title: "Stack I've run",
-      chips: ["Salesforce", "HubSpot", "LinkedIn Sales Navigator", "Clay", "Apollo", "Ocean.io", "Lusha", "Neuron", "Sumble", "Instantly", "HeyReach", "Nooks", "Gong", "n8n", "Claude", "Perplexity"],
+      chips: ["Salesforce", "HubSpot", "LinkedIn Sales Navigator", "Clay", "Apollo", "Ocean.io", "Lusha", "Neuron", "Sumble", "Instantly", "HeyReach", "Nooks", "Gong", "Outlook", "n8n", "Claude", "Perplexity"],
     },
   },
   {
@@ -149,6 +149,7 @@ export const salesSkills = [
 export const toolkit = [
   {
     title: "Sales stack",
+    cols: 7,
     tools: [
       { name: "Clay", icon: "clay" }, // clay.svg crops the wordmark to just the arch
       { name: "Apollo", icon: "apollo" },
@@ -163,6 +164,7 @@ export const toolkit = [
       { name: "Lusha", icon: "lusha" },
       { name: "Neuron", icon: "neuron" },
       { name: "Sales Navigator", icon: "linkedin" },
+      { name: "Outlook", icon: "outlook" },
     ],
   },
   {
@@ -176,6 +178,20 @@ export const toolkit = [
   {
     title: "Engineering",
     note: "From my engineering years",
-    skills: ["Python", "JavaScript", "TypeScript", "React", "PostgreSQL", "Git"],
+    small: true,
+    cols: 5,
+    // `skill` pulls the icon from the engineering skills list
+    tools: [
+      { name: "Python", skill: "Python" },
+      { name: "JavaScript", skill: "JavaScript" },
+      { name: "TypeScript", skill: "TypeScript" },
+      { name: "React", skill: "React" },
+      { name: "SQL", skill: "PostgreSQL" },
+      { name: "REST APIs / Webhooks", glyph: "{ }" },
+      { name: "Postman", icon: "postman" },
+      { name: "Google Sheets", icon: "googlesheets" },
+      { name: "Excel", icon: "microsoftexcel" },
+      { name: "Git", skill: "Git" },
+    ],
   },
 ];

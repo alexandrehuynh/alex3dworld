@@ -104,32 +104,30 @@ const About = () => {
                 {group.title}
                 {group.note && <span className='ml-2 font-normal normal-case tracking-normal text-slate-400'>· {group.note}</span>}
               </p>
-              <div className='mt-4 flex flex-wrap gap-3'>
-                {group.tools?.map((t) => (
-                  <div key={t.name} className='flex h-24 w-24 flex-col items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white shadow-sm'>
-                    {t.icon ? (
-                      <img
-                        src={toolIcon(t.icon)}
-                        alt=''
-                        className={`h-9 w-9 rounded-md ${t.crop ? "object-cover object-left" : "object-contain"}`}
-                      />
-                    ) : (
-                      <span className='flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 font-poppins text-sm font-bold text-white'>
-                        {t.name[0]}
+              <div
+                className='mt-4 flex flex-wrap gap-3'
+                // even rows: cap the row width at `cols` tiles (tile width + 0.75rem gap)
+                style={group.cols ? { maxWidth: `${group.cols * (group.small ? 5.75 : 6.75)}rem` } : undefined}
+              >
+                {group.tools?.map((t) => {
+                  const src = t.skill ? skills.find((sk) => sk.name === t.skill)?.imageUrl : t.icon && toolIcon(t.icon);
+                  const box = group.small ? "h-16 w-20 gap-1 rounded-xl" : "h-24 w-24 gap-2 rounded-2xl shadow-sm";
+                  const img = group.small ? "h-7 w-7" : "h-9 w-9";
+                  return (
+                    <div key={t.name} className={`flex flex-col items-center justify-center border border-slate-200 bg-white px-1 ${box}`}>
+                      {src ? (
+                        <img src={src} alt='' className={`${img} rounded-md object-contain`} />
+                      ) : (
+                        <span className={`${img} flex items-center justify-center rounded-lg bg-slate-900 font-mono text-xs font-bold text-white`}>
+                          {t.glyph ?? t.name[0]}
+                        </span>
+                      )}
+                      <span className={`text-center font-medium leading-tight text-slate-600 ${group.small ? "text-[10px]" : "text-xs"}`}>
+                        {t.name}
                       </span>
-                    )}
-                    <span className='text-xs font-medium text-slate-700'>{t.name}</span>
-                  </div>
-                ))}
-                {group.skills &&
-                  skills
-                    .filter((sk) => group.skills.includes(sk.name))
-                    .map((sk) => (
-                      <div key={sk.name} className='flex h-16 w-16 flex-col items-center justify-center gap-1 rounded-xl border border-slate-200 bg-white' title={sk.name}>
-                        <img src={sk.imageUrl} alt={sk.name} className='h-7 w-7 object-contain' />
-                        <span className='text-[10px] text-slate-500'>{sk.name}</span>
-                      </div>
-                    ))}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           ))}

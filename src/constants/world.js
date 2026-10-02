@@ -293,8 +293,8 @@ export const rooms = {
           {
             title: "Obour Foods",
             role: "Hummus stand, farmers market",
-            dates: "Weekends, for fun",
-            note: "Worked the farmers market stand for a friend's business.",
+            dates: "Clement St Farmers Market · SF",
+            note: "A friend's business. Worked the Clement Farmers Market in SF as a side quest.",
             color: "#fef08a",
             art: "obour",
             logo: obourLogo,
