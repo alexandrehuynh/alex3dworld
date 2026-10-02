@@ -15,7 +15,15 @@ const draw = (ctx, text, accent) => {
   ctx.strokeStyle = accent;
   ctx.stroke();
   ctx.fillStyle = "#1e293b";
-  ctx.font = "600 52px Poppins, 'Work Sans', sans-serif";
+  // Shrink long names so they fit inside the pill
+  let size = 52;
+  ctx.font = `600 ${size}px Poppins, 'Work Sans', sans-serif`;
+  const maxWidth = WIDTH - 70;
+  const measured = ctx.measureText(text).width;
+  if (measured > maxWidth) {
+    size = Math.floor((size * maxWidth) / measured);
+    ctx.font = `600 ${size}px Poppins, 'Work Sans', sans-serif`;
+  }
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText(text, WIDTH / 2, HEIGHT / 2 + 4);

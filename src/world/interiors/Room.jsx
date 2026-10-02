@@ -72,9 +72,9 @@ export const Room = ({ width, depth, floor, wall, trim, onZone, offZone, active,
 
 // A spot in the room tied to one job. Walking onto it lights the ring and
 // offers to open its card.
-export const Station = ({ index, label, position, accent, active, onZone, offZone, collider = 0 }) => {
-  const target = { kind: "station", id: index };
-  const isActive = active === index;
+export const Station = ({ id, label, position, accent, active, onZone, offZone, collider = 0 }) => {
+  const target = { kind: "station", id };
+  const isActive = active === id;
   return (
     <group position={[position[0], 0, position[1]]}>
       <RigidBody type='fixed' colliders={false}>

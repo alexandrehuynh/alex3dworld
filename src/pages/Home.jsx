@@ -64,13 +64,14 @@ const Home = () => {
   const [fading, setFading] = useState(false);
   // What the player is standing at: { kind: "door" | "station" | "exit", id }
   const [target, setTarget] = useState(null);
-  // Open UI: { kind: "station", id: index } or { kind: "overview" }
+  // Open UI: { kind: "station", id: sectionId } or { kind: "overview" }
   const [card, setCard] = useState(null);
 
   const inside = buildings.find((b) => b.id === location);
   const doorBuilding = target?.kind === "door" ? buildings.find((b) => b.id === target.id) : null;
   const overviewBuilding = card?.kind === "overview" ? inside ?? doorBuilding : null;
-  const stationSection = card?.kind === "station" && inside ? rooms[inside.id].sections[card.id] : null;
+  const findSection = (id) => inside && rooms[inside.id].sections.find((s) => s.id === id);
+  const stationSection = card?.kind === "station" ? findSection(card.id) : null;
 
   useEffect(() => {
     if (!audioRef.current) {
@@ -126,7 +127,7 @@ const Home = () => {
       : target?.kind === "exit"
         ? "🚪 Back outside"
         : target?.kind === "station" && inside
-          ? `${inside.emoji} ${rooms[inside.id].sections[target.id]?.title}`
+          ? `${inside.emoji} ${findSection(target.id)?.title}`
           : null;
 
   // Hide the intro card once they start moving

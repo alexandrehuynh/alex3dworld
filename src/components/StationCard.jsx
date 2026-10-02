@@ -16,7 +16,7 @@ const StationCard = ({ building, section, onClose, onOverview }) => {
       <div
         role='dialog'
         aria-label={section.title}
-        className='w-full max-w-md rounded-2xl bg-white/95 p-5 shadow-2xl backdrop-blur'
+        className='w-full max-w-lg max-h-[70vh] overflow-y-auto rounded-2xl bg-white/95 p-5 shadow-2xl backdrop-blur'
         style={{ borderTop: `6px solid ${building.accent}` }}
       >
         <div className='flex items-start justify-between gap-3'>
@@ -25,7 +25,12 @@ const StationCard = ({ building, section, onClose, onOverview }) => {
               {building.emoji} {building.name}
             </p>
             <h3 className='mt-1 font-poppins text-2xl font-semibold text-slate-900'>{section.title}</h3>
-            <p className='mt-1 text-slate-600'>{section.subtitle}</p>
+            {section.role && <p className='mt-1 font-medium text-slate-700'>{section.role}</p>}
+            {(section.dates || section.place) && (
+              <p className='text-sm text-slate-500'>
+                {[section.dates, section.place].filter(Boolean).join(" · ")}
+              </p>
+            )}
           </div>
           <button
             onClick={onClose}
@@ -34,6 +39,31 @@ const StationCard = ({ building, section, onClose, onOverview }) => {
             Esc ✕
           </button>
         </div>
+        {section.points && (
+          <ul className='mt-3 list-disc space-y-1.5 pl-5 text-sm text-slate-600'>
+            {section.points.map((point) => (
+              <li key={point}>{point}</li>
+            ))}
+          </ul>
+        )}
+
+        {section.flyers && (
+          <div className='mt-4 grid gap-3 sm:grid-cols-3'>
+            {section.flyers.map((flyer, i) => (
+              <div
+                key={flyer.title}
+                className='p-3 shadow-md'
+                style={{ background: flyer.color, rotate: `${(i - 1) * 1.5}deg` }}
+              >
+                <p className='font-poppins font-semibold text-slate-900'>{flyer.title}</p>
+                <p className='text-sm text-slate-700'>{flyer.role}</p>
+                <p className='mt-1 text-xs text-slate-600'>{flyer.dates}</p>
+                {flyer.note && <p className='mt-2 text-xs text-slate-700'>{flyer.note}</p>}
+              </div>
+            ))}
+          </div>
+        )}
+
         <div className='mt-4 flex flex-wrap gap-3'>
           {section.link &&
             (external ? (

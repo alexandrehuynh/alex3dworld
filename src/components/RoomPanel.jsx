@@ -9,7 +9,10 @@ const Entry = ({ section, board, index }) => {
   const body = (
     <>
       <p className='font-poppins font-semibold text-lg text-slate-900'>{section.title}</p>
-      <p className='text-sm text-slate-600'>{section.subtitle}</p>
+      <p className='text-sm text-slate-600'>
+        {section.role ?? section.flyers?.map((f) => f.title).join(", ")}
+      </p>
+      {section.dates && <p className='text-xs text-slate-500'>{section.dates}</p>}
     </>
   );
   const className = board
@@ -67,7 +70,7 @@ const RoomPanel = ({ building, onClose }) => {
 
           <div className={`mt-6 grid gap-4 ${room.board ? "grid-cols-2 sm:grid-cols-3" : "sm:grid-cols-2"}`}>
             {room.sections.map((section, i) => (
-              <Entry key={section.title} section={section} board={room.board} index={i} />
+              <Entry key={section.id} section={section} board={room.board} index={i} />
             ))}
           </div>
         </div>
