@@ -4,8 +4,9 @@ import { CTA } from "../components";
 import { skills } from "../constants";
 import { RESUME_URL, headline, salesSkills, toolkit, tracks } from "../constants/career";
 
-const TOOL_ICONS = import.meta.glob("../assets/icons/tools/*.svg", { eager: true, import: "default" });
-const toolIcon = (key) => TOOL_ICONS[`../assets/icons/tools/${key}.svg`];
+const TOOL_ICONS = import.meta.glob("../assets/icons/tools/*.{svg,png,jpg}", { eager: true, import: "default" });
+const toolIcon = (key) =>
+  Object.entries(TOOL_ICONS).find(([path]) => path.split("/").pop().split(".")[0] === key)?.[1];
 
 const About = () => {
   const [sales, ...pastTracks] = tracks;
@@ -107,7 +108,11 @@ const About = () => {
                 {group.tools?.map((t) => (
                   <div key={t.name} className='flex h-24 w-24 flex-col items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white shadow-sm'>
                     {t.icon ? (
-                      <img src={toolIcon(t.icon)} alt='' className='h-8 w-8 object-contain' />
+                      <img
+                        src={toolIcon(t.icon)}
+                        alt=''
+                        className={`h-9 w-9 rounded-md ${t.crop ? "object-cover object-left" : "object-contain"}`}
+                      />
                     ) : (
                       <span className='flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 font-poppins text-sm font-bold text-white'>
                         {t.name[0]}

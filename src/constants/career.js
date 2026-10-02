@@ -60,7 +60,7 @@ export const tracks = [
     },
     extra: {
       title: "Stack I've run",
-      chips: ["Salesforce", "HubSpot", "LinkedIn Sales Navigator", "Clay", "Apollo", "Ocean.io", "Lusha", "Neuron", "Sumble", "Instantly", "HeyReach", "Nooks", "n8n", "Claude", "Perplexity"],
+      chips: ["Salesforce", "HubSpot", "LinkedIn Sales Navigator", "Clay", "Apollo", "Ocean.io", "Lusha", "Neuron", "Sumble", "Instantly", "HeyReach", "Nooks", "Gong", "n8n", "Claude", "Perplexity"],
     },
   },
   {
@@ -150,17 +150,18 @@ export const toolkit = [
   {
     title: "Sales stack",
     tools: [
-      { name: "Clay" },
-      { name: "Apollo" },
+      { name: "Clay", icon: "clay", crop: true }, // wordmark file: show just the arch on the left
+      { name: "Apollo", icon: "apollo" },
       { name: "Salesforce", icon: "salesforce" },
       { name: "HubSpot", icon: "hubspot" },
-      { name: "Instantly" },
-      { name: "HeyReach" },
-      { name: "Nooks" },
-      { name: "Sumble" },
-      { name: "Ocean.io" },
-      { name: "Lusha" },
-      { name: "Neuron" },
+      { name: "Instantly", icon: "instantly" },
+      { name: "HeyReach", icon: "heyreach" },
+      { name: "Nooks", icon: "nooks" },
+      { name: "Gong", icon: "gong" },
+      { name: "Sumble", icon: "sumble" },
+      { name: "Ocean.io", icon: "ocean" },
+      { name: "Lusha", icon: "lusha" },
+      { name: "Neuron", icon: "neuron" },
       { name: "Sales Navigator", icon: "linkedin" },
     ],
   },
