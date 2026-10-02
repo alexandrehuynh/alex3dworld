@@ -3,6 +3,7 @@ import { PROPS } from "../props";
 import { wrapText } from "../textTexture";
 import { rooms } from "../../constants/world";
 import { Plant, Puffs, Soft, TextPanel } from "./shared";
+import { flyerArt, kElements, magicFlute, presidio } from "./brands";
 
 const Glass = ({ position, liquid, height = 0.22, stem = true }) => (
   <group position={position}>
@@ -43,7 +44,8 @@ const Bottle = ({ position, color }) => (
 /* Presidio Social Club: American diner counter */
 const DinerCounter = ({ position }) => (
   <group position={position}>
-    <Soft args={[5.6, 1.1, 0.9]} position={[0, 0.55, 0]} color='#dc2626' radius={0.15} />
+    <Soft args={[5.6, 1.1, 0.9]} position={[0, 0.55, 0]} color='#9f1239' radius={0.15} />
+    <TextPanel width={3.4} height={0.5} position={[0, 0.45, 0.46]} draw={presidio} />
     <Soft args={[5.8, 0.1, 1]} position={[0, 1.13, 0]} color='#f1f5f9' radius={0.04} />
     <Soft args={[5.6, 0.12, 0.92]} position={[0, 0.85, 0.01]} color='#e2e8f0' metalness={0.7} roughness={0.25} radius={0.05} />
     {/* stools */}
@@ -55,7 +57,7 @@ const DinerCounter = ({ position }) => (
         </mesh>
         <mesh position={[0, 0.74, 0]} castShadow>
           <cylinderGeometry args={[0.24, 0.22, 0.12, 24]} />
-          <meshStandardMaterial color='#ef4444' roughness={0.4} />
+          <meshStandardMaterial color='#9f1239' roughness={0.4} />
         </mesh>
       </group>
     ))}
@@ -138,33 +140,89 @@ const DinerCounter = ({ position }) => (
   </group>
 );
 
-/* Magic Flute Ristorante: brunch table with mimosas, champagne, and wine */
-const BrunchTable = ({ position }) => (
-  <group position={position}>
-    <mesh position={[0, 0.38, 0]} castShadow>
-      <cylinderGeometry args={[0.08, 0.2, 0.76, 16]} />
-      <meshStandardMaterial color='#78350f' />
+/* Magic Flute Ristorante: garden patio brunch. Marble table, black-and-gold
+   bistro chairs, wood fence with ivy and string lights, hanging wood sign */
+const BistroChair = ({ position, rotation }) => (
+  <group position={position} rotation={rotation}>
+    <mesh position={[0, 0.46, 0]} castShadow>
+      <cylinderGeometry args={[0.24, 0.22, 0.06, 24]} />
+      <meshStandardMaterial color='#111111' roughness={0.6} />
     </mesh>
-    <mesh position={[0, 0.66, 0]} castShadow receiveShadow>
-      <cylinderGeometry args={[0.95, 0.9, 0.2, 40]} />
-      <meshStandardMaterial color='#ffffff' roughness={0.9} />
+    <mesh position={[0, 0.72, -0.17]} rotation={[0.15, 0, 0]}>
+      <torusGeometry args={[0.22, 0.04, 8, 24, Math.PI]} />
+      <meshStandardMaterial color='#111111' roughness={0.6} />
     </mesh>
-    {[0, Math.PI / 2, Math.PI, (3 * Math.PI) / 2].map((a) => (
-      <mesh key={a} position={[Math.sin(a) * 0.6, 0.77, Math.cos(a) * 0.6]}>
-        <cylinderGeometry args={[0.17, 0.17, 0.02, 24]} />
-        <meshStandardMaterial color='#f1f5f9' />
+    {[
+      [-0.16, -0.16],
+      [0.16, -0.16],
+      [-0.16, 0.16],
+      [0.16, 0.16],
+    ].map(([x, z]) => (
+      <mesh key={`${x}${z}`} position={[x, 0.22, z]}>
+        <cylinderGeometry args={[0.018, 0.018, 0.46, 8]} />
+        <meshStandardMaterial color='#c9a227' metalness={0.6} roughness={0.35} />
       </mesh>
     ))}
-    <Glass position={[0.3, 0.76, 0.35]} liquid='#fb923c' />
-    <Glass position={[-0.35, 0.76, 0.3]} liquid='#fb923c' />
-    <Glass position={[0.4, 0.76, -0.3]} liquid='#fde68a' />
-    <Glass position={[-0.3, 0.76, -0.38]} liquid='#7f1d1d' height={0.16} />
+  </group>
+);
+
+// Low ivy-topped garden fence with string lights between two posts, so it
+// frames the table without blocking the flyer board behind it
+const PatioBackdrop = () => (
+  <group position={[0, 0, -1.4]}>
+    <Soft args={[3.2, 0.8, 0.12]} position={[0, 0.4, 0]} color='#8b6b4e' radius={0.04} roughness={1} />
+    {Array.from({ length: 9 }, (_, i) => (
+      <Soft key={i} args={[0.03, 0.76, 0.13]} position={[-1.4 + i * 0.35, 0.4, 0.005]} color='#6f553e' radius={0.01} />
+    ))}
+    {Array.from({ length: 10 }, (_, i) => (
+      <mesh key={i} position={[-1.45 + i * 0.32, 0.86 + (i % 3) * 0.04, 0.03]}>
+        <sphereGeometry args={[0.17 + (i % 2) * 0.04, 16, 12]} />
+        <meshStandardMaterial color={i % 2 ? "#3f7d3a" : "#4d8f45"} roughness={0.9} />
+      </mesh>
+    ))}
+    {[-1.7, 1.7].map((x) => (
+      <Soft key={x} args={[0.06, 2.1, 0.06]} position={[x, 1.05, 0]} color='#3b2416' />
+    ))}
+    {Array.from({ length: 11 }, (_, i) => (
+      <mesh key={i} position={[-1.6 + i * 0.32, 2 - Math.sin((i / 10) * Math.PI) * 0.25, 0]}>
+        <sphereGeometry args={[0.045, 10, 8]} />
+        <meshStandardMaterial color='#fde68a' emissive='#fbbf24' emissiveIntensity={2} />
+      </mesh>
+    ))}
+    <pointLight position={[0, 1.6, 0.8]} color='#fcd34d' intensity={2.5} distance={3} />
+    {/* hanging wood sign off the right post */}
+    <Soft args={[0.75, 0.04, 0.04]} position={[1.4, 2.05, 0.04]} color='#c9a227' radius={0.015} />
+    <TextPanel width={0.6} height={0.75} position={[1.35, 1.6, 0.06]} draw={magicFlute} />
+  </group>
+);
+
+const BrunchTable = ({ position }) => (
+  <group position={position}>
+    <PatioBackdrop />
+    <mesh position={[0, 0.38, 0]} castShadow>
+      <cylinderGeometry args={[0.06, 0.22, 0.76, 16]} />
+      <meshStandardMaterial color='#111111' />
+    </mesh>
+    <mesh position={[0, 0.72, 0]} castShadow receiveShadow>
+      <cylinderGeometry args={[0.85, 0.85, 0.08, 40]} />
+      <meshStandardMaterial color='#f4f4f5' roughness={0.25} />
+    </mesh>
+    {[0, Math.PI / 2, Math.PI, (3 * Math.PI) / 2].map((a) => (
+      <mesh key={a} position={[Math.sin(a) * 0.55, 0.77, Math.cos(a) * 0.55]}>
+        <cylinderGeometry args={[0.15, 0.15, 0.02, 24]} />
+        <meshStandardMaterial color='#ffffff' />
+      </mesh>
+    ))}
+    <Glass position={[0.3, 0.76, 0.32]} liquid='#fb923c' />
+    <Glass position={[-0.33, 0.76, 0.28]} liquid='#fb923c' />
+    <Glass position={[0.38, 0.76, -0.28]} liquid='#fde68a' />
+    <Glass position={[-0.28, 0.76, -0.35]} liquid='#7f1d1d' height={0.16} />
     <Bottle position={[0.05, 0.76, -0.05]} color='#14532d' />
     <Bottle position={[-0.15, 0.76, 0.12]} color='#a16207' />
-    <Prop url={PROPS.cafeCroissant} size={0.22} position={[0.6, 0.78, 0]} />
-    <Prop url={PROPS.cafeMuffin} size={0.18} position={[-0.6, 0.78, 0]} />
-    {[0, Math.PI].map((a) => (
-      <Prop key={a} url={PROPS.chairWood} height={1} position={[Math.sin(a + Math.PI / 2) * 1.3, 0, 0]} rotation={[0, a - Math.PI / 2, 0]} />
+    <Prop url={PROPS.cafeCroissant} size={0.2} position={[0.55, 0.78, 0.05]} />
+    <Prop url={PROPS.cafeMuffin} size={0.16} position={[-0.55, 0.78, 0]} />
+    {[-1, 1].map((side) => (
+      <BistroChair key={side} position={[side * 1.15, 0, 0]} rotation={[0, (side * -Math.PI) / 2, 0]} />
     ))}
   </group>
 );
@@ -197,6 +255,17 @@ const KbbqTable = ({ position }) => (
         </mesh>
       </group>
     ))}
+    {/* storefront fascia + purple accent light like the real place */}
+    <Soft args={[2.9, 0.95, 0.1]} position={[0, 1.95, -1.45]} color='#2b2622' radius={0.04} />
+    <TextPanel width={2.8} height={0.85} position={[0, 1.95, -1.39]} draw={kElements} />
+    <Soft args={[2.9, 0.04, 0.04]} position={[0, 1.4, -1.42]} color='#a855f7' radius={0.01} />
+    <mesh position={[0, 1.4, -1.38]}>
+      <boxGeometry args={[2.8, 0.03, 0.01]} />
+      <meshBasicMaterial color='#c084fc' toneMapped={false} />
+    </mesh>
+    {[-0.75, 0.75].map((x) => (
+      <Soft key={x} args={[0.32, 0.03, 0.22]} position={[x, 0.835, -0.4]} color='#fda4af' radius={0.01} />
+    ))}
     <pointLight position={[0, 1.1, 0]} color='#fb923c' intensity={3} distance={2.5} />
     <Puffs position={[0, 0.9, 0]} color='#e5e7eb' count={5} height={1.2} spread={0.3} size={0.12} />
     {[-0.6, 0.6].map((x) => (
@@ -214,20 +283,21 @@ const Flyer = ({ flyer, position, tilt }) => (
     <TextPanel
       width={FLYER_W}
       height={FLYER_H}
-      deps={[flyer.title]}
-      draw={(ctx, w, h) => {
-        ctx.fillStyle = flyer.color;
-        ctx.fillRect(0, 0, w, h);
-        ctx.fillStyle = "#0f172a";
-        ctx.textAlign = "center";
-        ctx.font = `700 ${w * 0.12}px Poppins, sans-serif`;
-        let y = wrapText(ctx, flyer.title, w / 2, h * 0.2, w * 0.86, w * 0.14);
-        ctx.font = `500 ${w * 0.075}px 'Work Sans', sans-serif`;
-        ctx.fillStyle = "#334155";
-        y = wrapText(ctx, flyer.role, w / 2, y + h * 0.04, w * 0.84, w * 0.095);
-        ctx.font = `400 ${w * 0.065}px 'Work Sans', sans-serif`;
-        wrapText(ctx, flyer.dates, w / 2, y + h * 0.04, w * 0.84, w * 0.085);
-      }}
+      deps={[flyer.title, flyer.art]}
+      draw={
+        flyerArt[flyer.art] ??
+        ((ctx, w, h) => {
+          ctx.fillStyle = flyer.color;
+          ctx.fillRect(0, 0, w, h);
+          ctx.fillStyle = "#0f172a";
+          ctx.textAlign = "center";
+          ctx.font = `700 ${w * 0.12}px Poppins, sans-serif`;
+          const y = wrapText(ctx, flyer.title, w / 2, h * 0.2, w * 0.86, w * 0.14);
+          ctx.font = `500 ${w * 0.075}px 'Work Sans', sans-serif`;
+          ctx.fillStyle = "#334155";
+          wrapText(ctx, flyer.role, w / 2, y + h * 0.04, w * 0.84, w * 0.095);
+        })
+      }
     />
     <mesh position={[0, FLYER_H / 2 - 0.08, 0.02]}>
       <sphereGeometry args={[0.035, 12, 8]} />

@@ -260,6 +260,7 @@ export const rooms = {
             role: "River rafting tour guide / Store Manager",
             dates: "Jun – Oct 2016 · Reno, NV",
             color: "#bae6fd",
+            art: "sierra",
           },
           {
             title: "Pure Barre Marina",
@@ -267,12 +268,14 @@ export const rooms = {
             dates: "Oct 2020 – Mar 2021 · SF",
             note: "Lead gen and cold calls grew customer acquisition 24% during COVID.",
             color: "#fbcfe8",
+            art: "pureBarre",
           },
           {
             title: "Obour Foods",
             role: "Hummus stand, farmers market",
             dates: SOON,
             color: "#fef08a",
+            art: "obour",
           },
         ],
       },
