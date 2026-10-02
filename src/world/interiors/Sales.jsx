@@ -483,19 +483,20 @@ const SalesBoardTv = ({ position, rotation }) => (
         ctx.font = `800 ${h * 0.1}px Poppins, sans-serif`;
         ctx.textAlign = "left";
         ctx.textBaseline = "middle";
-        ctx.fillText("SALES BOARD", w * 0.06, h * 0.12);
+        ctx.fillText("CAREER HIGHLIGHTS", w * 0.06, h * 0.12);
+        // career highlights labeled by company, so the board never looks dated
         const rows = [
-          ["Top SDR", "Dec 2025"],
-          ["Quota", "280%"],
-          ["Pipeline sourced", "$178.5K"],
-          ["Meetings booked", "52"],
+          ["Numeral · first to quota", "Top SDR"],
+          ["Numeral · peak month", "280%"],
+          ["Numeral · pipeline sourced", "$178.5K"],
+          ["Revyl · meetings booked", "52"],
         ];
         rows.forEach(([k, v], i) => {
           const y = h * (0.32 + i * 0.17);
           ctx.fillStyle = i % 2 ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.08)";
           ctx.fillRect(w * 0.04, y - h * 0.075, w * 0.92, h * 0.15);
           ctx.fillStyle = "#e2e8f0";
-          ctx.font = `500 ${h * 0.075}px Poppins, sans-serif`;
+          ctx.font = `500 ${h * 0.068}px Poppins, sans-serif`;
           ctx.textAlign = "left";
           ctx.fillText(k, w * 0.08, y);
           ctx.fillStyle = "#4ade80";
@@ -511,9 +512,10 @@ const SalesBoardTv = ({ position, rotation }) => (
 const Lounge = () => (
   <>
     <SalesBoardTv position={[8.95, 0, 2.6]} rotation={[0, -Math.PI / 2, 0]} />
-    <Prop url={PROPS.rugStripes} size={3.4} position={[6.6, 0.01, 2.6]} rotation={[0, Math.PI / 2, 0]} />
+    {/* dark slate rug so the yellow couch stands out */}
+    <Soft args={[3.2, 0.03, 3.4]} position={[6.4, 0.015, 2.6]} color='#334155' radius={0.012} roughness={1} />
     <Prop url={PROPS.couch} size={2.4} position={[5.2, 0, 2.6]} rotation={[0, Math.PI / 2, 0]} />
-    <Prop url={PROPS.tableLow} size={1.1} position={[6.8, 0, 2.6]} />
+    <Prop url={PROPS.tableLow} size={1.1} position={[6.8, 0, 2.6]} rotation={[0, Math.PI / 2, 0]} />
     <Plant position={[8.3, 0, 4.8]} />
   </>
 );
