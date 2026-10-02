@@ -1,0 +1,115 @@
+// Content for the About and Experience pages. Roles and bullets come from the
+// shared rooms data (constants/world.js) so the 3D world and the pages never
+// drift apart; this file adds the page-level framing, stats, and extras.
+import { rooms } from "./world";
+
+export const RESUME_URL = `${import.meta.env.BASE_URL}AlexHuynh-GTM-Resume.pdf`;
+
+export const headline = {
+  role: "Go-To-Market & Sales",
+  current: "GTM Business Development at Daloopa",
+  summary:
+    "Engineer turned seller. Three years building and testing software, then into outbound, where I cleared quota every month of ramp and moved into a founding GTM seat two months later. I sell to engineers because I used to be one.",
+};
+
+// Each track maps to a building in the 3D world (worldId) so a room's
+// Overview button can open the matching tab.
+export const tracks = [
+  {
+    id: "sales",
+    worldId: "sales",
+    label: "Sales & GTM",
+    emoji: "📈",
+    accent: "#7c3aed",
+    blurb: "Where I'm building my career: outbound, pipeline, and go-to-market for technical products.",
+    stats: [
+      { value: "280%", label: "peak monthly quota at Numeral" },
+      { value: "$178.5K", label: "pipeline sourced in 3 months" },
+      { value: "52", label: "meetings booked from cold outbound" },
+      { value: "2", label: "closed-won customers sourced, one enterprise" },
+    ],
+    // most recent first
+    sections: [...rooms.sales.sections].reverse(),
+    extra: {
+      title: "Stack I've run",
+      chips: ["Clay", "n8n", "Claude", "Perplexity", "Apollo", "HeyReach", "Instantly", "HubSpot", "Nooks", "Sumble"],
+    },
+  },
+  {
+    id: "engineering",
+    worldId: "code",
+    label: "Engineering",
+    emoji: "💻",
+    accent: "#0284c7",
+    blurb: "Where I started: QA automation, an internship, and two bootcamps. It's why I can talk shop with the engineers I sell to.",
+    stats: [
+      { value: "~70%", label: "manual test time cut at Kateeva" },
+      { value: "10+", label: "major releases shipped with automated QA" },
+      { value: "#1", label: "highest-rated MVP at Co.Lab" },
+      { value: "200+", label: "person audience for the BiteByte demo" },
+    ],
+    sections: rooms.code.sections.filter((s) => s.id !== "projects"),
+    showProjects: true,
+  },
+  {
+    id: "fitness",
+    worldId: "gym",
+    label: "Fitness & Coaching",
+    emoji: "🏋️",
+    accent: "#dc2626",
+    blurb: "I left engineering for strength and conditioning: an unpaid internship and my CSCS, then five years coaching at gyms. It taught me discovery, trust, and retention, the same muscles sales uses.",
+    stats: [
+      { value: "$80K–$120K", label: "annual coaching revenue" },
+      { value: "100+", label: "client relationships" },
+      { value: "85%", label: "client retention" },
+      { value: "2022", label: "Equinox Most Inspirational Trainer & Rookie of the Year" },
+    ],
+    sections: rooms.gym.sections,
+    extra: {
+      title: "Certifications",
+      list: [
+        { name: "Certified Strength and Conditioning Specialist (CSCS)", issuer: "NSCA" },
+        { name: "Level 1 Weightlifting Coach", issuer: "USA Weightlifting" },
+        { name: "Pain-Free Performance Specialist (PPSC)", issuer: "Dr. John Rusin" },
+        { name: "Functional Kettlebell Training Specialist", issuer: "Pain-Free Performance" },
+        { name: "Rotational Movement Training Specialist (RMTS)", issuer: "WeckMethod" },
+        { name: "Adult & Pediatric First Aid / CPR / AED", issuer: "American Red Cross" },
+      ],
+    },
+  },
+  {
+    id: "service",
+    worldId: "cafe",
+    label: "Customer Service",
+    emoji: "☕",
+    accent: "#d97706",
+    blurb: "Service jobs paid the rent while I studied for my CSCS and interned unpaid, and I kept a few going alongside gym work. Years of reading a room and keeping people happy.",
+    stats: [
+      { value: "~20%", label: "sales lift from upselling at Magic Flute" },
+      { value: "$1,650", label: "handled per shift" },
+      { value: "6–10", label: "tables a shift at K-Elements" },
+      { value: "24%", label: "customer acquisition growth at Pure Barre" },
+    ],
+    sections: rooms.cafe.sections,
+    extra: {
+      title: "Certifications",
+      list: [
+        { name: "Responsible Beverage Service (RBS) Server", issuer: "California ABC" },
+        { name: "California Food Handler Card" },
+      ],
+    },
+  },
+];
+
+export const trackForWorld = (worldId) => tracks.find((t) => t.worldId === worldId);
+
+export const salesSkills = [
+  "Outbound prospecting",
+  "Multi-channel sequencing",
+  "Discovery & qualification",
+  "Pipeline generation",
+  "Persona & messaging design",
+  "Channel economics analysis",
+  "GTM automation (Clay, n8n)",
+  "Selling to technical buyers",
+];

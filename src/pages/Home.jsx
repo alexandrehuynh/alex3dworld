@@ -4,7 +4,7 @@ import * as THREE from "three";
 import { Physics } from "@react-three/rapier";
 import { Joystick, useJoystickStore } from "ecctrl/input";
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import lofiOgg from "../assets/audio/lofi_loop.ogg";
 import lofiMp3 from "../assets/audio/lofi.mp3";
@@ -12,6 +12,7 @@ import skyHdr from "../assets/sky/kloofendal_partly_cloudy_1k.hdr";
 import CharacterPicker from "../components/CharacterPicker";
 import { characters, loadCharacterId, saveCharacterId } from "../constants/characters";
 import { Loader, RoomPanel } from "../components";
+import { trackForWorld } from "../constants/career";
 import { GO_HOME_EVENT } from "../components/NavBar";
 import { soundoff, soundon } from "../assets/icons";
 import StationCard from "../components/StationCard";
@@ -43,6 +44,7 @@ const isTouch = () =>
   typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
 
 const Home = () => {
+  const navigate = useNavigate();
   const audioRef = useRef(null);
   const [isPlayingMusic, setIsPlayingMusic] = useState(false);
   const [showIntro, setShowIntro] = useState(true);
@@ -295,7 +297,7 @@ const Home = () => {
             {inside.emoji} {inside.name}
           </span>
           <button
-            onClick={() => setCard({ kind: "overview" })}
+            onClick={() => navigate(`/experience/${trackForWorld(inside.id).id}`)}
             className='rounded-full bg-white/85 px-3 py-1.5 text-sm font-medium shadow backdrop-blur hover:bg-white'
           >
             Overview
@@ -322,7 +324,7 @@ const Home = () => {
           building={inside}
           section={stationSection}
           onClose={closeCard}
-          onOverview={() => setCard({ kind: "overview" })}
+          onOverview={() => navigate(`/experience/${trackForWorld(inside.id).id}`)}
         />
       )}
       {overviewBuilding && <RoomPanel building={overviewBuilding} onClose={closeCard} />}
@@ -338,7 +340,7 @@ const Home = () => {
       )}
 
       <Link
-        to='/about'
+        to='/experience'
         className='absolute top-20 right-4 z-20 hidden sm:block rounded-full bg-white/85 px-4 py-1.5 text-sm font-medium shadow backdrop-blur hover:bg-white'
       >
         Skip to résumé →

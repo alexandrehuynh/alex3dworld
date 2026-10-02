@@ -189,7 +189,7 @@ export const rooms = {
       {
         id: "numeral",
         title: "Numeral (YC W23)",
-        role: "Sales Development Representative",
+        role: "Sales Development Representative · placed via InsideScale",
         dates: "Oct 2025 – Dec 2025",
         place: "SF Bay Area",
         points: [
@@ -202,8 +202,8 @@ export const rooms = {
       {
         id: "revyl",
         title: "Revyl (YC F24)",
-        role: "Go-To-Market / Business Development",
-        dates: "Jan 2026 – Present",
+        role: "Go-To-Market / Business Development Representative",
+        dates: "Jan 2026 – Aug 2026",
         place: "SF Bay Area",
         points: [
           "A QA platform for mobile apps: AI agents run tests on cloud devices and feed results straight back into the dev loop. First GTM hire.",
@@ -214,8 +214,9 @@ export const rooms = {
       {
         id: "daloopa",
         title: "Daloopa",
-        role: "Just joined",
+        role: "GTM Business Development · placed via InsideScale",
         dates: "Oct 2026 – Present",
+        place: "SF Bay Area",
         points: ["The data layer for financial models.", "More details coming soon."],
       },
     ],

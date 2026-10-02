@@ -1,8 +1,9 @@
 import { lazy, Suspense } from "react";
-import { Route, HashRouter as Router, Routes } from "react-router-dom";
+import { Navigate, Route, HashRouter as Router, Routes } from "react-router-dom";
 
 import { Footer, NavBar } from "./components";
-import { About, Projects } from "./pages";
+import { About } from "./pages";
+import Experience from "./pages/Experience";
 
 // The 3D pages pull in three.js and the Rapier physics engine, so load them on demand
 const Home = lazy(() => import("./pages/Home"));
@@ -22,7 +23,10 @@ const App = () => {
                 <>
                   <Routes>
                     <Route path='/about' element={<About />} />
-                    <Route path='/projects' element={<Projects />} />
+                    <Route path='/experience' element={<Experience />} />
+                    <Route path='/experience/:track' element={<Experience />} />
+                    {/* old link */}
+                    <Route path='/projects' element={<Navigate to='/experience/engineering' replace />} />
                     <Route path='/contact' element={<Contact />} />
                   </Routes>
                   <Footer />

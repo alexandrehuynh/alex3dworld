@@ -1,6 +1,7 @@
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 
 import { logo } from "../assets/images";
+import { RESUME_URL } from "../constants/career";
 
 // Home's world listens for this to walk you back out to the plaza
 export const GO_HOME_EVENT = "portfolio:home";
@@ -30,12 +31,15 @@ const NavBar = () => {
         <NavLink to='/about' className={linkClass}>
           About
         </NavLink>
-        <NavLink to='/projects' className={linkClass}>
-          Projects
+        <NavLink to='/experience' className={linkClass}>
+          Experience
         </NavLink>
         <NavLink to='/contact' className={linkClass}>
           Contact
         </NavLink>
+        <a href={RESUME_URL} target='_blank' rel='noopener noreferrer' className='rounded-full bg-slate-900 px-4 py-1.5 text-sm font-medium text-white hover:bg-slate-700'>
+          Résumé
+        </a>
       </nav>
     </header>
   );
