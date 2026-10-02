@@ -150,7 +150,7 @@ export const toolkit = [
   {
     title: "Sales stack",
     tools: [
-      { name: "Clay", icon: "clay", crop: true }, // wordmark file: show just the arch on the left
+      { name: "Clay", icon: "clay" }, // clay.svg crops the wordmark to just the arch
       { name: "Apollo", icon: "apollo" },
       { name: "Salesforce", icon: "salesforce" },
       { name: "HubSpot", icon: "hubspot" },
