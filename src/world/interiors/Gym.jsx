@@ -117,9 +117,8 @@ const SquatRack = ({ position, rotation, plate }) => (
     ].map(([x, z]) => (
       <Soft key={`${x}${z}`} args={[0.14, 2.4, 0.14]} position={[x, 1.2, z]} color='#334155' metalness={0.4} roughness={0.4} />
     ))}
-    {[-0.5, 0.5].map((z) => (
-      <Soft key={z} args={[1.64, 0.12, 0.12]} position={[0, 2.35, z]} color='#334155' metalness={0.4} roughness={0.4} />
-    ))}
+    {/* front top bar only; the back one would cover the wall sign */}
+    <Soft args={[1.64, 0.12, 0.12]} position={[0, 2.35, 0.5]} color='#334155' metalness={0.4} roughness={0.4} />
     <Barbell position={[0, 1.45, 0.5]} plate={plate} />
   </group>
 );
@@ -163,6 +162,18 @@ const OutdoorPlatform = ({ position }) => (
       <Barbell position={[0, 0, 0]} plate='#2563eb' />
     </group>
     <TextPanel width={2.6} height={0.85} position={[1.56, 2.35, -0.4]} rotation={[0, -Math.PI / 2, 0]} draw={luxfit} />
+    {/* sun umbrella + plant: this one's outside */}
+    <group position={[1.1, 0, 2.3]}>
+      <mesh position={[0, 1.1, 0]}>
+        <cylinderGeometry args={[0.03, 0.03, 2.2, 8]} />
+        <meshStandardMaterial color='#e5e7eb' />
+      </mesh>
+      <mesh position={[0, 2.15, 0]} castShadow>
+        <coneGeometry args={[0.65, 0.3, 24, 1, true]} />
+        <meshStandardMaterial color='#fbbf24' side={2} />
+      </mesh>
+    </group>
+    <Plant position={[0.9, 0, 1.1]} />
     {/* kettlebell row along the wall */}
     {[-2.6, -2.25, -1.9, -1.55, -1.2].map((z, i) => (
       <group key={z} position={[1.25, 0, z]}>
@@ -176,18 +187,6 @@ const OutdoorPlatform = ({ position }) => (
         </mesh>
       </group>
     ))}
-    {/* sun umbrella + plant: this one's outside */}
-    <group position={[1.1, 0, 2.3]}>
-      <mesh position={[0, 1.1, 0]}>
-        <cylinderGeometry args={[0.03, 0.03, 2.2, 8]} />
-        <meshStandardMaterial color='#e5e7eb' />
-      </mesh>
-      <mesh position={[0, 2.15, 0]} castShadow>
-        <coneGeometry args={[0.65, 0.3, 24, 1, true]} />
-        <meshStandardMaterial color='#fbbf24' side={2} />
-      </mesh>
-    </group>
-    <Plant position={[0.9, 0, 1.1]} />
   </group>
 );
 
@@ -210,7 +209,7 @@ const TurfLane = ({ position }) => (
         <meshStandardMaterial color='#ffffff' />
       </mesh>
     ))}
-    <TextPanel width={2.2} height={0.6} position={[0.9, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]} draw={bayClubTurf} />
+    <TextPanel width={2.2} height={0.6} position={[0.9, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]} draw={bayClubTurf} transparent />
     {/* push sled at the start of the lane */}
     <group position={[-1.9, 0, 0]} rotation={[0, -Math.PI / 2, 0]}>
       <Soft args={[0.9, 0.1, 1.1]} position={[0, 0.06, 0]} color='#1f2937' />
@@ -346,20 +345,22 @@ const GymDecor = () => (
 );
 
 export default {
+  labels: false,
   width: 20,
   depth: 14,
   floor: "#64748b",
   wall: "#f8fafc",
   trim: "#1f2937",
+  // Logos on the walls name each spot, so only the parallettes get a ring + label.
   // Walk-on areas (court, turf, platform, mats) are the trigger themselves;
   // Equinox and OFFTHEWEIGHTS use rings since you can't stand in them.
   stations: {
-    equinox: [-7, -3.3],
+    equinox: { at: [-7, -3.3], area: [5, 2] },
     murray: { at: [1, -3.8], area: [9, 6.4] },
     luxfit: { at: [8.4, 1.4], area: [3.4, 6.2] },
     bayclub: { at: [0.5, 2.7], area: [5, 2.8] },
     skrappack: { at: [-6.6, 4.7], area: [4.4, 4.4] },
-    offtheweights: { at: [-6.6, 0.3], radius: 1.6 },
+    offtheweights: { at: [-6.6, 0.3], radius: 1.6, label: true },
   },
   // [x, z, halfWidth, halfDepth] boxes the player can't walk through
   blockers: [

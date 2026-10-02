@@ -338,6 +338,7 @@ const CafeDecor = () => (
 );
 
 export default {
+  labels: false,
   width: 16,
   depth: 11,
   floor: "#e7c9a0",

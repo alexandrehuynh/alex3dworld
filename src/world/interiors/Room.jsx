@@ -73,7 +73,7 @@ export const Room = ({ width, depth, floor, wall, trim, onZone, offZone, active,
 // A spot in the room tied to one job. Either a glowing floor ring, or (with
 // `area`) a walk-on zone like a court or mat that lights up when you step on
 // it. The label rises in as you get close so it doesn't cover the props.
-export const Station = ({ id, label, position, accent, active, onZone, offZone, area, radius = 1.1 }) => {
+export const Station = ({ id, label, showLabel = true, position, accent, active, onZone, offZone, area, radius = 1.1 }) => {
   const target = { kind: "station", id };
   const isActive = active === id;
   const handlers = {
@@ -89,26 +89,21 @@ export const Station = ({ id, label, position, accent, active, onZone, offZone, 
           <CylinderCollider sensor args={[1, radius]} position={[0, 1, 0]} {...handlers} />
         )}
       </RigidBody>
-      {area ? (
-        <mesh position={[0, 0.03, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-          <planeGeometry args={area} />
-          <meshBasicMaterial color='#fde047' transparent opacity={isActive ? 0.28 : 0} depthWrite={false} />
-        </mesh>
-      ) : (
+      {!area && (
         <mesh position={[0, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <ringGeometry args={[radius - 0.35, radius - 0.15, 48]} />
           <meshStandardMaterial
-            color={isActive ? "#facc15" : accent}
-            emissive={isActive ? "#facc15" : accent}
-            emissiveIntensity={isActive ? 0.8 : 0.25}
+            color={accent}
+            emissive={accent}
+            emissiveIntensity={0.25}
             transparent
-            opacity={isActive ? 1 : 0.6}
+            opacity={0.6}
           />
         </mesh>
       )}
       {/* Area labels sit at the back edge so they don't cover you; the active
           station hides its label because the Enter prompt already names it */}
-      {!isActive && (
+      {showLabel && !isActive && (
         <Sign
           text={label}
           accent={accent}

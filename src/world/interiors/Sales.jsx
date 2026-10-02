@@ -423,6 +423,7 @@ const SalesDecor = () => (
 );
 
 export default {
+  labels: false,
   width: 18,
   depth: 13,
   floor: "#f8fafc",

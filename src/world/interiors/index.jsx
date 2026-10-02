@@ -41,6 +41,7 @@ export const Interior = ({ building, sections, active, onZone, offZone }) => {
             key={section.id}
             id={section.id}
             label={section.title}
+            showLabel={spot.label ?? config.labels !== false}
             position={at}
             area={spot.area}
             radius={spot.radius}
