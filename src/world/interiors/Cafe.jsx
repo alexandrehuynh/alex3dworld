@@ -251,8 +251,14 @@ const BrunchTable = ({ position }) => (
     <Bottle position={[-0.15, 0.76, 0.12]} color='#a16207' />
     <Beignets position={[0.55, 0.77, 0.05]} />
     <Calamari position={[-0.55, 0.77, 0]} />
-    {[-1, 1].map((side) => (
-      <BistroChair key={side} position={[side * 1.15, 0, 0]} rotation={[0, (side * -Math.PI) / 2, 0]} />
+    {/* table for four, chairs staggered on the diagonals so all of them show */}
+    {[
+      [-1, 1],
+      [1, 1],
+      [-1, -1],
+      [1, -1],
+    ].map(([sx, sz]) => (
+      <BistroChair key={`${sx}${sz}`} position={[sx * 0.88, 0, sz * 0.82]} rotation={[0, Math.atan2(-sx, -sz), 0]} />
     ))}
   </group>
 );
@@ -419,27 +425,6 @@ const BladeSign = ({ position }) => (
   </group>
 );
 
-// Brass menu stand at the patio entrance: the Magic Flute station marker
-const MenuStand = ({ position }) => (
-  <group position={position}>
-    <mesh position={[0, 0.02, 0]}>
-      <cylinderGeometry args={[0.18, 0.2, 0.04, 24]} />
-      <meshStandardMaterial color='#c9a227' metalness={0.7} roughness={0.3} />
-    </mesh>
-    <mesh position={[0, 0.55, 0]}>
-      <cylinderGeometry args={[0.018, 0.018, 1.05, 10]} />
-      <meshStandardMaterial color='#c9a227' metalness={0.7} roughness={0.3} />
-    </mesh>
-    <group position={[0, 1.12, 0]} rotation={[-0.6, 0, 0]}>
-      <Soft args={[0.44, 0.34, 0.03]} color='#1f2937' radius={0.01} />
-      <mesh position={[0, 0, 0.017]}>
-        <planeGeometry args={[0.36, 0.26]} />
-        <meshStandardMaterial color='#fdf6e3' />
-      </mesh>
-    </group>
-  </group>
-);
-
 // Host stand by the entrance: the "front of house" itself
 const HostStand = ({ position, rotation }) => (
   <group position={position} rotation={rotation}>
@@ -481,8 +466,7 @@ const CafeDecor = () => (
     <group position={[-5.9, 0, -0.6]} rotation={[0, Math.PI / 2, 0]}>
       <BrunchTable position={[0, 0, 0]} />
     </group>
-    <BladeSign position={[-8, 0, 1.75]} />
-    <MenuStand position={[-4.4, 0, 1.7]} />
+    <BladeSign position={[-8, 0, 2.7]} />
     <group position={[4.6, 0, -5.38]}>
       <FlyerBoard position={[0, 0, 0]} />
     </group>
@@ -504,15 +488,14 @@ export default {
   trim: "#92400e",
   stations: {
     presidio: [-1.2, -2.1],
-    // the menu stand is the marker, so no floor ring
-    magicflute: { at: [-4.4, 1.7], area: [1.6, 1.6] },
+    // walking up to the table's open side opens it; no floor ring
+    magicflute: { at: [-3.9, -0.6], area: [1.4, 2.8] },
     kelements: [4.3, 1],
     board: [4.6, -3.8],
   },
   blockers: [
     [-1.2, -4.2, 3, 0.5],
-    [-6.1, -0.6, 1.2, 1.6],
-    [-4.4, 1.7, 0.15, 0.15],
+    [-6.2, -0.6, 1.25, 1.45],
     [6.5, 1, 1.2, 1],
     [-2, 3.7, 0.45, 0.35],
   ],
