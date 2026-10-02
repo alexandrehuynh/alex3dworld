@@ -1,5 +1,7 @@
 import { Canvas } from "@react-three/fiber";
-import { KeyboardControls, Sky } from "@react-three/drei";
+import { Environment, KeyboardControls, Lightformer, Sky } from "@react-three/drei";
+import { Bloom, EffectComposer, N8AO, SMAA, ToneMapping, Vignette } from "@react-three/postprocessing";
+import { ToneMappingMode } from "postprocessing";
 import { Physics } from "@react-three/rapier";
 import { Joystick, useJoystickStore } from "ecctrl/input";
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -98,19 +100,31 @@ const Home = () => {
 
       <KeyboardControls map={KEYBOARD_MAP}>
         <Canvas
-          shadows
+          shadows='percentage'
+          dpr={[1, 2]}
           className='w-full h-screen bg-sky-200'
           camera={{ fov: 50, near: 0.1, far: 500, position: [0, 12, 26] }}
         >
           <Suspense fallback={null}>
             <Sky sunPosition={[60, 40, 30]} turbidity={2} rayleigh={0.6} />
-            <ambientLight intensity={0.7} />
-            <hemisphereLight skyColor='#bae6fd' groundColor='#4d7c0f' intensity={0.6} />
+            <fog attach='fog' args={["#dbeafe", 60, 140]} />
+
+            {/* Soft studio-style ambient light, generated in code (no HDRI download) */}
+            <Environment resolution={256} environmentIntensity={0.55}>
+              <Lightformer intensity={2} position={[0, 10, 0]} rotation-x={Math.PI / 2} scale={[40, 40, 1]} color='#fff7ed' />
+              <Lightformer intensity={0.8} position={[-20, 4, 10]} rotation-y={Math.PI / 2} scale={[30, 10, 1]} color='#bae6fd' />
+              <Lightformer intensity={0.8} position={[20, 4, -10]} rotation-y={-Math.PI / 2} scale={[30, 10, 1]} color='#fde68a' />
+            </Environment>
+            <hemisphereLight skyColor='#e0f2fe' groundColor='#4ade80' intensity={0.35} />
             <directionalLight
               position={[20, 30, 15]}
-              intensity={2.2}
+              intensity={2.5}
+              color='#fff1d6'
               castShadow
               shadow-mapSize={[2048, 2048]}
+              shadow-radius={6}
+              shadow-bias={-0.0004}
+              shadow-normalBias={0.04}
               shadow-camera-left={-30}
               shadow-camera-right={30}
               shadow-camera-top={30}
@@ -131,6 +145,17 @@ const Home = () => {
               ))}
               <Player frozen={!!openId} />
             </Physics>
+
+            {/* Soft contact shading + gentle glow; skipped on phones to keep it smooth */}
+            {!touch && (
+              <EffectComposer multisampling={0}>
+                <N8AO aoRadius={1.4} intensity={1.6} distanceFalloff={1} halfRes />
+                <Bloom luminanceThreshold={0.85} intensity={0.35} mipmapBlur />
+                <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
+                <Vignette offset={0.35} darkness={0.25} />
+                <SMAA />
+              </EffectComposer>
+            )}
           </Suspense>
         </Canvas>
       </KeyboardControls>

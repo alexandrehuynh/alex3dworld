@@ -1,12 +1,20 @@
+import { RoundedBox } from "@react-three/drei";
 import { CuboidCollider, RigidBody } from "@react-three/rapier";
 
 import Sign from "./Sign";
 
-const Box = ({ args, color, ...props }) => (
-  <mesh castShadow receiveShadow {...props}>
-    <boxGeometry args={args} />
-    <meshStandardMaterial color={color} flatShading />
-  </mesh>
+// Soft, rounded box: radius scales with the smallest side so thin parts stay valid
+const Box = ({ args, color, radius, ...props }) => (
+  <RoundedBox
+    args={args}
+    radius={radius ?? Math.min(0.35, Math.min(...args) * 0.45)}
+    smoothness={4}
+    castShadow
+    receiveShadow
+    {...props}
+  >
+    <meshStandardMaterial color={color} roughness={0.75} />
+  </RoundedBox>
 );
 
 const Windows = ({ width, height, y, z, color, cols = 2 }) => (
@@ -14,10 +22,9 @@ const Windows = ({ width, height, y, z, color, cols = 2 }) => (
     {Array.from({ length: cols }, (_, i) => {
       const x = -width / 2 + (width / (cols + 1)) * (i + 1);
       return (
-        <mesh key={i} position={[x, y, z]}>
-          <planeGeometry args={[0.9, height]} />
-          <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.25} />
-        </mesh>
+        <RoundedBox key={i} args={[0.9, height, 0.12]} radius={0.05} position={[x, y, z]}>
+          <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.35} roughness={0.2} />
+        </RoundedBox>
       );
     })}
   </>
@@ -32,12 +39,12 @@ const Details = ({ style, w, h, d, b }) => {
       return (
         <>
           <mesh position={[0, h, 0]} castShadow>
-            <sphereGeometry args={[1.8, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2]} />
-            <meshStandardMaterial color='#7dd3fc' transparent opacity={0.75} />
+            <sphereGeometry args={[1.8, 48, 24, 0, Math.PI * 2, 0, Math.PI / 2]} />
+            <meshStandardMaterial color='#7dd3fc' transparent opacity={0.8} roughness={0.1} metalness={0.1} />
           </mesh>
           <Box args={[0.1, 2, 0.1]} position={[1.8, h + 1, -1]} color='#64748b' />
           <mesh position={[1.8, h + 2.1, -1]}>
-            <sphereGeometry args={[0.18, 8, 8]} />
+            <sphereGeometry args={[0.18, 24, 16]} />
             <meshStandardMaterial color='#ef4444' emissive='#ef4444' emissiveIntensity={1} />
           </mesh>
           <Windows width={w} height={1.2} y={h * 0.62} z={front} color='#38bdf8' cols={3} />
@@ -49,13 +56,13 @@ const Details = ({ style, w, h, d, b }) => {
           {/* Giant dumbbell on the roof */}
           <group position={[0, h + 0.9, 0]} rotation={[0, 0, Math.PI / 2]}>
             <mesh castShadow>
-              <cylinderGeometry args={[0.18, 0.18, 4.2, 10]} />
+              <cylinderGeometry args={[0.18, 0.18, 4.2, 24]} />
               <meshStandardMaterial color='#475569' />
             </mesh>
             {[-1.7, 1.7].map((y) => (
               <mesh key={y} position={[0, y, 0]} castShadow>
-                <cylinderGeometry args={[0.85, 0.85, 0.7, 12]} />
-                <meshStandardMaterial color='#1f2937' flatShading />
+                <cylinderGeometry args={[0.85, 0.85, 0.7, 40]} />
+                <meshStandardMaterial color='#1f2937' roughness={0.4} />
               </mesh>
             ))}
           </group>
@@ -83,16 +90,17 @@ const Details = ({ style, w, h, d, b }) => {
     case "cafe":
       return (
         <>
-          {/* Pitched roof */}
-          <mesh position={[0, h + 0.9, 0]} rotation={[0, Math.PI / 4, 0]} castShadow>
-            <coneGeometry args={[w * 0.78, 1.8, 4]} />
-            <meshStandardMaterial color={b.roof} flatShading />
+          {/* Rounded barrel roof */}
+          <mesh position={[0, h + 0.2, 0]} rotation={[0, 0, Math.PI / 2]} scale={[1, 1, 0.55]} castShadow>
+            <cylinderGeometry args={[d * 0.62, d * 0.62, w + 0.6, 48, 1, false, 0, Math.PI]} />
+            <meshStandardMaterial color={b.roof} roughness={0.7} side={2} />
           </mesh>
           {/* Striped awning */}
           {Array.from({ length: 6 }, (_, i) => (
             <Box
               key={i}
-              args={[w / 6, 0.08, 1.2]}
+              args={[w / 6, 0.1, 1.2]}
+              radius={0.04}
               position={[-w / 2 + w / 12 + (w / 6) * i, h * 0.72, front + 0.55]}
               rotation={[0.35, 0, 0]}
               color={i % 2 ? "#ffffff" : b.accent}
@@ -109,10 +117,9 @@ const Details = ({ style, w, h, d, b }) => {
               [0.1, 1.3, "#bbf7d0"],
               [0.45, 1.6, "#fbcfe8"],
             ].map(([x, y, c]) => (
-              <mesh key={x} position={[x, y, 0.06]}>
-                <planeGeometry args={[0.35, 0.35]} />
+              <RoundedBox key={x} args={[0.35, 0.35, 0.03]} radius={0.012} position={[x, y, 0.07]}>
                 <meshStandardMaterial color={c} />
-              </mesh>
+              </RoundedBox>
             ))}
           </group>
         </>
@@ -138,9 +145,11 @@ const Building = ({ building, isNearby, onEnterZone, onExitZone }) => {
       <RigidBody type='fixed' colliders={false}>
         <CuboidCollider args={[w / 2, h / 2 + 2, d / 2]} position={[0, h / 2, 0]} />
         <Box args={[w, h, d]} position={[0, h / 2, 0]} color={building.color} />
-        <Box args={[w + 0.3, 0.3, d + 0.3]} position={[0, h + 0.15, 0]} color={building.roof} />
+        {building.style !== "cafe" && (
+          <Box args={[w + 0.4, 0.45, d + 0.4]} position={[0, h + 0.15, 0]} color={building.roof} />
+        )}
         {/* Door */}
-        <Box args={[1.4, 2.2, 0.1]} position={[0, 1.1, d / 2 + 0.05]} color={building.accent} />
+        <Box args={[1.5, 2.3, 0.25]} position={[0, 1.15, d / 2]} color={building.accent} />
         <Details style={building.style} w={w} h={h} d={d} b={building} />
 
         {/* Invisible trigger zone in front of the door */}
@@ -154,8 +163,8 @@ const Building = ({ building, isNearby, onEnterZone, onExitZone }) => {
       </RigidBody>
 
       {/* Doormat glows when the player is close */}
-      <mesh position={[0, 0.03, d / 2 + 1.1]} rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[2.2, 1.2]} />
+      <mesh position={[0, 0.03, d / 2 + 1.1]} rotation={[-Math.PI / 2, 0, 0]} scale={[1.6, 0.9, 1]}>
+        <circleGeometry args={[0.75, 40]} />
         <meshStandardMaterial
           color={isNearby ? "#facc15" : building.accent}
           emissive={isNearby ? "#facc15" : "#000000"}

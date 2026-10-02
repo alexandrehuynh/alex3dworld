@@ -11,8 +11,8 @@ const Cloud = ({ position, scale }) => (
       [0.5, 0.7, -0.3, 1.1],
     ].map(([x, y, z, r], i) => (
       <mesh key={i} position={[x, y, z]}>
-        <icosahedronGeometry args={[r, 1]} />
-        <meshStandardMaterial color='#ffffff' flatShading />
+        <sphereGeometry args={[r, 32, 24]} />
+        <meshStandardMaterial color='#ffffff' roughness={1} emissive='#e0f2fe' emissiveIntensity={0.25} />
       </mesh>
     ))}
   </group>

@@ -1,3 +1,4 @@
+import * as THREE from "three";
 import { useMemo } from "react";
 import { CylinderCollider, RigidBody } from "@react-three/rapier";
 
@@ -9,27 +10,34 @@ const seeded = (seed) => () => {
   return (seed - 1) / 2147483646;
 };
 
-const Tree = ({ position, scale = 1 }) => (
-  <group position={position} scale={scale}>
-    <mesh position={[0, 0.6, 0]} castShadow>
-      <cylinderGeometry args={[0.15, 0.2, 1.2, 6]} />
-      <meshStandardMaterial color='#7c4a2d' flatShading />
+const LEAF_COLORS = ["#51cf66", "#40c057", "#69db7c", "#37b24d"];
+
+// Rounded "puffball" tree: a few smooth, squashed spheres on a curved trunk
+const Tree = ({ position, scale = 1, variant = 0 }) => (
+  <group position={position} scale={scale} rotation={[0, variant * 1.7, 0]}>
+    <mesh position={[0, 0.7, 0]} castShadow>
+      <cylinderGeometry args={[0.13, 0.2, 1.4, 16]} />
+      <meshStandardMaterial color='#8d5a3b' roughness={0.9} />
     </mesh>
-    <mesh position={[0, 1.9, 0]} castShadow>
-      <coneGeometry args={[0.9, 1.8, 7]} />
-      <meshStandardMaterial color='#2f9e44' flatShading />
+    <mesh position={[0, 2, 0]} scale={[1, 0.9, 1]} castShadow>
+      <sphereGeometry args={[0.95, 32, 24]} />
+      <meshStandardMaterial color={LEAF_COLORS[variant % 4]} roughness={0.8} />
     </mesh>
-    <mesh position={[0, 2.7, 0]} castShadow>
-      <coneGeometry args={[0.65, 1.3, 7]} />
-      <meshStandardMaterial color='#40c057' flatShading />
+    <mesh position={[0.45, 2.55, 0.2]} castShadow>
+      <sphereGeometry args={[0.6, 32, 24]} />
+      <meshStandardMaterial color={LEAF_COLORS[(variant + 1) % 4]} roughness={0.8} />
+    </mesh>
+    <mesh position={[-0.4, 2.4, -0.25]} castShadow>
+      <sphereGeometry args={[0.55, 32, 24]} />
+      <meshStandardMaterial color={LEAF_COLORS[(variant + 2) % 4]} roughness={0.8} />
     </mesh>
   </group>
 );
 
 const Rock = ({ position, scale = 1 }) => (
-  <mesh position={position} scale={scale} castShadow>
-    <dodecahedronGeometry args={[0.5, 0]} />
-    <meshStandardMaterial color='#adb5bd' flatShading />
+  <mesh position={position} scale={[scale, scale * 0.6, scale * 0.85]} castShadow receiveShadow>
+    <icosahedronGeometry args={[0.5, 3]} />
+    <meshStandardMaterial color='#c5cdd6' roughness={0.95} />
   </mesh>
 );
 
@@ -37,42 +45,66 @@ const Fountain = () => (
   <RigidBody type='fixed' colliders='hull'>
     <group>
       <mesh position={[0, 0.3, 0]} receiveShadow castShadow>
-        <cylinderGeometry args={[2.2, 2.4, 0.6, 16]} />
-        <meshStandardMaterial color='#ced4da' flatShading />
+        <cylinderGeometry args={[2.2, 2.35, 0.6, 64]} />
+        <meshStandardMaterial color='#e2e8f0' roughness={0.6} />
       </mesh>
-      <mesh position={[0, 0.62, 0]}>
-        <cylinderGeometry args={[1.9, 1.9, 0.05, 16]} />
-        <meshStandardMaterial color='#4dabf7' transparent opacity={0.85} />
+      <mesh position={[0, 0.6, 0]} rotation={[Math.PI / 2, 0, 0]} castShadow>
+        <torusGeometry args={[2.1, 0.16, 16, 64]} />
+        <meshStandardMaterial color='#f1f5f9' roughness={0.5} />
+      </mesh>
+      <mesh position={[0, 0.58, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[1.95, 64]} />
+        <meshStandardMaterial color='#4dabf7' roughness={0.05} metalness={0.2} />
       </mesh>
       <mesh position={[0, 1.2, 0]} castShadow>
-        <cylinderGeometry args={[0.25, 0.35, 1.4, 8]} />
-        <meshStandardMaterial color='#dee2e6' flatShading />
+        <cylinderGeometry args={[0.22, 0.38, 1.4, 32]} />
+        <meshStandardMaterial color='#f1f5f9' roughness={0.5} />
       </mesh>
-      <mesh position={[0, 1.95, 0]}>
-        <sphereGeometry args={[0.35, 10, 8]} />
-        <meshStandardMaterial color='#74c0fc' transparent opacity={0.8} />
+      <mesh position={[0, 2, 0]}>
+        <sphereGeometry args={[0.38, 32, 24]} />
+        <meshStandardMaterial color='#a5d8ff' emissive='#74c0fc' emissiveIntensity={0.4} transparent opacity={0.85} />
       </mesh>
     </group>
   </RigidBody>
 );
 
-// A flat path from the plaza to each building door
+// A path with rounded ends from the plaza to each building door
 const Path = ({ angle }) => {
   const length = BUILDING_RING - 6;
   const mid = 3.5 + length / 2;
   return (
-    <mesh
-      position={[Math.sin(angle) * mid, 0.02, Math.cos(angle) * mid]}
-      rotation={[-Math.PI / 2, 0, angle]}
-      receiveShadow
-    >
-      <planeGeometry args={[2.2, length]} />
-      <meshStandardMaterial color='#e9d8a6' />
-    </mesh>
+    <group position={[Math.sin(angle) * mid, 0.02, Math.cos(angle) * mid]} rotation={[0, angle, 0]}>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <planeGeometry args={[2.2, length]} />
+        <meshStandardMaterial color='#e8d6ae' roughness={1} />
+      </mesh>
+      {[-1, 1].map((end) => (
+        <mesh key={end} position={[0, 0, (end * length) / 2]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+          <circleGeometry args={[1.1, 32]} />
+          <meshStandardMaterial color='#e8d6ae' roughness={1} />
+        </mesh>
+      ))}
+    </group>
   );
 };
 
+// Island top: flat grass with a soft rounded rim (lathe profile)
+const useIslandTop = () =>
+  useMemo(() => {
+    const pts = [new THREE.Vector2(0, 0)];
+    const rim = 0.9;
+    pts.push(new THREE.Vector2(ISLAND_RADIUS - rim, 0));
+    for (let i = 1; i <= 12; i++) {
+      const a = (i / 12) * (Math.PI / 2);
+      pts.push(new THREE.Vector2(ISLAND_RADIUS - rim + Math.sin(a) * rim, -rim + Math.cos(a) * rim));
+    }
+    pts.push(new THREE.Vector2(ISLAND_RADIUS - 0.2, -1.2));
+    pts.push(new THREE.Vector2(0, -1.2));
+    return new THREE.LatheGeometry(pts, 96);
+  }, []);
+
 const Island = () => {
+  const topGeometry = useIslandTop();
   const scenery = useMemo(() => {
     const rand = seeded(42);
     const trees = [];
@@ -98,7 +130,8 @@ const Island = () => {
       const r = 6 + rand() * (ISLAND_RADIUS - 6);
       const x = Math.sin(a) * r;
       const z = Math.cos(a) * r;
-      if (keepClear(x, z)) trees.push({ position: [x, 0, z], scale: 0.7 + rand() * 0.6 });
+      if (keepClear(x, z))
+        trees.push({ position: [x, 0, z], scale: 0.7 + rand() * 0.6, variant: trees.length % 4 });
     }
     while (rocks.length < 18) {
       const a = rand() * Math.PI * 2;
@@ -115,33 +148,38 @@ const Island = () => {
       {/* Walkable top */}
       <RigidBody type='fixed' colliders={false}>
         <CylinderCollider args={[0.5, ISLAND_RADIUS]} position={[0, -0.5, 0]} />
-        <mesh position={[0, -0.5, 0]} receiveShadow>
-          <cylinderGeometry args={[ISLAND_RADIUS, ISLAND_RADIUS - 0.6, 1, 48]} />
-          <meshStandardMaterial color='#69db7c' flatShading />
+        <mesh geometry={topGeometry} receiveShadow>
+          <meshStandardMaterial color='#5fc97f' roughness={0.9} />
         </mesh>
       </RigidBody>
 
-      {/* Floating rock underside */}
-      <mesh position={[0, -5, 0]} rotation={[Math.PI, 0, 0]}>
-        <coneGeometry args={[ISLAND_RADIUS - 0.6, 8, 24, 3]} />
-        <meshStandardMaterial color='#a0704a' flatShading />
+      {/* Soft, rounded earth underneath */}
+      <mesh position={[0, -1.1, 0]} scale={[1, 0.42, 1]}>
+        <sphereGeometry args={[ISLAND_RADIUS - 0.3, 96, 48, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2]} />
+        <meshStandardMaterial color='#b07d56' roughness={1} side={2} />
       </mesh>
-      <mesh position={[0, -11, 0]} rotation={[Math.PI, 0.4, 0]}>
-        <coneGeometry args={[7, 6, 9]} />
-        <meshStandardMaterial color='#8b5e3c' flatShading />
-      </mesh>
+      {[
+        [6, -9, 4, 4.5],
+        [-7, -8, -3, 4],
+        [1, -12, -2, 3.2],
+      ].map(([x, y, z, r], i) => (
+        <mesh key={i} position={[x, y, z]} scale={[1, 1.3, 1]}>
+          <sphereGeometry args={[r, 48, 32]} />
+          <meshStandardMaterial color={i % 2 ? "#9c6b47" : "#a8744e"} roughness={1} />
+        </mesh>
+      ))}
 
       {/* Plaza + running track */}
       <mesh position={[0, 0.01, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <circleGeometry args={[5.5, 40]} />
-        <meshStandardMaterial color='#f1e3c5' />
+        <circleGeometry args={[5.5, 96]} />
+        <meshStandardMaterial color='#eadcb8' roughness={1} />
       </mesh>
       <mesh position={[0, 0.015, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <ringGeometry args={[BUILDING_RING - 7.2, BUILDING_RING - 5.6, 64]} />
-        <meshStandardMaterial color='#e8590c' />
+        <ringGeometry args={[BUILDING_RING - 7.2, BUILDING_RING - 5.6, 160]} />
+        <meshStandardMaterial color='#f0703a' roughness={0.9} />
       </mesh>
       <mesh position={[0, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[BUILDING_RING - 6.45, BUILDING_RING - 6.35, 64]} />
+        <ringGeometry args={[BUILDING_RING - 6.45, BUILDING_RING - 6.35, 160]} />
         <meshStandardMaterial color='#ffffff' />
       </mesh>
 
@@ -154,7 +192,7 @@ const Island = () => {
       {scenery.trees.map((t, i) => (
         <RigidBody key={`tree-${i}`} type='fixed' colliders={false} position={t.position}>
           <CylinderCollider args={[1, 0.3 * t.scale]} position={[0, 1, 0]} />
-          <Tree position={[0, 0, 0]} scale={t.scale} />
+          <Tree position={[0, 0, 0]} scale={t.scale} variant={t.variant} />
         </RigidBody>
       ))}
       {scenery.rocks.map((r, i) => (
