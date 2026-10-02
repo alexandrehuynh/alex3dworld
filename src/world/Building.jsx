@@ -74,7 +74,15 @@ const Facade = ({ b, w, h, d }) => {
       {b.style === "tower" &&
         [-1.4, 0, 1.4].map((x) => <Window key={x} x={x} y={3.45} w={0.85} h={0.7} z={z} color={color} />)}
       {/* nameplate above the door */}
-      <group position={[0, b.style === "cafe" ? h - 0.4 : DOOR_H + 0.48, z + 0.06]}>
+      <group
+        position={[
+          0,
+          // cafe: above the awning; tower: under its upper windows; others: centered
+          // between the door and the roof slab (bottom at h - 0.075)
+          b.style === "cafe" ? h - 0.4 : b.style === "tower" ? DOOR_H + 0.48 : (DOOR_H + h - 0.075) / 2,
+          z + 0.06,
+        ]}
+      >
         <RoundedBox args={[3.3, 0.62, 0.08]} radius={0.07}>
           <meshStandardMaterial color={b.accent} roughness={0.5} />
         </RoundedBox>
@@ -238,43 +246,52 @@ const Details = ({ style, w, h, d, b }) => {
   }
 };
 
-// Roof laptop: lines of code type out, pause, then clear and start again
-const CODE_LINES = [
-  [1.3, "#38bdf8", 0],
-  [1.0, "#e2e8f0", 0.25],
-  [1.15, "#fbbf24", 0.25],
-  [0.8, "#a78bfa", 0],
-  [1.05, "#e2e8f0", 0.25],
+// Roof laptop: code appears token by token in quick discrete steps (clicky,
+// not a smooth bar), with a cursor that jumps along, then clears and restarts
+const CODE = [
+  { indent: 0, color: "#38bdf8", tokens: [0.28, 0.4, 0.18, 0.3] },
+  { indent: 0.25, color: "#e2e8f0", tokens: [0.22, 0.34, 0.26] },
+  { indent: 0.25, color: "#fbbf24", tokens: [0.3, 0.18, 0.4, 0.16] },
+  { indent: 0.5, color: "#a78bfa", tokens: [0.26, 0.3] },
+  { indent: 0.25, color: "#e2e8f0", tokens: [0.2, 0.36, 0.24] },
+  { indent: 0, color: "#38bdf8", tokens: [0.14] },
 ];
+const GAP = 0.06;
+const LAYOUT = CODE.flatMap((line, row) => {
+  let x = -1.2 + line.indent;
+  return line.tokens.map((w) => {
+    const tok = { row, x, w, color: line.color };
+    x += w + GAP;
+    return tok;
+  });
+});
+const TOKENS_PER_SEC = 9;
+
 const TypingCode = () => {
-  const lines = useRef();
+  const tokens = useRef();
   const cursor = useRef();
   useFrame(({ clock }) => {
-    const t = (clock.elapsedTime * 0.35) % (CODE_LINES.length + 1.5);
-    lines.current?.children.forEach((line, i) => {
-      const p = Math.min(1, Math.max(0, t - i));
-      line.scale.x = Math.max(0.001, p);
-      line.visible = p > 0;
+    const cycle = LAYOUT.length + 12; // brief pause on the finished screen
+    const n = Math.floor(clock.elapsedTime * TOKENS_PER_SEC) % cycle;
+    tokens.current?.children.forEach((tok, i) => {
+      tok.visible = i < n;
     });
     if (cursor.current) {
-      const row = Math.min(CODE_LINES.length - 1, Math.floor(t));
-      const [len, , indent] = CODE_LINES[row];
-      const p = Math.min(1, Math.max(0, t - row));
-      cursor.current.position.set(-1.2 + indent + len * p + 0.08, 1.55 - row * 0.25, 0.09);
-      cursor.current.visible = Math.sin(clock.elapsedTime * 8) > 0;
+      const last = LAYOUT[Math.min(n, LAYOUT.length) - 1];
+      const x = last ? last.x + last.w + 0.05 : -1.2;
+      const y = 1.6 - (last ? last.row : 0) * 0.22;
+      cursor.current.position.set(x, y, 0.09);
+      cursor.current.visible = n >= LAYOUT.length ? Math.sin(clock.elapsedTime * 10) > 0 : true;
     }
   });
   return (
     <>
-      <group ref={lines}>
-        {CODE_LINES.map(([len, color, indent], i) => (
-          // left-anchored so scale.x reads as typing
-          <group key={i} position={[-1.2 + indent, 1.55 - i * 0.25, 0.09]}>
-            <mesh position={[len / 2, 0, 0]}>
-              <planeGeometry args={[len, 0.1]} />
-              <meshBasicMaterial color={color} toneMapped={false} />
-            </mesh>
-          </group>
+      <group ref={tokens}>
+        {LAYOUT.map((t, i) => (
+          <mesh key={i} position={[t.x + t.w / 2, 1.6 - t.row * 0.22, 0.09]}>
+            <planeGeometry args={[t.w, 0.09]} />
+            <meshBasicMaterial color={t.color} toneMapped={false} />
+          </mesh>
         ))}
       </group>
       <mesh ref={cursor}>
