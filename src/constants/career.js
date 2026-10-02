@@ -23,10 +23,10 @@ export const tracks = [
     accent: "#7c3aed",
     blurb: "Where I'm building my career: outbound, pipeline, and go-to-market for technical products.",
     stats: [
-      { value: "280%", label: "peak monthly quota at Numeral" },
-      { value: "$178.5K", label: "pipeline sourced in 3 months" },
-      { value: "52", label: "meetings booked from cold outbound" },
-      { value: "2", label: "closed-won customers sourced, one enterprise" },
+      { value: "280%", label: "peak ramp quota at Numeral, cleared every month of ramp" },
+      { value: "$178.5K", label: "pipeline sourced in my first 3 months at Numeral" },
+      { value: "0 → 1", label: "built Revyl's outbound motion as the first GTM hire" },
+      { value: "52", label: "meetings in 8 months at Revyl: 2 closed-won, 9 into product evaluation" },
     ],
     // most recent first
     sections: [...rooms.sales.sections].reverse(),
@@ -108,8 +108,41 @@ export const salesSkills = [
   "Multi-channel sequencing",
   "Discovery & qualification",
   "Pipeline generation",
-  "Persona & messaging design",
-  "Channel economics analysis",
-  "GTM automation (Clay, n8n)",
   "Selling to technical buyers",
+  "Account research & enrichment",
+  "Persona & messaging design",
+  "Playbooks & sales enablement",
+  "Channel economics analysis",
+  "GTM automation",
+];
+
+// Toolkit, sales-first. `icon` keys map to logos in assets/icons/tools; tools
+// without a free logo render as name tiles.
+export const toolkit = [
+  {
+    title: "Sales stack",
+    tools: [
+      { name: "Clay" },
+      { name: "Apollo" },
+      { name: "HubSpot", icon: "hubspot" },
+      { name: "Instantly" },
+      { name: "HeyReach" },
+      { name: "Nooks" },
+      { name: "Sumble" },
+      { name: "LinkedIn", icon: "linkedin" },
+    ],
+  },
+  {
+    title: "AI & automation",
+    tools: [
+      { name: "n8n", icon: "n8n" },
+      { name: "Claude", icon: "claude" },
+      { name: "Perplexity", icon: "perplexity" },
+    ],
+  },
+  {
+    title: "Engineering",
+    note: "From my engineering years",
+    skills: ["Python", "JavaScript", "TypeScript", "React", "PostgreSQL", "Git"],
+  },
 ];

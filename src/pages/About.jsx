@@ -2,7 +2,10 @@ import { Link } from "react-router-dom";
 
 import { CTA } from "../components";
 import { skills } from "../constants";
-import { RESUME_URL, headline, salesSkills, tracks } from "../constants/career";
+import { RESUME_URL, headline, salesSkills, toolkit, tracks } from "../constants/career";
+
+const TOOL_ICONS = import.meta.glob("../assets/icons/tools/*.svg", { eager: true, import: "default" });
+const toolIcon = (key) => TOOL_ICONS[`../assets/icons/tools/${key}.svg`];
 
 const About = () => {
   const [sales, ...pastTracks] = tracks;
@@ -39,9 +42,9 @@ const About = () => {
 
       <div className='mt-16'>
         <h3 className='subhead-text'>What I do</h3>
-        <div className='mt-6 flex flex-wrap gap-2'>
+        <div className='mt-6 grid grid-cols-2 gap-2 md:grid-cols-5'>
           {salesSkills.map((s) => (
-            <span key={s} className='rounded-full bg-purple-50 px-4 py-2 text-sm font-medium text-purple-800 ring-1 ring-purple-200'>
+            <span key={s} className='flex items-center justify-center rounded-full bg-purple-50 px-3 py-2 text-center text-sm font-medium text-purple-800 ring-1 ring-purple-200'>
               {s}
             </span>
           ))}
@@ -54,7 +57,7 @@ const About = () => {
         <ol className='mt-6 flex flex-wrap items-center gap-2 text-sm font-medium text-slate-700'>
           {[
             ["💻", "Engineering", "2015–2020"],
-            ["🏋️", "Strength & conditioning + service jobs", "2020–2025"],
+            ["🏋️", "Fitness coaching + customer service", "2020–2025"],
             ["📈", "Sales & GTM", "2025–now"],
           ].map(([e, l, d], i) => (
             <li key={l} className='flex items-center gap-2'>
@@ -92,14 +95,36 @@ const About = () => {
       </div>
 
       <div className='py-16'>
-        <h3 className='subhead-text'>Technical toolkit</h3>
-        <p className='mt-3 text-slate-500'>From my engineering years, and still how I build my own outbound tooling.</p>
-        <div className='mt-8 flex flex-wrap gap-8'>
-          {skills.map((skill) => (
-            <div className='block-container h-14 w-14' key={skill.name} title={skill.name}>
-              <div className='btn-back rounded-xl' />
-              <div className='btn-front flex items-center justify-center rounded-xl'>
-                <img src={skill.imageUrl} alt={skill.name} className='h-1/2 w-1/2 object-contain' />
+        <h3 className='subhead-text'>Toolkit</h3>
+        <div className='mt-8 flex flex-col gap-10'>
+          {toolkit.map((group) => (
+            <div key={group.title}>
+              <p className='text-sm font-semibold uppercase tracking-wide text-slate-500'>
+                {group.title}
+                {group.note && <span className='ml-2 font-normal normal-case tracking-normal text-slate-400'>· {group.note}</span>}
+              </p>
+              <div className='mt-4 flex flex-wrap gap-3'>
+                {group.tools?.map((t) => (
+                  <div key={t.name} className='flex h-24 w-24 flex-col items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white shadow-sm'>
+                    {t.icon ? (
+                      <img src={toolIcon(t.icon)} alt='' className='h-8 w-8 object-contain' />
+                    ) : (
+                      <span className='flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 font-poppins text-sm font-bold text-white'>
+                        {t.name[0]}
+                      </span>
+                    )}
+                    <span className='text-xs font-medium text-slate-700'>{t.name}</span>
+                  </div>
+                ))}
+                {group.skills &&
+                  skills
+                    .filter((sk) => group.skills.includes(sk.name))
+                    .map((sk) => (
+                      <div key={sk.name} className='flex h-16 w-16 flex-col items-center justify-center gap-1 rounded-xl border border-slate-200 bg-white' title={sk.name}>
+                        <img src={sk.imageUrl} alt={sk.name} className='h-7 w-7 object-contain' />
+                        <span className='text-[10px] text-slate-500'>{sk.name}</span>
+                      </div>
+                    ))}
               </div>
             </div>
           ))}
