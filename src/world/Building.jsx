@@ -183,7 +183,7 @@ const Details = ({ style, w, h, d, b }) => {
               <torusGeometry args={[0.36, 0.1, 16, 32, Math.PI]} />
               <meshStandardMaterial color='#ffffff' roughness={0.35} />
             </mesh>
-            <Puffs position={[0, 1.65, 0]} count={9} height={2.2} spread={0.5} size={0.28} steam />
+            <Puffs position={[0, 1.65, 0]} count={14} height={2.2} spread={0.55} size={0.36} steam />
           </group>
           {/* striped awning */}
           {Array.from({ length: 6 }, (_, i) => (

@@ -50,7 +50,7 @@ export const Puffs = ({ position, color = "#ffffff", count = 5, height = 1.6, sp
       const grow = steam ? 0.5 + t * 2.2 : 0.6 + t;
       puff.scale.set(size * grow, size * grow * (steam ? 1.5 : 1), size * grow);
       const fadeIn = steam ? Math.min(1, t * 6) : 1;
-      puff.material.opacity = (steam ? 0.22 : 0.45) * (1 - t) * fadeIn;
+      puff.material.opacity = (steam ? 0.42 : 0.45) * (1 - t) * fadeIn;
     });
   });
   return (
