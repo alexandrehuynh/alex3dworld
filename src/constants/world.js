@@ -121,8 +121,8 @@ export const rooms = {
       {
         id: "projects",
         title: "Projects & hackathons",
-        role: "EyeSpyAI, Trainers Memory, HealthBridge, and more",
-        link: "/projects",
+        role: "AI fitness and health apps I've built",
+        link: "/experience/engineering",
       },
     ],
   },

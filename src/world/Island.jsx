@@ -1,9 +1,11 @@
 import * as THREE from "three";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { CylinderCollider, RigidBody } from "@react-three/rapier";
 
 import { BUILDING_RING, ISLAND_RADIUS, buildings } from "../constants/world";
+import { SIZES } from "./Building";
+import { setNavMap } from "./pathfinding";
 
 // Deterministic pseudo-random so the scenery layout is stable between reloads
 const seeded = (seed) => () => {
@@ -288,6 +290,19 @@ const Island = () => {
     }
     return { trees, rocks };
   }, []);
+
+  // Tell the click-to-walk pathfinder what's in the way out here
+  useEffect(() => {
+    setNavMap({ type: "circle", r: ISLAND_RADIUS }, [
+      { type: "circle", x: 0, z: 0, r: 2.45 },
+      ...scenery.trees.map((t) => ({ type: "circle", x: t.position[0], z: t.position[2], r: 0.5 * t.scale })),
+      ...scenery.rocks.map((r) => ({ type: "circle", x: r.position[0], z: r.position[2], r: 0.35 * r.scale })),
+      ...buildings.map((b) => {
+        const [w, , d] = SIZES[b.style];
+        return { type: "rect", x: b.position[0], z: b.position[2], hw: w / 2, hd: d / 2, rot: b.angle + Math.PI };
+      }),
+    ]);
+  }, [scenery]);
 
   return (
     <group>

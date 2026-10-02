@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 
 import { playerState } from "./playerState";
+import { findPath } from "./pathfinding";
 
 const ndc = new THREE.Vector2();
 
@@ -35,9 +36,13 @@ const ClickToWalk = ({ enabled }) => {
 
       let walkTo = null;
       for (let o = hit.object; o && !walkTo; o = o.parent) walkTo = o.userData?.walkTo;
-      playerState.moveTarget = walkTo
-        ? new THREE.Vector3(walkTo[0], 0, walkTo[1])
-        : new THREE.Vector3(hit.point.x, 0, hit.point.z);
+      const [gx, gz] = walkTo ?? [hit.point.x, hit.point.z];
+      const { x: sx, z: sz } = playerState.position;
+      // route around obstacles; the last waypoint is where we actually end up
+      const path = findPath(sx, sz, gx, gz);
+      if (!path) return;
+      playerState.path = path.map((p) => new THREE.Vector3(p.x, 0, p.z));
+      playerState.moveTarget = playerState.path[playerState.path.length - 1];
     };
     el.addEventListener("pointerdown", onDown);
     el.addEventListener("pointerup", onUp);

@@ -6,4 +6,6 @@ import * as THREE from "three";
 export const playerState = {
   position: new THREE.Vector3(0, -1000, 0),
   moveTarget: null,
+  // waypoints from the pathfinder, ending at moveTarget
+  path: [],
 };

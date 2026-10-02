@@ -349,7 +349,7 @@ const SpinningCoin = ({ position }) => {
   );
 };
 
-const SIZES = {
+export const SIZES = {
   lab: [6, 4, 5],
   gym: [7.5, 3.6, 5.5],
   tower: [5.5, 4.4, 5],

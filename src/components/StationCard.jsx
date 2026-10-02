@@ -1,10 +1,16 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 
+import { projects } from "../constants";
+
 // Card for a single job station inside a building
 const StationCard = ({ building, section, onClose, onOverview }) => {
   useEffect(() => {
-    const onKey = (e) => e.key === "Escape" && onClose();
+    // any key closes the card (walking keys too, so you can just keep moving)
+    const onKey = (e) => {
+      if (e.repeat || ["Shift", "Control", "Alt", "Meta", "Tab"].includes(e.key)) return;
+      onClose();
+    };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
@@ -36,7 +42,7 @@ const StationCard = ({ building, section, onClose, onOverview }) => {
             onClick={onClose}
             className='shrink-0 rounded-full bg-slate-100 px-3 py-1 text-sm font-medium hover:bg-slate-200'
           >
-            Esc ✕
+            ✕
           </button>
         </div>
         {section.points && (
@@ -47,19 +53,44 @@ const StationCard = ({ building, section, onClose, onOverview }) => {
           </ul>
         )}
 
+        {/* 2x2 corkboard: alternating tilt and a slight stagger */}
         {section.flyers && (
-          <div className='mt-4 grid gap-3 sm:grid-cols-3'>
+          <div className='mt-4 grid grid-cols-2 gap-4'>
             {section.flyers.map((flyer, i) => (
               <div
                 key={flyer.title}
                 className='p-3 shadow-md'
-                style={{ background: flyer.color, rotate: `${(i - 1) * 1.5}deg` }}
+                style={{
+                  background: flyer.color,
+                  rotate: `${i % 2 ? 1.8 : -1.8}deg`,
+                  translate: `0 ${i % 2 ? 10 : 0}px`,
+                }}
               >
                 <p className='font-poppins font-semibold text-slate-900'>{flyer.title}</p>
                 <p className='text-sm text-slate-700'>{flyer.role}</p>
                 <p className='mt-1 text-xs text-slate-600'>{flyer.dates}</p>
                 {flyer.note && <p className='mt-2 text-xs text-slate-700'>{flyer.note}</p>}
               </div>
+            ))}
+          </div>
+        )}
+
+        {section.id === "projects" && (
+          <div className='mt-4 grid gap-2 sm:grid-cols-2'>
+            {projects.map((p) => (
+              <a
+                key={p.name}
+                href={p.link ?? p.codeLink}
+                target='_blank'
+                rel='noopener noreferrer'
+                className='flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-2.5 transition hover:border-blue-300 hover:shadow-sm'
+              >
+                <img src={p.iconUrl} alt='' className='h-8 w-8 shrink-0 rounded-lg bg-slate-50 object-contain p-1' />
+                <span className='min-w-0'>
+                  <span className='block truncate text-sm font-semibold text-slate-900'>{p.name}</span>
+                  <span className='block truncate text-xs text-slate-500'>{p.description}</span>
+                </span>
+              </a>
             ))}
           </div>
         )}

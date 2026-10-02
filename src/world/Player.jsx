@@ -29,18 +29,28 @@ const toTarget = new THREE.Vector3();
 // Turn a click-to-walk destination into a camera-relative joystick vector
 // (Ecctrl moves relative to the camera). Returns null once arrived or stuck.
 const steerToward = (camera, from, nav, delta) => {
-  toTarget.set(nav.target.x - from.x, 0, nav.target.z - from.z);
+  // follow waypoints; switch to the next one as soon as we're close
+  let wp = nav.path[0];
+  while (wp && nav.path.length > 1 && Math.hypot(wp.x - from.x, wp.z - from.z) < 0.5) {
+    nav.path.shift();
+    nav.best = Infinity;
+    wp = nav.path[0];
+  }
+  if (!wp) return null;
+  toTarget.set(wp.x - from.x, 0, wp.z - from.z);
   const dist = toTarget.length();
-  if (dist < 0.7) return null;
-  // give up if we stop making progress (blocked by a wall or prop)
+  if (nav.path.length === 1 && dist < 0.5) return null;
+  // give up if we stop making progress (something unexpected in the way)
   if (dist < nav.best - 0.05) {
     nav.best = dist;
     nav.stuck = 0;
-  } else if ((nav.stuck += delta) > 1.2) return null;
+  } else if ((nav.stuck += delta) > 1.5) return null;
   camera.getWorldDirection(camForward).setY(0).normalize();
   camRight.crossVectors(camForward, camera.up).normalize();
   toTarget.normalize();
-  return { x: toTarget.dot(camRight), y: toTarget.dot(camForward) };
+  // ease off on the last stretch so we stop on the spot instead of overshooting
+  const speed = nav.path.length === 1 ? Math.min(1, Math.max(0.35, dist / 1.8)) : 1;
+  return { x: toTarget.dot(camRight) * speed, y: toTarget.dot(camForward) * speed };
 };
 
 // Feet sit at the bottom of the capsule plus Ecctrl's float height
@@ -71,14 +81,26 @@ const Player = ({ characterUrl, frozen, pose, closeUp, indoor, atStation, freeCa
       keys.forward || keys.backward || keys.leftward || keys.rightward || keys.jump || joystick?.active;
 
     if (playerState.moveTarget && (!nav.current || nav.current.target !== playerState.moveTarget)) {
-      nav.current = { target: playerState.moveTarget, best: Infinity, stuck: 0 };
+      nav.current = {
+        target: playerState.moveTarget,
+        path: playerState.path.length ? [...playerState.path] : [playerState.moveTarget],
+        best: Infinity,
+        stuck: 0,
+      };
     }
     let auto = null;
     if (nav.current && !manual && !frozen) {
       auto = steerToward(camera, player.currPos, nav.current, delta);
-      if (!auto) nav.current = playerState.moveTarget = null;
+      if (!auto) {
+        nav.current = playerState.moveTarget = null;
+        playerState.path = [];
+        // brake so we stop on the spot instead of sliding past it
+        const v = player.body.linvel();
+        player.body.setLinvel({ x: 0, y: v.y, z: 0 }, true);
+      }
     } else if (manual || frozen) {
       nav.current = playerState.moveTarget = null;
+      playerState.path = [];
     }
 
     player.setMovement(

@@ -1,4 +1,7 @@
+import { useEffect } from "react";
 import { CuboidCollider, RigidBody } from "@react-three/rapier";
+
+import { setNavMap } from "../pathfinding";
 
 import { Room, Station, StationTracker } from "./Room";
 import cafe from "./Cafe";
@@ -14,6 +17,14 @@ export const INTERIORS = { cafe, code, gym, sales };
 export const Interior = ({ building, sections, active, onZone, offZone }) => {
   const config = INTERIORS[building.id];
   const { Decor } = config;
+
+  // Furniture blockers + room walls for the click-to-walk pathfinder
+  useEffect(() => {
+    setNavMap(
+      { type: "rect", hw: config.width / 2, hd: config.depth / 2 },
+      (config.blockers ?? []).map(([x, z, hw, hd]) => ({ type: "rect", x, z, hw, hd }))
+    );
+  }, [config]);
   // spot: [x, z] for a ring, or { at: [x, z], area: [w, d] } / { at, radius }
   const zones = sections
     .filter((section) => config.stations[section.id])
