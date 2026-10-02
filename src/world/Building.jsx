@@ -154,15 +154,11 @@ const Details = ({ style, w, h, d, b }) => {
     case "tower":
       return (
         <>
-          {/* AI money: green rising bars, a spinning gold $ coin, AI sparkle */}
+          {/* AI money: green rising bars and a spinning gold $ coin */}
           {[0.8, 1.4, 2.1].map((bh, i) => (
             <Box key={i} args={[0.6, bh, 0.6]} position={[-1.5 + i * 0.75, h + 0.3 + bh / 2, -0.6]} color='#22c55e' />
           ))}
           <SpinningCoin position={[1, h + 1.9, 0.3]} />
-          <mesh position={[2, h + 3.3, 0.3]} rotation={[0, Math.PI / 4, Math.PI / 4]}>
-            <octahedronGeometry args={[0.35, 0]} />
-            <meshStandardMaterial color='#a78bfa' emissive='#8b5cf6' emissiveIntensity={0.9} />
-          </mesh>
         </>
       );
     case "cafe":
@@ -187,7 +183,7 @@ const Details = ({ style, w, h, d, b }) => {
               <torusGeometry args={[0.36, 0.1, 16, 32, Math.PI]} />
               <meshStandardMaterial color='#ffffff' roughness={0.35} />
             </mesh>
-            <Puffs position={[0, 1.7, 0]} count={6} height={1.8} spread={0.9} size={0.35} />
+            <Puffs position={[0, 1.65, 0]} count={9} height={2.2} spread={0.5} size={0.28} steam />
           </group>
           {/* striped awning */}
           {Array.from({ length: 6 }, (_, i) => (

@@ -37,15 +37,20 @@ export const TextPanel = ({ width, height, draw, deps = [], emissive = false, tr
 };
 
 // Soft puffs rising and fading in a loop (sauna steam, grill smoke)
-export const Puffs = ({ position, color = "#ffffff", count = 5, height = 1.6, spread = 0.5, size = 0.22 }) => {
+export const Puffs = ({ position, color = "#ffffff", count = 5, height = 1.6, spread = 0.5, size = 0.22, steam = false }) => {
   const group = useRef();
   useFrame(({ clock }) => {
     if (!group.current) return;
     group.current.children.forEach((puff, i) => {
-      const t = (clock.elapsedTime * 0.35 + i / count) % 1;
-      puff.position.set(Math.sin(i * 2.1 + t * 3) * spread * 0.5, t * height, Math.cos(i * 1.7) * spread * 0.3);
-      puff.scale.setScalar(size * (0.6 + t));
-      puff.material.opacity = 0.45 * (1 - t);
+      const speed = steam ? 0.22 : 0.35;
+      const t = (clock.elapsedTime * speed + i / count) % 1;
+      // steam: wispy curl that widens and thins out as it rises
+      const sway = steam ? Math.sin(t * 5 + i) * spread * (0.2 + t) : Math.sin(i * 2.1 + t * 3) * spread * 0.5;
+      puff.position.set(sway, t * height, Math.cos(i * 1.7 + t * 4) * spread * (steam ? 0.25 * t : 0.3));
+      const grow = steam ? 0.5 + t * 2.2 : 0.6 + t;
+      puff.scale.set(size * grow, size * grow * (steam ? 1.5 : 1), size * grow);
+      const fadeIn = steam ? Math.min(1, t * 6) : 1;
+      puff.material.opacity = (steam ? 0.22 : 0.45) * (1 - t) * fadeIn;
     });
   });
   return (
@@ -53,7 +58,7 @@ export const Puffs = ({ position, color = "#ffffff", count = 5, height = 1.6, sp
       {Array.from({ length: count }, (_, i) => (
         <mesh key={i}>
           <sphereGeometry args={[1, 16, 12]} />
-          <meshStandardMaterial color={color} transparent opacity={0.4} depthWrite={false} />
+          <meshBasicMaterial color={color} transparent opacity={0.3} depthWrite={false} toneMapped={false} />
         </mesh>
       ))}
     </group>

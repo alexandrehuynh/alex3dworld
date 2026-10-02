@@ -32,19 +32,27 @@ const CharacterPicker = ({ characters, selectedId, onSelect, onConfirm }) => {
             ‹
           </button>
           <div className='flex flex-1 justify-center gap-2'>
-            {characters.map((c) => (
-              <button
-                key={c.id}
-                onClick={() => onSelect(c.id)}
-                className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
-                  c.id === selectedId
-                    ? "bg-blue-600 text-white shadow"
-                    : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-                }`}
-              >
-                {c.name}
-              </button>
-            ))}
+            {/* two rows: He / She */}
+            <div className='flex flex-col gap-2'>
+              {["He", "She"].map((group) => (
+                <div key={group} className='flex items-center justify-center gap-2'>
+                  <span className='w-8 text-right text-xs font-semibold uppercase text-slate-400'>{group}</span>
+                  {characters
+                    .filter((c) => c.group === group)
+                    .map((c) => (
+                      <button
+                        key={c.id}
+                        onClick={() => onSelect(c.id)}
+                        className={`rounded-full px-3 py-1.5 text-sm font-medium transition ${
+                          c.id === selectedId ? "bg-blue-600 text-white shadow" : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                        }`}
+                      >
+                        {c.name}
+                      </button>
+                    ))}
+                </div>
+              ))}
+            </div>
           </div>
           <button
             onClick={() => step(1)}
