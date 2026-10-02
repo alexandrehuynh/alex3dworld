@@ -1,5 +1,6 @@
-import { Html } from "@react-three/drei";
 import { CuboidCollider, RigidBody } from "@react-three/rapier";
+
+import Sign from "./Sign";
 
 const Box = ({ args, color, ...props }) => (
   <mesh castShadow receiveShadow {...props}>
@@ -162,16 +163,11 @@ const Building = ({ building, isNearby, onEnterZone, onExitZone }) => {
         />
       </mesh>
 
-      <Html
+      <Sign
+        text={`${building.emoji} ${building.name}`}
+        accent={building.accent}
         position={[0, building.style === "tower" ? h + 4.5 : h + 2.2, 0]}
-        center
-        distanceFactor={18}
-        zIndexRange={[10, 0]}
-      >
-        <div className='world-sign' style={{ borderColor: building.accent }}>
-          <span>{building.emoji}</span> {building.name}
-        </div>
-      </Html>
+      />
     </group>
   );
 };

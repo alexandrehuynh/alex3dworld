@@ -1,12 +1,17 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useMemo } from "react";
+import { useGraph } from "@react-three/fiber";
 import { useGLTF, useAnimations } from "@react-three/drei";
+import { clone as cloneSkinned } from "three/examples/jsm/utils/SkeletonUtils.js";
 
 import scene from "../assets/3d/fox.glb";
 
 // 3D Model from: https://sketchfab.com/3d-models/fox-f372c04de44640fbb6a4f9e4e5845c78
 export function Fox({ currentAnimation, ...props }) {
   const group = useRef();
-  const { nodes, materials, animations } = useGLTF(scene);
+  const { scene: gltfScene, animations } = useGLTF(scene);
+  // Render a copy so the cached glTF stays intact for the walker on the home page
+  const instance = useMemo(() => cloneSkinned(gltfScene), [gltfScene]);
+  const { nodes, materials } = useGraph(instance);
   const { actions } = useAnimations(animations, group);
 
   // This effect will run whenever the currentAnimation prop changes

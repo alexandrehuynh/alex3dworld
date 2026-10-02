@@ -1,9 +1,10 @@
 import * as THREE from "three";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useAnimations, useGLTF, useKeyboardControls } from "@react-three/drei";
 import { Ecctrl } from "ecctrl";
 import { useJoystickStore } from "ecctrl/input";
+import { clone as cloneSkinned } from "three/examples/jsm/utils/SkeletonUtils.js";
 
 import foxScene from "../assets/3d/fox.glb";
 
@@ -18,6 +19,8 @@ const LOOK_OFFSET = new THREE.Vector3(0, 0.5, -3);
 const Character = ({ animation }) => {
   const group = useRef();
   const { scene, animations } = useGLTF(foxScene);
+  // The contact page renders the same cached glTF, so walk with our own copy
+  const model = useMemo(() => cloneSkinned(scene), [scene]);
   const { actions } = useAnimations(animations, group);
 
   useEffect(() => {
@@ -29,7 +32,7 @@ const Character = ({ animation }) => {
 
   return (
     <group ref={group} position={[0, -0.6, 0]} rotation={[0, 0, 0]} scale={0.35}>
-      <primitive object={scene} />
+      <primitive object={model} />
     </group>
   );
 };
