@@ -74,7 +74,7 @@ const Facade = ({ b, w, h, d }) => {
       {b.style === "tower" &&
         [-1.4, 0, 1.4].map((x) => <Window key={x} x={x} y={3.45} w={0.85} h={0.7} z={z} color={color} />)}
       {/* nameplate above the door */}
-      <group position={[0, DOOR_H + 0.48, z + 0.06]}>
+      <group position={[0, b.style === "cafe" ? h - 0.4 : DOOR_H + 0.48, z + 0.06]}>
         <RoundedBox args={[3.3, 0.62, 0.08]} radius={0.07}>
           <meshStandardMaterial color={b.accent} roughness={0.5} />
         </RoundedBox>
@@ -117,12 +117,7 @@ const Details = ({ style, w, h, d, b }) => {
                 <planeGeometry args={[2.8, 1.65]} />
                 <meshStandardMaterial color='#0f172a' emissive='#0c4a6e' emissiveIntensity={0.5} />
               </mesh>
-              {[0.45, 0.2, -0.05, -0.3].map((y, i) => (
-                <mesh key={y} position={[-0.5 + (i % 2) * 0.25, 1 + y, 0.09]}>
-                  <planeGeometry args={[1.4 - i * 0.2, 0.1]} />
-                  <meshBasicMaterial color={["#38bdf8", "#e2e8f0", "#fbbf24", "#a78bfa"][i]} toneMapped={false} />
-                </mesh>
-              ))}
+              <TypingCode />
             </group>
           </group>
         </>
@@ -131,7 +126,8 @@ const Details = ({ style, w, h, d, b }) => {
       return (
         <>
           {/* Giant dumbbell on the roof */}
-          {/* plates rest on the roof slab (top at h + 0.375) */}
+          {/* plates rest on the roof slab (top at h + 0.375); it lifts in slow reps */}
+          <Reps>
           <group position={[0, h + 1.24, 0]} rotation={[0, 0, Math.PI / 2]}>
             <mesh castShadow>
               <cylinderGeometry args={[0.18, 0.18, 4.2, 24]} />
@@ -144,6 +140,7 @@ const Details = ({ style, w, h, d, b }) => {
               </mesh>
             ))}
           </group>
+          </Reps>
         </>
       );
     case "tower":
@@ -241,6 +238,67 @@ const Details = ({ style, w, h, d, b }) => {
   }
 };
 
+// Roof laptop: lines of code type out, pause, then clear and start again
+const CODE_LINES = [
+  [1.3, "#38bdf8", 0],
+  [1.0, "#e2e8f0", 0.25],
+  [1.15, "#fbbf24", 0.25],
+  [0.8, "#a78bfa", 0],
+  [1.05, "#e2e8f0", 0.25],
+];
+const TypingCode = () => {
+  const lines = useRef();
+  const cursor = useRef();
+  useFrame(({ clock }) => {
+    const t = (clock.elapsedTime * 0.35) % (CODE_LINES.length + 1.5);
+    lines.current?.children.forEach((line, i) => {
+      const p = Math.min(1, Math.max(0, t - i));
+      line.scale.x = Math.max(0.001, p);
+      line.visible = p > 0;
+    });
+    if (cursor.current) {
+      const row = Math.min(CODE_LINES.length - 1, Math.floor(t));
+      const [len, , indent] = CODE_LINES[row];
+      const p = Math.min(1, Math.max(0, t - row));
+      cursor.current.position.set(-1.2 + indent + len * p + 0.08, 1.55 - row * 0.25, 0.09);
+      cursor.current.visible = Math.sin(clock.elapsedTime * 8) > 0;
+    }
+  });
+  return (
+    <>
+      <group ref={lines}>
+        {CODE_LINES.map(([len, color, indent], i) => (
+          // left-anchored so scale.x reads as typing
+          <group key={i} position={[-1.2 + indent, 1.55 - i * 0.25, 0.09]}>
+            <mesh position={[len / 2, 0, 0]}>
+              <planeGeometry args={[len, 0.1]} />
+              <meshBasicMaterial color={color} toneMapped={false} />
+            </mesh>
+          </group>
+        ))}
+      </group>
+      <mesh ref={cursor}>
+        <planeGeometry args={[0.05, 0.14]} />
+        <meshBasicMaterial color='#ffffff' toneMapped={false} />
+      </mesh>
+    </>
+  );
+};
+
+// Roof dumbbell: slow lift, hold, lower, rest
+const Reps = ({ children }) => {
+  const ref = useRef();
+  useFrame(({ clock }) => {
+    const t = (clock.elapsedTime * 0.45) % 1;
+    const lift = t < 0.35 ? Math.sin((t / 0.35) * (Math.PI / 2)) : t < 0.5 ? 1 : t < 0.85 ? Math.cos(((t - 0.5) / 0.35) * (Math.PI / 2)) : 0;
+    if (ref.current) {
+      ref.current.position.y = lift * 0.9;
+      ref.current.rotation.x = lift * 0.15;
+    }
+  });
+  return <group ref={ref}>{children}</group>;
+};
+
 const SpinningCoin = ({ position }) => {
   const ref = useRef();
   useFrame((_, delta) => {
@@ -278,7 +336,7 @@ const SIZES = {
   lab: [6, 4, 5],
   gym: [7.5, 3.6, 5.5],
   tower: [5.5, 4.4, 5],
-  cafe: [6, 3.2, 5],
+  cafe: [6, 3.6, 5],
 };
 
 const Building = ({ building, isNearby, onEnterZone, onExitZone }) => {

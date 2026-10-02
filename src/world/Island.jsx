@@ -1,5 +1,6 @@
 import * as THREE from "three";
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
+import { useFrame } from "@react-three/fiber";
 import { CylinderCollider, RigidBody } from "@react-three/rapier";
 
 import { BUILDING_RING, ISLAND_RADIUS, buildings } from "../constants/world";
@@ -41,31 +42,132 @@ const Rock = ({ position, scale = 1 }) => (
   </mesh>
 );
 
-const Fountain = () => (
-  <RigidBody type='fixed' colliders='hull'>
+// Working fountain: a central jet sprays droplets that arc out and splash
+// into the pool, leaving expanding ripples. Water effects live outside the
+// physics body so they don't affect the collider.
+const STREAMS = 10;
+const RIPPLES = STREAMS; // one splash where each stream lands
+const POOL_Y = 0.62;
+const NOZZLE_Y = 2.3;
+const REACH = 1.25;
+const PEAK = 1.1;
+
+// Flowing stripes scrolled along each stream so the water reads as moving
+const useFlowTexture = () =>
+  useMemo(() => {
+    const c = document.createElement("canvas");
+    c.width = 4;
+    c.height = 64;
+    const ctx = c.getContext("2d");
+    const g = ctx.createLinearGradient(0, 0, 0, 64);
+    g.addColorStop(0, "rgba(255,255,255,0.95)");
+    g.addColorStop(0.5, "rgba(186,230,253,0.55)");
+    g.addColorStop(1, "rgba(255,255,255,0.95)");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, 4, 64);
+    const tex = new THREE.CanvasTexture(c);
+    tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+    tex.repeat.set(1, 3);
+    return tex;
+  }, []);
+
+const FountainWater = () => {
+  const ripples = useRef();
+  const plume = useRef();
+  const flow = useFlowTexture();
+
+  // One arcing tube per stream: up out of the nozzle and down into the pool
+  const geometries = useMemo(
+    () =>
+      Array.from({ length: STREAMS }, (_, i) => {
+        const a = (i / STREAMS) * Math.PI * 2;
+        const pts = Array.from({ length: 24 }, (_, k) => {
+          const t = k / 23;
+          const r = REACH * t;
+          const y = NOZZLE_Y + 4 * PEAK * t * (1 - t) - (NOZZLE_Y - POOL_Y) * t * t;
+          return new THREE.Vector3(Math.cos(a) * r, y, Math.sin(a) * r);
+        });
+        return new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 48, 0.035, 8, false);
+      }),
+    []
+  );
+
+  useFrame(({ clock }, delta) => {
+    flow.offset.x -= delta * 1.6;
+    ripples.current?.children.forEach((ring, i) => {
+      const t = (clock.elapsedTime * 0.6 + (i % 3) / 3) % 1;
+      const a = (i / STREAMS) * Math.PI * 2;
+      ring.position.set(Math.cos(a) * REACH, POOL_Y + 0.01, Math.sin(a) * REACH);
+      ring.scale.setScalar(0.25 + t * 0.9);
+      ring.material.opacity = 0.7 * (1 - t);
+    });
+    if (plume.current) plume.current.scale.y = 1 + Math.sin(clock.elapsedTime * 9) * 0.06;
+  });
+
+  return (
     <group>
-      <mesh position={[0, 0.3, 0]} receiveShadow castShadow>
-        <cylinderGeometry args={[2.2, 2.35, 0.6, 64]} />
-        <meshStandardMaterial color='#e2e8f0' roughness={0.6} />
+      <mesh position={[0, POOL_Y, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[1.97, 64]} />
+        <meshStandardMaterial color='#3b9cf0' roughness={0.08} metalness={0.25} />
       </mesh>
-      <mesh position={[0, 0.6, 0]} rotation={[Math.PI / 2, 0, 0]} castShadow>
-        <torusGeometry args={[2.1, 0.16, 16, 64]} />
-        <meshStandardMaterial color='#f1f5f9' roughness={0.5} />
+      <mesh ref={plume} position={[0, NOZZLE_Y + 0.3, 0]}>
+        <cylinderGeometry args={[0.04, 0.09, 0.6, 16, 1, true]} />
+        <meshStandardMaterial color='#e0f2fe' emissive='#bae6fd' emissiveIntensity={0.6} transparent opacity={0.8} />
       </mesh>
-      <mesh position={[0, 0.58, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <circleGeometry args={[1.95, 64]} />
-        <meshStandardMaterial color='#4dabf7' roughness={0.05} metalness={0.2} />
-      </mesh>
-      <mesh position={[0, 1.2, 0]} castShadow>
-        <cylinderGeometry args={[0.22, 0.38, 1.4, 32]} />
-        <meshStandardMaterial color='#f1f5f9' roughness={0.5} />
-      </mesh>
-      <mesh position={[0, 2, 0]}>
-        <sphereGeometry args={[0.38, 32, 24]} />
-        <meshStandardMaterial color='#a5d8ff' emissive='#74c0fc' emissiveIntensity={0.4} transparent opacity={0.85} />
-      </mesh>
+      {geometries.map((geo, i) => (
+        <mesh key={i} geometry={geo}>
+          <meshStandardMaterial
+            map={flow}
+            color='#e0f2fe'
+            emissive='#bae6fd'
+            emissiveIntensity={0.4}
+            transparent
+            opacity={0.8}
+            depthWrite={false}
+          />
+        </mesh>
+      ))}
+      <group ref={ripples}>
+        {Array.from({ length: RIPPLES }, (_, i) => (
+          <mesh key={i} rotation={[-Math.PI / 2, 0, 0]}>
+            <ringGeometry args={[0.16, 0.2, 32]} />
+            <meshBasicMaterial color='#ffffff' transparent opacity={0.5} depthWrite={false} />
+          </mesh>
+        ))}
+      </group>
     </group>
-  </RigidBody>
+  );
+};
+
+const Fountain = () => (
+  <>
+    <RigidBody type='fixed' colliders='hull'>
+      <group>
+        <mesh position={[0, 0.3, 0]} receiveShadow castShadow>
+          <cylinderGeometry args={[2.2, 2.35, 0.6, 64]} />
+          <meshStandardMaterial color='#e2e8f0' roughness={0.6} />
+        </mesh>
+        <mesh position={[0, 0.66, 0]} rotation={[Math.PI / 2, 0, 0]} castShadow>
+          <torusGeometry args={[2.1, 0.16, 16, 64]} />
+          <meshStandardMaterial color='#f1f5f9' roughness={0.5} />
+        </mesh>
+        {/* column with a small top bowl and nozzle */}
+        <mesh position={[0, 1.3, 0]} castShadow>
+          <cylinderGeometry args={[0.18, 0.34, 1.4, 32]} />
+          <meshStandardMaterial color='#f1f5f9' roughness={0.5} />
+        </mesh>
+        <mesh position={[0, 2.1, 0]} castShadow>
+          <cylinderGeometry args={[0.6, 0.2, 0.25, 32]} />
+          <meshStandardMaterial color='#f1f5f9' roughness={0.5} />
+        </mesh>
+        <mesh position={[0, 2.25, 0]}>
+          <cylinderGeometry args={[0.06, 0.08, 0.12, 16]} />
+          <meshStandardMaterial color='#cbd5e1' metalness={0.6} roughness={0.3} />
+        </mesh>
+      </group>
+    </RigidBody>
+    <FountainWater />
+  </>
 );
 
 // A path with rounded ends from the plaza to each building door
