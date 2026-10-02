@@ -51,11 +51,11 @@ body:has(.card[data-color="green"]:hover) {
   }
 
   .nav-pill {
-    @apply pointer-events-auto flex items-center gap-1 rounded-full bg-white/85 p-1 shadow backdrop-blur;
+    @apply pointer-events-auto flex items-center gap-0.5 sm:gap-1 rounded-full bg-white/85 p-1 shadow backdrop-blur;
   }
 
   .header {
-    @apply flex justify-between items-center px-4 pt-4 absolute top-0 left-0 right-0 z-30 pointer-events-none;
+    @apply flex justify-between items-center gap-2 px-3 pt-3 sm:px-4 sm:pt-4 absolute top-0 left-0 right-0 z-30 pointer-events-none;
   }
 
   .footer {

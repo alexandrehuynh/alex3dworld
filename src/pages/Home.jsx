@@ -193,7 +193,7 @@ const Home = () => {
       )}
 
       {showIntro && !picking && (
-        <div className='absolute top-20 left-0 right-0 z-10 flex justify-center px-4 pointer-events-none'>
+        <div className='absolute top-32 sm:top-20 left-0 right-0 z-10 flex justify-center px-4 pointer-events-none'>
           <div className='neo-brutalism-blue py-4 px-6 text-white text-center sm:text-lg max-w-md pointer-events-auto'>
             Hi, I'm <span className='font-semibold'>Alex Huynh</span> 👋
             <br />
