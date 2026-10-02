@@ -183,6 +183,28 @@ const PatioBackdrop = () => (
   </group>
 );
 
+// Cup of coffee on a saucer
+const CoffeeCup = ({ position }) => (
+  <group position={position}>
+    <mesh>
+      <cylinderGeometry args={[0.08, 0.08, 0.012, 20]} />
+      <meshStandardMaterial color='#ffffff' />
+    </mesh>
+    <mesh position={[0, 0.045, 0]}>
+      <cylinderGeometry args={[0.045, 0.035, 0.08, 20]} />
+      <meshStandardMaterial color='#ffffff' />
+    </mesh>
+    <mesh position={[0, 0.083, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+      <circleGeometry args={[0.04, 20]} />
+      <meshStandardMaterial color='#4a2c17' />
+    </mesh>
+    <mesh position={[0.05, 0.045, 0]}>
+      <torusGeometry args={[0.02, 0.006, 6, 12]} />
+      <meshStandardMaterial color='#ffffff' />
+    </mesh>
+  </group>
+);
+
 // Powdered-sugar beignets on a plate
 const Beignets = ({ position }) => (
   <group position={position}>
@@ -243,12 +265,14 @@ const BrunchTable = ({ position }) => (
         <meshStandardMaterial color='#ffffff' />
       </mesh>
     ))}
+    {/* mimosas, champagne, and coffee */}
     <Glass position={[0.3, 0.76, 0.32]} liquid='#fb923c' />
     <Glass position={[-0.33, 0.76, 0.28]} liquid='#fb923c' />
-    <Glass position={[0.38, 0.76, -0.28]} liquid='#fde68a' />
-    <Glass position={[-0.28, 0.76, -0.35]} liquid='#7f1d1d' height={0.16} />
-    <Bottle position={[0.05, 0.76, -0.05]} color='#14532d' />
-    <Bottle position={[-0.15, 0.76, 0.12]} color='#a16207' />
+    <Glass position={[0.38, 0.76, -0.28]} liquid='#fef3c7' />
+    <Glass position={[-0.28, 0.76, -0.35]} liquid='#fef3c7' />
+    <Bottle position={[0, 0.76, 0]} color='#14532d' />
+    <CoffeeCup position={[0.12, 0.77, 0.5]} />
+    <CoffeeCup position={[-0.5, 0.77, -0.12]} />
     <Beignets position={[0.55, 0.77, 0.05]} />
     <Calamari position={[-0.55, 0.77, 0]} />
     {/* table for four, chairs staggered on the diagonals so all of them show */}
@@ -374,15 +398,19 @@ const FlyerBoard = ({ position }) => {
 // it, so it faces the entrance like the real one on the street (two-sided)
 const BladeSign = ({ position }) => (
   <group position={position}>
-    <Soft args={[1.5, 0.06, 0.06]} position={[0.75, 3, 0]} color='#c9a227' radius={0.02} />
-    <Soft args={[0.08, 0.3, 0.08]} position={[0.04, 2.85, 0]} color='#c9a227' radius={0.02} />
-    {[0.35, 1.15].map((x) => (
+    {/* the side walls are low, so the bracket mounts to a post standing against the wall */}
+    <Soft args={[0.16, 3.15, 0.16]} position={[0.08, 1.575, 0]} color='#3b2416' radius={0.04} />
+    <Soft args={[0.24, 0.08, 0.24]} position={[0.08, 3.17, 0]} color='#c9a227' radius={0.02} />
+    <Soft args={[1.5, 0.06, 0.06]} position={[0.85, 3, 0]} color='#c9a227' radius={0.02} />
+    {/* diagonal brace */}
+    <Soft args={[0.05, 0.75, 0.05]} position={[0.42, 2.72, 0]} rotation={[0, 0, -0.85]} color='#c9a227' radius={0.02} />
+    {[0.45, 1.25].map((x) => (
       <mesh key={x} position={[x, 2.88, 0]}>
         <cylinderGeometry args={[0.006, 0.006, 0.22, 6]} />
         <meshStandardMaterial color='#1f2937' />
       </mesh>
     ))}
-    <group position={[0.75, 2.2, 0]}>
+    <group position={[0.85, 2.2, 0]}>
       <Soft args={[1.04, 1.24, 0.06]} color='#1c1917' radius={0.05} />
       {[1, -1].map((side) => (
         <TextPanel
@@ -396,7 +424,7 @@ const BladeSign = ({ position }) => (
       ))}
     </group>
     {/* PATIO SEATING plaque underneath */}
-    <group position={[0.75, 1.43, 0]}>
+    <group position={[0.85, 1.43, 0]}>
       {[0.5, 1].map((x) => (
         <mesh key={x} position={[x - 0.75, 0.15, 0]}>
           <cylinderGeometry args={[0.004, 0.004, 0.12, 6]} />
