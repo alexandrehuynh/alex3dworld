@@ -46,6 +46,7 @@ const Rock = ({ position, scale = 1 }) => (
 // into the pool, leaving expanding ripples. Water effects live outside the
 // physics body so they don't affect the collider.
 const STREAMS = 10;
+const DROPS_PER_STREAM = 4;
 const RIPPLES = STREAMS; // one splash where each stream lands
 const POOL_Y = 0.62;
 const NOZZLE_Y = 2.3;
@@ -59,15 +60,14 @@ const useFlowTexture = () =>
     c.width = 4;
     c.height = 64;
     const ctx = c.getContext("2d");
-    const g = ctx.createLinearGradient(0, 0, 0, 64);
-    g.addColorStop(0, "rgba(255,255,255,0.95)");
-    g.addColorStop(0.5, "rgba(186,230,253,0.55)");
-    g.addColorStop(1, "rgba(255,255,255,0.95)");
-    ctx.fillStyle = g;
+    // alternating bright and faint bands so the scrolling is easy to see
+    ctx.fillStyle = "rgba(147,197,253,0.35)";
     ctx.fillRect(0, 0, 4, 64);
+    ctx.fillStyle = "rgba(255,255,255,1)";
+    ctx.fillRect(0, 0, 4, 20);
     const tex = new THREE.CanvasTexture(c);
     tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-    tex.repeat.set(1, 3);
+    tex.repeat.set(5, 1);
     return tex;
   }, []);
 
@@ -77,7 +77,7 @@ const FountainWater = () => {
   const flow = useFlowTexture();
 
   // One arcing tube per stream: up out of the nozzle and down into the pool
-  const geometries = useMemo(
+  const curves = useMemo(
     () =>
       Array.from({ length: STREAMS }, (_, i) => {
         const a = (i / STREAMS) * Math.PI * 2;
@@ -87,13 +87,40 @@ const FountainWater = () => {
           const y = NOZZLE_Y + 4 * PEAK * t * (1 - t) - (NOZZLE_Y - POOL_Y) * t * t;
           return new THREE.Vector3(Math.cos(a) * r, y, Math.sin(a) * r);
         });
-        return new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 48, 0.035, 8, false);
+        return new THREE.CatmullRomCurve3(pts);
       }),
     []
   );
+  const geometries = useMemo(() => curves.map((c) => new THREE.TubeGeometry(c, 48, 0.035, 8, false)), [curves]);
+  const drops = useRef();
+  const splashes = useRef();
+  const temp = useMemo(() => new THREE.Object3D(), []);
+  const point = useMemo(() => new THREE.Vector3(), []);
 
   useFrame(({ clock }, delta) => {
-    flow.offset.x -= delta * 1.6;
+    flow.offset.x -= delta * 2.4;
+    const t0 = clock.elapsedTime;
+    // bright droplets riding each stream from nozzle to pool
+    if (drops.current) {
+      let n = 0;
+      curves.forEach((curve, s) => {
+        for (let k = 0; k < DROPS_PER_STREAM; k++) {
+          const t = (t0 * 0.9 + k / DROPS_PER_STREAM + s * 0.13) % 1;
+          curve.getPoint(t, point);
+          temp.position.copy(point);
+          temp.scale.setScalar(0.055);
+          temp.updateMatrix();
+          drops.current.setMatrixAt(n++, temp.matrix);
+        }
+      });
+      drops.current.instanceMatrix.needsUpdate = true;
+    }
+    // little splash domes that pop up where each stream lands
+    splashes.current?.children.forEach((dome, i) => {
+      const t = (t0 * 2.2 + i * 0.37) % 1;
+      dome.scale.set(0.12 + t * 0.08, 0.25 * Math.sin(t * Math.PI), 0.12 + t * 0.08);
+      dome.material.opacity = 0.9 * (1 - t);
+    });
     ripples.current?.children.forEach((ring, i) => {
       const t = (clock.elapsedTime * 0.6 + (i % 3) / 3) % 1;
       const a = (i / STREAMS) * Math.PI * 2;
@@ -127,6 +154,21 @@ const FountainWater = () => {
           />
         </mesh>
       ))}
+      <instancedMesh ref={drops} args={[null, null, STREAMS * DROPS_PER_STREAM]}>
+        <sphereGeometry args={[1, 10, 8]} />
+        <meshBasicMaterial color='#ffffff' toneMapped={false} />
+      </instancedMesh>
+      <group ref={splashes}>
+        {Array.from({ length: STREAMS }, (_, i) => {
+          const a = (i / STREAMS) * Math.PI * 2;
+          return (
+            <mesh key={i} position={[Math.cos(a) * REACH, POOL_Y, Math.sin(a) * REACH]}>
+              <sphereGeometry args={[1, 12, 8, 0, Math.PI * 2, 0, Math.PI / 2]} />
+              <meshBasicMaterial color='#ffffff' transparent opacity={0.8} depthWrite={false} />
+            </mesh>
+          );
+        })}
+      </group>
       <group ref={ripples}>
         {Array.from({ length: RIPPLES }, (_, i) => (
           <mesh key={i} rotation={[-Math.PI / 2, 0, 0]}>

@@ -142,17 +142,6 @@ export const rooms = {
         ],
       },
       {
-        id: "luxfit",
-        title: "LuxFit",
-        role: "Fitness Coach",
-        dates: "Mar 2023 – Dec 2023",
-        place: "San Francisco, CA",
-        points: [
-          "Ran 20–25 personalized sessions a month with 95% retention after the first package.",
-          "Grew my client base 30% through marketing and partnerships with other coaches.",
-        ],
-      },
-      {
         id: "offtheweights",
         title: "OFFTHEWEIGHTS",
         role: "Founder · my coaching brand",
@@ -163,8 +152,20 @@ export const rooms = {
         id: "skrappack",
         title: "Skrap Pack Marina",
         role: "Strength & Conditioning Coach",
+        dates: "Mar 2023 – Dec 2023",
         place: "San Francisco, CA",
         points: ["Strength and conditioning for jiu-jitsu athletes."],
+      },
+      {
+        id: "luxfit",
+        title: "LuxFit",
+        role: "Fitness Coach",
+        dates: "Mar 2023 – Dec 2023",
+        place: "San Francisco, CA",
+        points: [
+          "Ran 20–25 personalized sessions a month with 95% retention after the first package.",
+          "Grew my client base 30% through marketing and partnerships with other coaches.",
+        ],
       },
       {
         id: "equinox",

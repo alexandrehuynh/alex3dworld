@@ -280,15 +280,15 @@ const InternDesk = ({ position, rotation }) => (
       <Soft key={c} args={[0.08, 0.005, 0.08]} position={[0.1 + i * 0.1, 0.627, 0.17]} rotation={[0, i * 0.3, 0]} color={c} radius={0.002} />
     ))}
     <TextPanel
-      width={0.34}
-      height={0.08}
-      position={[0, 0.66, 0.255]}
+      width={0.46}
+      height={0.12}
+      position={[0, 0.66, 0.27]}
       rotation={[-0.3, 0, 0]}
       draw={(ctx, w, h) => {
-        ctx.fillStyle = "#111827";
+        ctx.fillStyle = "#ffffff";
         ctx.fillRect(0, 0, w, h);
-        ctx.fillStyle = "#fde68a";
-        ctx.font = `700 ${h * 0.6}px Poppins, sans-serif`;
+        ctx.fillStyle = "#0f172a";
+        ctx.font = `800 ${h * 0.62}px Poppins, sans-serif`;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText("INTERN", w / 2, h / 2);

@@ -120,6 +120,17 @@ const Home = () => {
     else if (target.kind === "station") setCard({ kind: "station", id: target.id });
   }, [target, card, fading, travel, inside]);
 
+  // Don't leave HUD buttons focused after a click, so Enter/Space keep driving
+  // the world instead of re-pressing the last button
+  useEffect(() => {
+    const blur = () => {
+      const el = document.activeElement;
+      if (el && (el.tagName === "BUTTON" || el.tagName === "A")) el.blur();
+    };
+    window.addEventListener("click", blur);
+    return () => window.removeEventListener("click", blur);
+  }, []);
+
   // The AH logo walks you back out to the plaza
   useEffect(() => {
     const goHome = () => {
@@ -133,7 +144,11 @@ const Home = () => {
   // E / Enter acts on whatever you're standing at
   useEffect(() => {
     const onKey = (e) => {
-      if (e.key === "e" || e.key === "E" || e.key === "Enter") activate();
+      if (e.key !== "e" && e.key !== "E" && e.key !== "Enter") return;
+      // a focused HUD button (Exit, AH, Look around...) would otherwise also
+      // "click" on Enter and send you somewhere unexpected
+      e.preventDefault();
+      activate();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
