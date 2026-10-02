@@ -12,6 +12,7 @@ import skyHdr from "../assets/sky/kloofendal_partly_cloudy_1k.hdr";
 import CharacterPicker from "../components/CharacterPicker";
 import { characters, loadCharacterId, saveCharacterId } from "../constants/characters";
 import { Loader, RoomPanel } from "../components";
+import { GO_HOME_EVENT } from "../components/NavBar";
 import { soundoff, soundon } from "../assets/icons";
 import StationCard from "../components/StationCard";
 import { BUILDING_RING, buildings, rooms } from "../constants/world";
@@ -117,6 +118,16 @@ const Home = () => {
     else if (target.kind === "station") setCard({ kind: "station", id: target.id });
   }, [target, card, fading, travel, inside]);
 
+  // The AH logo walks you back out to the plaza
+  useEffect(() => {
+    const goHome = () => {
+      if (inside) travel("island", doorSpawn(inside));
+      else setCard(null);
+    };
+    window.addEventListener(GO_HOME_EVENT, goHome);
+    return () => window.removeEventListener(GO_HOME_EVENT, goHome);
+  }, [inside, travel]);
+
   // E / Enter acts on whatever you're standing at
   useEffect(() => {
     const onKey = (e) => {
@@ -163,7 +174,7 @@ const Home = () => {
       )}
 
       {showIntro && !picking && (
-        <div className='absolute top-24 left-0 right-0 z-10 flex justify-center px-4 pointer-events-none'>
+        <div className='absolute top-20 left-0 right-0 z-10 flex justify-center px-4 pointer-events-none'>
           <div className='neo-brutalism-blue py-4 px-6 text-white text-center sm:text-lg max-w-md pointer-events-auto'>
             Hi, I'm <span className='font-semibold'>Alex Huynh</span> 👋
             <br />
@@ -279,27 +290,27 @@ const Home = () => {
       )}
 
       {inside && !picking && (
-        <div className='absolute top-24 left-4 z-20 flex flex-wrap items-center gap-2'>
-          <span className='rounded-full bg-white/90 px-4 py-1.5 font-poppins text-sm font-semibold shadow'>
+        <div className='absolute top-20 left-4 z-20 flex flex-wrap items-center gap-2'>
+          <span className='rounded-full bg-white/85 px-4 py-1.5 font-poppins text-sm font-semibold shadow backdrop-blur'>
             {inside.emoji} {inside.name}
           </span>
           <button
             onClick={() => setCard({ kind: "overview" })}
-            className='rounded-full bg-white/80 px-3 py-1.5 text-sm font-medium shadow hover:bg-white'
+            className='rounded-full bg-white/85 px-3 py-1.5 text-sm font-medium shadow backdrop-blur hover:bg-white'
           >
             Overview
           </button>
           <button
             onClick={() => setLookAround((v) => !v)}
             className={`rounded-full px-3 py-1.5 text-sm font-medium shadow ${
-              lookAround ? "bg-blue-600 text-white" : "bg-white/80 hover:bg-white"
+              lookAround ? "bg-blue-600 text-white" : "bg-white/85 backdrop-blur hover:bg-white"
             }`}
           >
             {lookAround ? "Done looking" : "🔍 Look around"}
           </button>
           <button
             onClick={() => travel("island", doorSpawn(inside))}
-            className='rounded-full bg-white/80 px-3 py-1.5 text-sm font-medium shadow hover:bg-white'
+            className='rounded-full bg-white/85 px-3 py-1.5 text-sm font-medium shadow backdrop-blur hover:bg-white'
           >
             Exit ↩
           </button>
@@ -328,7 +339,7 @@ const Home = () => {
 
       <Link
         to='/about'
-        className='absolute top-24 right-4 z-20 hidden sm:block rounded-full bg-white/80 px-4 py-1.5 text-sm font-medium shadow hover:bg-white'
+        className='absolute top-20 right-4 z-20 hidden sm:block rounded-full bg-white/85 px-4 py-1.5 text-sm font-medium shadow backdrop-blur hover:bg-white'
       >
         Skip to résumé →
       </Link>
@@ -336,8 +347,8 @@ const Home = () => {
       {!inside && !picking && !card && (
         <button
           onClick={() => setLookAround((v) => !v)}
-          className={`absolute top-24 left-4 z-20 rounded-full px-3 py-1.5 text-sm font-medium shadow ${
-            lookAround ? "bg-blue-600 text-white" : "bg-white/80 hover:bg-white"
+          className={`absolute top-20 left-4 z-20 rounded-full px-3 py-1.5 text-sm font-medium shadow ${
+            lookAround ? "bg-blue-600 text-white" : "bg-white/85 backdrop-blur hover:bg-white"
           }`}
         >
           {lookAround ? "Done looking" : "🔍 Look around"}
