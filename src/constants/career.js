@@ -60,7 +60,13 @@ export const tracks = [
     },
     extra: {
       title: "Stack I've run",
-      chips: ["Salesforce", "HubSpot", "LinkedIn Sales Navigator", "Clay", "Apollo", "Ocean.io", "Lusha", "Neuron", "Sumble", "Instantly", "HeyReach", "Nooks", "Gong", "Outlook", "n8n", "Claude", "Perplexity"],
+      // grouped in the order an outbound motion runs, most important first
+      groups: [
+        { label: "CRM & inbox", chips: ["Salesforce", "HubSpot", "Outlook"] },
+        { label: "Prospecting & data", chips: ["LinkedIn Sales Navigator", "Clay", "Apollo", "Lusha", "Ocean.io", "Sumble", "Neuron"] },
+        { label: "Sequencing & calling", chips: ["Instantly", "HeyReach", "Nooks", "Gong"] },
+        { label: "AI & automation", chips: ["n8n", "Claude", "Perplexity"] },
+      ],
     },
   },
   {
@@ -151,20 +157,20 @@ export const toolkit = [
     title: "Sales stack",
     cols: 7,
     tools: [
-      { name: "Clay", icon: "clay" }, // clay.svg crops the wordmark to just the arch
-      { name: "Apollo", icon: "apollo" },
       { name: "Salesforce", icon: "salesforce" },
       { name: "HubSpot", icon: "hubspot" },
+      { name: "Outlook", icon: "outlook" },
+      { name: "Sales Navigator", icon: "linkedin" },
+      { name: "Clay", icon: "clay" }, // clay.svg crops the wordmark to just the arch
+      { name: "Apollo", icon: "apollo" },
+      { name: "Lusha", icon: "lusha" },
+      { name: "Ocean.io", icon: "ocean" },
+      { name: "Sumble", icon: "sumble" },
+      { name: "Neuron", icon: "neuron" },
       { name: "Instantly", icon: "instantly" },
       { name: "HeyReach", icon: "heyreach" },
       { name: "Nooks", icon: "nooks" },
       { name: "Gong", icon: "gong" },
-      { name: "Sumble", icon: "sumble" },
-      { name: "Ocean.io", icon: "ocean" },
-      { name: "Lusha", icon: "lusha" },
-      { name: "Neuron", icon: "neuron" },
-      { name: "Sales Navigator", icon: "linkedin" },
-      { name: "Outlook", icon: "outlook" },
     ],
   },
   {

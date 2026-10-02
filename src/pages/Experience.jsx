@@ -92,12 +92,19 @@ const Projects = () => (
 const Extra = ({ extra, accent }) => (
   <div className='mt-14'>
     <h2 className='subhead-text'>{extra.title}</h2>
-    {extra.chips && (
-      <div className='mt-6 flex flex-wrap gap-2'>
-        {extra.chips.map((c) => (
-          <span key={c} className='rounded-full border border-slate-200 bg-white px-4 py-1.5 text-sm font-medium text-slate-700'>
-            {c}
-          </span>
+    {extra.groups && (
+      <div className='mt-6 grid gap-5 sm:grid-cols-2'>
+        {extra.groups.map((g) => (
+          <div key={g.label}>
+            <p className='text-xs font-semibold uppercase tracking-wide text-slate-400'>{g.label}</p>
+            <div className='mt-2 flex flex-wrap gap-2'>
+              {g.chips.map((c) => (
+                <span key={c} className='rounded-full border border-slate-200 bg-white px-4 py-1.5 text-sm font-medium text-slate-700'>
+                  {c}
+                </span>
+              ))}
+            </div>
+          </div>
         ))}
       </div>
     )}
