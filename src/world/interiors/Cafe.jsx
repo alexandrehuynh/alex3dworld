@@ -3,7 +3,8 @@ import { PROPS } from "../props";
 import { wrapText } from "../textTexture";
 import { rooms } from "../../constants/world";
 import { LogoDecal, Plant, Puffs, Soft, TextPanel } from "./shared";
-import { flyerArt, kElements, magicFlute, presidio } from "./brands";
+import { flyerArt, magicFlute, presidio } from "./brands";
+import kElementsSign from "../../assets/logos/kelements.webp";
 
 const Glass = ({ position, liquid, height = 0.22, stem = true }) => (
   <group position={position}>
@@ -288,8 +289,8 @@ const KbbqTable = ({ position }) => (
       </group>
     ))}
     {/* storefront fascia + purple accent light like the real place */}
-    <Soft args={[2.9, 0.95, 0.1]} position={[0, 1.95, -1.45]} color='#2b2622' radius={0.04} />
-    <TextPanel width={2.8} height={0.85} position={[0, 1.95, -1.39]} draw={kElements} />
+    <Soft args={[2.95, 1.15, 0.1]} position={[0, 1.95, -1.45]} color='#2b2622' radius={0.04} />
+    <LogoDecal url={kElementsSign} width={2.85} position={[0, 1.95, -1.39]} />
     <Soft args={[2.9, 0.04, 0.04]} position={[0, 1.4, -1.42]} color='#a855f7' radius={0.01} />
     <mesh position={[0, 1.4, -1.38]}>
       <boxGeometry args={[2.8, 0.03, 0.01]} />
