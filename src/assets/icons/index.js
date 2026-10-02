@@ -30,6 +30,15 @@ import contact from './contact.svg'
 import soundon from './soundon.png'
 import soundoff from './soundoff.png'
 import trainersmemory from './trainersmemory.svg'
+import python from './python.svg'
+import flask from './flask.svg'
+import postgresql from './postgresql.svg'
+import firebase from './firebase.svg'
+import tensorflow from './tensorflow.svg'
+import threejs from './threejs.svg'
+import googlecloud from './googlecloud.svg'
+import healthbridge from './healthbridge.svg'
+import healthchat from './healthchat.svg'
 export {
     css,
     express,
@@ -62,5 +71,14 @@ export {
     pokemon,
     trainer,
     handstand,
-    trainersmemory
+    trainersmemory,
+    python,
+    flask,
+    postgresql,
+    firebase,
+    tensorflow,
+    threejs,
+    googlecloud,
+    healthbridge,
+    healthchat
 }

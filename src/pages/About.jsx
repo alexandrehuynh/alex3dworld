@@ -22,8 +22,11 @@ const About = () => {
 
       <div className='mt-5 flex flex-col gap-3 text-slate-500'>
         <p>
-          Software Engineer based in California, specializing in software
-          development through hands-on learning and building applications.
+          Software engineer based in California, building AI-powered fitness
+          and health apps. Before I wrote product code, I automated test suites
+          for industrial printers at Kateeva and coached athletes from youth to
+          pro levels, so I care about software that's reliable and actually
+          helps people.
         </p>
       </div>
 

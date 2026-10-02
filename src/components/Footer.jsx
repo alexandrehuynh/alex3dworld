@@ -9,12 +9,19 @@ const Footer = () => {
 
       <div className='footer-container'>
         <p>
-          © 2024 <strong>Alex Huynh</strong>. All rights reserved.
+          © {new Date().getFullYear()} <strong>Alex Huynh</strong>. All rights reserved.
         </p>
 
         <div className='flex gap-3 justify-center items-center'>
           {socialLinks.map((link) => (
-            <Link key={link.name} to={link.link} target='_blank'>
+            <Link
+              key={link.name}
+              to={link.link}
+              {...(link.link.startsWith("http") && {
+                target: "_blank",
+                rel: "noopener noreferrer",
+              })}
+            >
               <img
                 src={link.iconUrl}
                 alt={link.name}
