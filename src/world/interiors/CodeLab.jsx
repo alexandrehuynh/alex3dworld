@@ -3,8 +3,10 @@ import { useFrame } from "@react-three/fiber";
 
 import Prop from "../Prop";
 import { PROPS } from "../props";
-import { Plant, Soft, TextPanel } from "./shared";
-import { coLab, codingTemple, gainSpan, kateeva } from "./brands";
+import { LogoDecal, Plant, Soft, TextPanel } from "./shared";
+import codingTempleLogo from "../../assets/logos/codingtemple.png";
+import coLabLogo from "../../assets/logos/colab.png";
+import { gainSpan, kateeva } from "./brands";
 
 /* Kateeva: an OLED inkjet printer laying RGB pixels onto a glass panel */
 const COLS = 12;
@@ -120,7 +122,7 @@ const Bootcamp = ({ position }) => (
     <TextPanel
       width={3.6}
       height={0.7}
-      position={[0, 2.45, -0.9]}
+      position={[0, 2.75, -0.9]}
       draw={(ctx, w, h) => {
         ctx.fillStyle = "#0369a1";
         ctx.beginPath();
@@ -136,8 +138,16 @@ const Bootcamp = ({ position }) => (
     <StudentDesk position={[-1.3, 0, 0]} accent='#f472b6' />
     <StudentDesk position={[1.3, 0, 0]} accent='#34d399' />
     {/* each bootcamp's logo above its desk */}
-    <TextPanel width={1.7} height={0.62} position={[-1.3, 1.75, -0.9]} draw={codingTemple} />
-    <TextPanel width={1.7} height={0.62} position={[1.3, 1.75, -0.9]} draw={coLab} />
+    {/* matching white panels so both logos read the same size, with a gap under the banner */}
+    {[
+      [-1.3, codingTempleLogo, 1.3],
+      [1.3, coLabLogo, 0.82],
+    ].map(([x, url, w]) => (
+      <group key={x} position={[x, 1.75, -0.9]}>
+        <Soft args={[1.55, 0.95, 0.05]} color='#ffffff' radius={0.05} />
+        <LogoDecal url={url} width={w} position={[0, 0, 0.03]} />
+      </group>
+    ))}
   </group>
 );
 
@@ -246,7 +256,7 @@ const InternDesk = ({ position, rotation }) => (
 const DevStudioDecor = () => (
   <>
     <OledPrinter position={[-4.6, 0, -3.3]} />
-    <TextPanel width={3} height={0.55} position={[-4.6, 2.3, -5.48]} draw={kateeva} />
+    <TextPanel width={4.4} height={0.8} position={[-4.6, 2.35, -5.48]} draw={kateeva} />
     <TextPanel width={1.9} height={0.95} position={[-7.97, 1.6, 2.7]} rotation={[0, Math.PI / 2, 0]} draw={gainSpan} />
     <Bootcamp position={[3.6, 0, -3.6]} />
     <BigScreen position={[7.75, 0, 1.6]} rotation={[0, -Math.PI / 2, 0]} />
