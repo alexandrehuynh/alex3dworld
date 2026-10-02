@@ -145,6 +145,8 @@ const Home = () => {
   useEffect(() => {
     const onKey = (e) => {
       if (e.key !== "e" && e.key !== "E" && e.key !== "Enter") return;
+      // an open card handles its own keys (Enter may be following a link in it)
+      if (card) return;
       // a focused HUD button (Exit, AH, Look around...) would otherwise also
       // "click" on Enter and send you somewhere unexpected
       e.preventDefault();
@@ -152,7 +154,7 @@ const Home = () => {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [activate]);
+  }, [activate, card]);
 
   const prompt =
     target?.kind === "door"

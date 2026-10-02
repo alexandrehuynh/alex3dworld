@@ -1,15 +1,33 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 
 import { projects } from "../constants";
 
 // Card for a single job station inside a building
 const StationCard = ({ building, section, onClose, onOverview }) => {
+  const cardRef = useRef();
+
   useEffect(() => {
-    // any key closes the card (walking keys too, so you can just keep moving)
+    const WALK = ["w", "a", "s", "d"];
+    const ARROWS = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
     const onKey = (e) => {
-      if (e.repeat || ["Shift", "Control", "Alt", "Meta", "Tab"].includes(e.key)) return;
-      onClose();
+      // leave copy/paste and other shortcuts alone
+      if (e.repeat || e.metaKey || e.ctrlKey || e.altKey) return;
+      const card = cardRef.current;
+      const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+
+      if (key === "Escape" || key === "e" || WALK.includes(key)) return onClose();
+      if (key === "Enter") {
+        // a focused link or button inside the card should just work
+        const focused = document.activeElement;
+        if (card?.contains(focused) && (focused.tagName === "A" || focused.tagName === "BUTTON")) return;
+        return onClose();
+      }
+      if (ARROWS.includes(key)) {
+        // arrows scroll a long card; otherwise they close it and start walking
+        if (card && card.scrollHeight > card.clientHeight + 4) return;
+        return onClose();
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -20,6 +38,7 @@ const StationCard = ({ building, section, onClose, onOverview }) => {
   return (
     <div className='absolute inset-x-0 bottom-6 z-30 flex justify-center px-4'>
       <div
+        ref={cardRef}
         role='dialog'
         aria-label={section.title}
         className='w-full max-w-lg max-h-[70vh] overflow-y-auto rounded-2xl bg-white/95 p-5 shadow-2xl backdrop-blur'
@@ -42,7 +61,7 @@ const StationCard = ({ building, section, onClose, onOverview }) => {
             onClick={onClose}
             className='shrink-0 rounded-full bg-slate-100 px-3 py-1 text-sm font-medium hover:bg-slate-200'
           >
-            ✕
+            Esc ✕
           </button>
         </div>
         {section.points && (
