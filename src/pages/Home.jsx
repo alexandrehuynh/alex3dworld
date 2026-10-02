@@ -37,7 +37,6 @@ const KEYBOARD_MAP = [
   { name: "leftward", keys: ["ArrowLeft", "KeyA"] },
   { name: "rightward", keys: ["ArrowRight", "KeyD"] },
   { name: "jump", keys: ["Space"] },
-  { name: "run", keys: ["Shift"] },
 ];
 
 const isTouch = () =>
@@ -49,6 +48,8 @@ const Home = () => {
   const [isPlayingMusic, setIsPlayingMusic] = useState(false);
   const [showIntro, setShowIntro] = useState(true);
   const touch = useMemo(isTouch, []);
+  // phones start running (walking feels slow on a joystick); desktop starts walking
+  const [runMode, setRunMode] = useState(touch);
   const [characterId, setCharacterId] = useState(
     () => characters.find((c) => c.id === loadCharacterId())?.id ?? null
   );
@@ -131,6 +132,15 @@ const Home = () => {
     return () => window.removeEventListener("click", blur);
   }, []);
 
+  // Shift flips between walking and running
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "Shift" && !e.repeat) setRunMode((r) => !r);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
   // The AH logo walks you back out to the plaza
   useEffect(() => {
     const goHome = () => {
@@ -200,7 +210,7 @@ const Home = () => {
             <span className='text-sm sm:text-base opacity-90'>
               {touch
                 ? "Use the joystick to walk around. Each building is a chapter of my career."
-                : "Walk with WASD or the arrow keys (Shift to run). Each building is a chapter of my career."}
+                : "Walk with WASD or the arrow keys (Shift to run), or click where you want to go. Each building is a chapter of my career."}
             </span>
           </div>
         </div>
@@ -265,6 +275,7 @@ const Home = () => {
                 </>
               )}
               <Player
+                runMode={runMode}
                 characterUrl={activeCharacter.url}
                 frozen={!!card || picking || fading || lookAround}
                 pose={picking ? "wave" : undefined}
@@ -383,6 +394,18 @@ const Home = () => {
           className='absolute bottom-3 left-14 z-20 rounded-full bg-white/85 px-3 py-1.5 text-sm font-medium shadow hover:bg-white'
         >
           Change character
+        </button>
+      )}
+
+      {/* run / walk mode: bottom right, clear of the joystick and character button */}
+      {!picking && !card && (
+        <button
+          onClick={() => setRunMode((r) => !r)}
+          className='absolute bottom-3 right-3 z-20 flex items-center gap-2 rounded-full bg-white/85 px-3 py-1.5 text-sm font-medium shadow backdrop-blur hover:bg-white'
+          aria-label={runMode ? "Switch to walking" : "Switch to running"}
+        >
+          <span>{runMode ? "🏃 Running" : "🚶 Walking"}</span>
+          {!touch && <kbd className='rounded bg-slate-100 px-1.5 text-xs text-slate-500'>⇧ Shift</kbd>}
         </button>
       )}
 

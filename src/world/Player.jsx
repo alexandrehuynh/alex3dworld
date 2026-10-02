@@ -58,7 +58,7 @@ const steerToward = (camera, from, nav, delta) => {
 // Feet sit at the bottom of the capsule plus Ecctrl's float height
 const FEET_Y = -(0.3 + 0.35 + 0.2);
 
-const Player = ({ characterUrl, frozen, pose, closeUp, indoor, atStation, freeCam, focusRef, spawn = SPAWN }) => {
+const Player = ({ runMode = false, characterUrl, frozen, pose, closeUp, indoor, atStation, freeCam, focusRef, spawn = SPAWN }) => {
   const ecctrl = useRef();
   const [, getKeys] = useKeyboardControls();
   const [animation, setAnimation] = useState("idle");
@@ -109,13 +109,13 @@ const Player = ({ characterUrl, frozen, pose, closeUp, indoor, atStation, freeCa
       frozen
         ? STILL
         : auto
-          ? { ...STILL, joystick: auto }
+          ? { ...STILL, run: runMode, joystick: auto }
           : {
               forward: keys.forward,
               backward: keys.backward,
               leftward: keys.leftward,
               rightward: keys.rightward,
-              run: keys.run,
+              run: runMode,
               jump: keys.jump,
               joystick: joystick?.active ? { x: joystick.x, y: joystick.y } : { x: 0, y: 0 },
             }
@@ -170,6 +170,8 @@ const Player = ({ characterUrl, frozen, pose, closeUp, indoor, atStation, freeCa
       capsuleRadius={0.35}
       maxWalkVel={3.5}
       maxRunVel={7}
+      // run/walk is a mode owned by Home (Shift or the HUD pill toggles it)
+      enableToggleRun={false}
     >
       <CharacterModel url={characterUrl} animation={animation} position={[0, FEET_Y, 0]} />
     </Ecctrl>
