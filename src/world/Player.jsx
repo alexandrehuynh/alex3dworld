@@ -21,7 +21,7 @@ const LOOK_OFFSET_PICK = new THREE.Vector3(0, 0.2, 0);
 // Feet sit at the bottom of the capsule plus Ecctrl's float height
 const FEET_Y = -(0.3 + 0.35 + 0.2);
 
-const Player = ({ characterUrl, frozen, pose, closeUp, indoor, spawn = SPAWN }) => {
+const Player = ({ characterUrl, frozen, pose, closeUp, indoor, freeCam, focusRef, spawn = SPAWN }) => {
   const ecctrl = useRef();
   const [, getKeys] = useKeyboardControls();
   const [animation, setAnimation] = useState("idle");
@@ -64,6 +64,10 @@ const Player = ({ characterUrl, frozen, pose, closeUp, indoor, spawn = SPAWN }) 
       animationRef.current = next;
       setAnimation(next);
     }
+
+    if (focusRef) focusRef.current.copy(player.currPos);
+    // Look-around mode hands the camera to OrbitControls
+    if (freeCam) return;
 
     // Smooth follow camera at a fixed angle
     const t = 1 - Math.pow(0.001, delta);

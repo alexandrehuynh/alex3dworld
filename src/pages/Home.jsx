@@ -1,5 +1,6 @@
 import { Canvas } from "@react-three/fiber";
-import { Environment, KeyboardControls, Lightformer } from "@react-three/drei";
+import { Environment, KeyboardControls, Lightformer, OrbitControls } from "@react-three/drei";
+import * as THREE from "three";
 import { Bloom, EffectComposer, N8AO, SMAA, ToneMapping, Vignette } from "@react-three/postprocessing";
 import { ToneMappingMode } from "postprocessing";
 import { Physics } from "@react-three/rapier";
@@ -66,6 +67,9 @@ const Home = () => {
   const [target, setTarget] = useState(null);
   // Open UI: { kind: "station", id: sectionId } or { kind: "overview" }
   const [card, setCard] = useState(null);
+  // Free camera for inspecting a room up close
+  const [lookAround, setLookAround] = useState(false);
+  const focusRef = useRef(new THREE.Vector3());
 
   const inside = buildings.find((b) => b.id === location);
   const doorBuilding = target?.kind === "door" ? buildings.find((b) => b.id === target.id) : null;
@@ -98,6 +102,7 @@ const Home = () => {
     setCard(null);
     setTimeout(() => {
       setTarget(null);
+      setLookAround(false);
       setLocation(nextLocation);
       setSpawn(nextSpawn);
       setTimeout(() => setFading(false), 150);
@@ -231,13 +236,26 @@ const Home = () => {
               )}
               <Player
                 characterUrl={activeCharacter.url}
-                frozen={!!card || picking || fading}
+                frozen={!!card || picking || fading || lookAround}
                 pose={picking ? "wave" : undefined}
                 closeUp={picking}
                 indoor={!!inside}
                 spawn={spawn}
+                freeCam={lookAround}
+                focusRef={focusRef}
               />
             </Physics>
+
+            {lookAround && (
+              <OrbitControls
+                makeDefault
+                target={focusRef.current.toArray()}
+                enablePan
+                minDistance={2}
+                maxDistance={inside ? 22 : 45}
+                maxPolarAngle={Math.PI / 2.05}
+              />
+            )}
 
             {/* Soft contact shading + gentle glow; skipped on phones to keep it smooth */}
             {!touch && (
@@ -276,6 +294,14 @@ const Home = () => {
             Overview
           </button>
           <button
+            onClick={() => setLookAround((v) => !v)}
+            className={`rounded-full px-3 py-1.5 text-sm font-medium shadow ${
+              lookAround ? "bg-blue-600 text-white" : "bg-white/80 hover:bg-white"
+            }`}
+          >
+            {lookAround ? "Done looking" : "🔍 Look around"}
+          </button>
+          <button
             onClick={() => travel("island", doorSpawn(inside))}
             className='rounded-full bg-white/80 px-3 py-1.5 text-sm font-medium shadow hover:bg-white'
           >
@@ -310,6 +336,17 @@ const Home = () => {
       >
         Skip to résumé →
       </Link>
+
+      {!inside && !picking && !card && (
+        <button
+          onClick={() => setLookAround((v) => !v)}
+          className={`absolute top-24 left-4 z-20 rounded-full px-3 py-1.5 text-sm font-medium shadow ${
+            lookAround ? "bg-blue-600 text-white" : "bg-white/80 hover:bg-white"
+          }`}
+        >
+          {lookAround ? "Done looking" : "🔍 Look around"}
+        </button>
+      )}
 
       {!picking && !card && (
         <button

@@ -180,7 +180,7 @@ export const rooms = {
         dates: "Oct 2025 – Dec 2025",
         place: "SF Bay Area",
         points: [
-          "Sales tax compliance software. Booked directly with CFOs, VPs of Finance, and controllers.",
+          "Sales tax compliance for everyone from enterprises to mom-and-pop shops. Booked directly with CFOs, VPs of Finance, and controllers.",
           "Sourced 31 opportunities and $178.5K in pipeline in three months, at 280%, 120%, and 200% of quota.",
           "Top SDR in December and first on the team to hit quota.",
           "Built the research and enrichment pipeline in Clay, n8n, Claude, and Perplexity.",
@@ -193,7 +193,7 @@ export const rooms = {
         dates: "Jan 2026 – Present",
         place: "SF Bay Area",
         points: [
-          "Mobile software factory that helps developers ship mobile apps. First GTM hire.",
+          "A QA platform for mobile apps: AI agents run tests on cloud devices and feed results straight back into the dev loop. First GTM hire.",
           "Booked 52 meetings from cold outbound and sourced 2 closed-won customers, one enterprise.",
           "Built the outbound motion from zero and wrote the playbook, persona matrix, and product claims reference.",
         ],
@@ -201,8 +201,9 @@ export const rooms = {
       {
         id: "daloopa",
         title: "Daloopa",
-        role: "Current role",
-        points: ["Financial data for analysis: a data layer for AI.", "More details coming soon."],
+        role: "Just joined",
+        dates: "Oct 2026 – Present",
+        points: ["The data layer for financial models.", "More details coming soon."],
       },
     ],
   },

@@ -110,8 +110,8 @@ const HalfCourt = ({ position }) => (
 );
 
 /* LuxFit: outdoor lifting platform with a squat rack, on grass */
-const SquatRack = ({ position }) => (
-  <group position={position}>
+const SquatRack = ({ position, rotation }) => (
+  <group position={position} rotation={rotation}>
     {[
       [-0.75, -0.5],
       [0.75, -0.5],
@@ -148,59 +148,66 @@ const Barbell = ({ position }) => (
   </group>
 );
 
+// LuxFit was outdoors: grass strip along the right wall, rack backed against it
 const OutdoorPlatform = ({ position }) => (
   <group position={position}>
-    <mesh position={[0, 0.012, 1]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-      <planeGeometry args={[3.6, 7]} />
+    <mesh position={[0, 0.012, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+      <planeGeometry args={[3.4, 6.2]} />
       <meshStandardMaterial color='#4ade80' roughness={1} />
     </mesh>
-    <Soft args={[2.6, 0.08, 2.4]} position={[0, 0.04, 1.4]} color='#1f2937' radius={0.03} />
-    <Soft args={[1.2, 0.09, 2.4]} position={[0, 0.045, 1.4]} color='#c49a6c' radius={0.03} />
-    <SquatRack position={[0, 0, -0.4]} />
-    <Barbell position={[0, 0.42, 1.6]} />
+    {/* lifting platform in front of the rack */}
+    <group position={[-0.35, 0, -0.4]} rotation={[0, Math.PI / 2, 0]}>
+      <Soft args={[2.6, 0.08, 2.4]} position={[0, 0.04, 0]} color='#1f2937' radius={0.03} />
+      <Soft args={[1.2, 0.09, 2.4]} position={[0, 0.045, 0]} color='#c49a6c' radius={0.03} />
+    </group>
+    {/* rack against the wall, facing into the room */}
+    <SquatRack position={[1.05, 0, -0.4]} rotation={[0, -Math.PI / 2, 0]} />
+    <group position={[-0.35, 0.42, -0.4]} rotation={[0, Math.PI / 2, 0]}>
+      <Barbell position={[0, 0, 0]} />
+    </group>
     {/* sun umbrella + plant: this one's outside */}
-    <group position={[1.3, 0, 3.6]}>
-      <mesh position={[0, 1.2, 0]}>
-        <cylinderGeometry args={[0.03, 0.03, 2.4, 8]} />
+    <group position={[1.1, 0, 2.3]}>
+      <mesh position={[0, 1.1, 0]}>
+        <cylinderGeometry args={[0.03, 0.03, 2.2, 8]} />
         <meshStandardMaterial color='#e5e7eb' />
       </mesh>
-      <mesh position={[0, 2.35, 0]} castShadow>
-        <coneGeometry args={[1, 0.45, 24, 1, true]} />
+      <mesh position={[0, 2.15, 0]} castShadow>
+        <coneGeometry args={[0.65, 0.3, 24, 1, true]} />
         <meshStandardMaterial color='#fbbf24' side={2} />
       </mesh>
     </group>
-    <Plant position={[-1.3, 0, 4]} />
+    <Plant position={[0.9, 0, 1.1]} />
   </group>
 );
 
-/* Bay Club: turf lane with a sled, plus a dumbbell rack */
+/* Bay Club: blue turf lane running across the room, with a sled */
 const TurfLane = ({ position }) => (
   <group position={position}>
     <mesh position={[0, 0.013, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-      <planeGeometry args={[3.4, 6]} />
-      <meshStandardMaterial color='#16a34a' roughness={1} />
+      <planeGeometry args={[5, 2.8]} />
+      <meshStandardMaterial color='#2563eb' roughness={1} />
     </mesh>
-    {[-1.5, 1.5].map((x) => (
-      <mesh key={x} position={[x, 0.017, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[0.07, 6]} />
-        <meshStandardMaterial color='#ffffff' />
-      </mesh>
-    ))}
-    {[-2, 0, 2].map((z) => (
+    {[-1.25, 1.25].map((z) => (
       <mesh key={z} position={[0, 0.017, z]} rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[3, 0.05]} />
+        <planeGeometry args={[5, 0.07]} />
         <meshStandardMaterial color='#ffffff' />
       </mesh>
     ))}
-    {/* push sled */}
-    <group position={[0, 0, -1.8]}>
+    {[-1.6, 0, 1.6].map((x) => (
+      <mesh key={x} position={[x, 0.017, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[0.05, 2.5]} />
+        <meshStandardMaterial color='#ffffff' />
+      </mesh>
+    ))}
+    {/* push sled at the start of the lane */}
+    <group position={[-1.9, 0, 0]} rotation={[0, -Math.PI / 2, 0]}>
       <Soft args={[0.9, 0.1, 1.1]} position={[0, 0.06, 0]} color='#1f2937' />
       {[-0.3, 0.3].map((x) => (
         <Soft key={x} args={[0.07, 1.1, 0.07]} position={[x, 0.6, 0.45]} rotation={[0.25, 0, 0]} color='#94a3b8' metalness={0.5} />
       ))}
       <mesh position={[0, 0.25, -0.1]} rotation={[0, 0, Math.PI / 2]}>
         <cylinderGeometry args={[0.36, 0.36, 0.12, 32]} />
-        <meshStandardMaterial color='#3b82f6' />
+        <meshStandardMaterial color='#f8fafc' />
       </mesh>
     </group>
   </group>
@@ -222,32 +229,54 @@ const DumbbellRack = ({ position, rotation }) => (
 /* Skrap Pack Marina: jiu-jitsu tatami */
 const Tatami = ({ position }) => (
   <group position={position}>
-    {Array.from({ length: 5 }, (_, i) =>
-      Array.from({ length: 5 }, (_, j) => (
-        <Soft
-          key={`${i}-${j}`}
-          args={[1.08, 0.08, 1.08]}
-          position={[(i - 2) * 1.1, 0.04, (j - 2) * 1.1]}
-          color={(i + j) % 2 ? "#1e3a8a" : "#1d4ed8"}
-          radius={0.03}
-          roughness={0.7}
-        />
-      ))
+    {Array.from({ length: 4 }, (_, i) =>
+      Array.from({ length: 4 }, (_, j) => {
+        const edge = i === 0 || j === 0 || i === 3 || j === 3;
+        return (
+          <Soft
+            key={`${i}-${j}`}
+            args={[1.08, 0.08, 1.08]}
+            position={[(i - 1.5) * 1.1, 0.04, (j - 1.5) * 1.1]}
+            color={edge ? "#b91c1c" : "#374151"}
+            radius={0.03}
+            roughness={0.7}
+          />
+        );
+      })
     )}
     {/* folded belts by the edge */}
     {["#ffffff", "#2563eb", "#7c3aed", "#78350f", "#111827"].map((c, i) => (
-      <Soft key={c} args={[0.5, 0.05, 0.12]} position={[-2.6 + i * 0.05, 0.11 + i * 0.05, 3.1]} color={c} radius={0.02} />
+      <Soft key={c} args={[0.5, 0.05, 0.12]} position={[-2.6 + i * 0.05, 0.03 + i * 0.05, 1.6]} color={c} radius={0.02} />
     ))}
   </group>
 );
 
-/* OFFTHEWEIGHTS: brand banner + heavy bag */
+/* OFFTHEWEIGHTS: brand banner, heavy bag, and parallel bars for dips/handstands */
+const ParallelBars = ({ position, rotation }) => (
+  <group position={position} rotation={rotation}>
+    {[-0.3, 0.3].map((z) => (
+      <group key={z}>
+        <mesh position={[0, 1.15, z]} rotation={[0, 0, Math.PI / 2]} castShadow>
+          <capsuleGeometry args={[0.04, 1.9, 6, 16]} />
+          <meshStandardMaterial color='#d6a873' roughness={0.4} />
+        </mesh>
+        {[-0.75, 0.75].map((x) => (
+          <group key={x}>
+            <Soft args={[0.08, 1.12, 0.08]} position={[x, 0.56, z]} color='#facc15' metalness={0.3} roughness={0.4} />
+            <Soft args={[0.4, 0.06, 0.3]} position={[x, 0.03, z]} color='#111827' />
+          </group>
+        ))}
+      </group>
+    ))}
+  </group>
+);
+
 const BrandCorner = ({ position }) => (
   <group position={position}>
     <TextPanel
       width={3}
       height={1}
-      position={[-1.15, 1.9, 0]}
+      position={[-0.75, 1.9, 0.4]}
       rotation={[0, Math.PI / 2, 0]}
       draw={(ctx, w, h) => {
         ctx.fillStyle = "#facc15";
@@ -259,31 +288,35 @@ const BrandCorner = ({ position }) => (
         ctx.fillText("OFFTHEWEIGHTS", w / 2, h / 2);
       }}
     />
-    <Soft args={[0.12, 2.6, 0.12]} position={[0.1, 1.3, -0.7]} color='#334155' />
-    <Soft args={[0.12, 0.12, 1.4]} position={[0.1, 2.6, 0]} color='#334155' />
-    <mesh position={[0.1, 2.35, 0.4]}>
-      <cylinderGeometry args={[0.015, 0.015, 0.5, 8]} />
-      <meshStandardMaterial color='#64748b' />
-    </mesh>
-    <mesh position={[0.1, 1.5, 0.4]} castShadow>
-      <capsuleGeometry args={[0.3, 0.75, 8, 24]} />
-      <meshStandardMaterial color='#111827' roughness={0.45} />
-    </mesh>
-    <mesh position={[0.1, 1.5, 0.4]}>
-      <cylinderGeometry args={[0.305, 0.305, 0.14, 32]} />
-      <meshStandardMaterial color='#facc15' roughness={0.5} />
-    </mesh>
+    {/* heavy bag on a frame */}
+    <group position={[0.2, 0, -0.9]}>
+      <Soft args={[0.12, 2.6, 0.12]} position={[0, 1.3, -0.6]} color='#334155' />
+      <Soft args={[0.12, 0.12, 1]} position={[0, 2.6, -0.15]} color='#334155' />
+      <mesh position={[0, 2.35, 0.2]}>
+        <cylinderGeometry args={[0.015, 0.015, 0.5, 8]} />
+        <meshStandardMaterial color='#64748b' />
+      </mesh>
+      <mesh position={[0, 1.5, 0.2]} castShadow>
+        <capsuleGeometry args={[0.3, 0.75, 8, 24]} />
+        <meshStandardMaterial color='#111827' roughness={0.45} />
+      </mesh>
+      <mesh position={[0, 1.5, 0.2]}>
+        <cylinderGeometry args={[0.305, 0.305, 0.14, 32]} />
+        <meshStandardMaterial color='#facc15' roughness={0.5} />
+      </mesh>
+    </group>
+    <ParallelBars position={[2.1, 0, 0.6]} />
   </group>
 );
 
 const GymDecor = () => (
   <>
     <Sauna position={[-7, 0, -5.6]} />
-    <HalfCourt position={[2, 0, -3.8]} />
-    <OutdoorPlatform position={[8.3, 0, 0.6]} />
-    <TurfLane position={[3.6, 0, 3.6]} />
+    <HalfCourt position={[1, 0, -3.8]} />
+    <OutdoorPlatform position={[8.4, 0, 1.4]} />
+    <TurfLane position={[3.2, 0, 4.6]} />
     <DumbbellRack position={[9.3, 0, -4.8]} rotation={[0, -Math.PI / 2, 0]} />
-    <Tatami position={[-6.8, 0, 3.4]} />
+    <Tatami position={[-6.6, 0, 4.4]} />
     <BrandCorner position={[-8.7, 0, -0.6]} />
   </>
 );
@@ -295,20 +328,20 @@ export default {
   wall: "#f8fafc",
   trim: "#1f2937",
   stations: {
-    equinox: [-7, -2.9],
-    murray: [2, -2.4],
-    luxfit: [8.3, 3.2],
-    bayclub: [3.6, 4.4],
-    skrappack: [-6.8, 3.4],
-    offtheweights: [-6.8, -0.4],
+    equinox: [-7, -3],
+    murray: [1, -2.2],
+    luxfit: [7.2, 1],
+    bayclub: [3.2, 4.6],
+    skrappack: [-6.6, 4.4],
+    offtheweights: [-5.6, 1.4],
   },
   // [x, z, halfWidth, halfDepth] boxes the player can't walk through
   blockers: [
     [-7, -5.8, 2.1, 1.5],
-    [8.3, 0.2, 0.9, 0.6],
+    [9.45, 1, 0.6, 0.9],
     [9.3, -4.8, 0.35, 1.3],
-    [-8.6, -0.6, 0.4, 0.8],
-    [3.6, 1.8, 0.5, 0.6],
+    [-8.5, -1.6, 0.4, 0.8],
+    [-6.6, 0, 1, 0.4],
   ],
   Decor: GymDecor,
 };

@@ -102,7 +102,7 @@ const DinerCounter = ({ position }) => (
     </group>
     <Prop url={PROPS.cafeCake} size={0.4} position={[1.1, 1.18, 0]} />
     <Prop url={PROPS.cafeMug} size={0.18} position={[1.8, 1.18, 0.2]} />
-    {/* neon sign */}
+    {/* neon sign for the whole cafe */}
     <TextPanel
       width={3.6}
       height={0.7}
@@ -116,10 +116,14 @@ const DinerCounter = ({ position }) => (
         ctx.shadowColor = "#f472b6";
         ctx.shadowBlur = h * 0.15;
         ctx.fillStyle = "#fbcfe8";
-        ctx.font = `700 ${h * 0.36}px Poppins, sans-serif`;
+        ctx.font = `700 ${h * 0.4}px Poppins, sans-serif`;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText("PRESIDIO SOCIAL CLUB", w / 2, h / 2);
+        ctx.fillText("THE CAFÉ", w / 2, h * 0.42);
+        ctx.shadowColor = "#38bdf8";
+        ctx.fillStyle = "#bae6fd";
+        ctx.font = `500 ${h * 0.17}px Poppins, sans-serif`;
+        ctx.fillText("OPEN · EVERY SHIFT COUNTS", w / 2, h * 0.78);
       }}
     />
     {/* checkerboard floor in front */}
