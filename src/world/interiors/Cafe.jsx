@@ -180,9 +180,6 @@ const PatioBackdrop = () => (
       </mesh>
     ))}
     <pointLight position={[0, 1.6, 0.8]} color='#fcd34d' intensity={2.5} distance={3} />
-    {/* hanging wood sign off the right post */}
-    <Soft args={[1.2, 0.05, 0.05]} position={[1.1, 2.45, 0.06]} color='#c9a227' radius={0.02} />
-    <TextPanel width={1} height={1.25} position={[1, 1.78, 0.09]} draw={magicFlute} />
   </group>
 );
 
@@ -367,17 +364,133 @@ const FlyerBoard = ({ position }) => {
   );
 };
 
+// Magic Flute blade sign: hangs from an arm off the left wall, perpendicular to
+// it, so it faces the entrance like the real one on the street (two-sided)
+const BladeSign = ({ position }) => (
+  <group position={position}>
+    <Soft args={[1.5, 0.06, 0.06]} position={[0.75, 3, 0]} color='#c9a227' radius={0.02} />
+    <Soft args={[0.08, 0.3, 0.08]} position={[0.04, 2.85, 0]} color='#c9a227' radius={0.02} />
+    {[0.35, 1.15].map((x) => (
+      <mesh key={x} position={[x, 2.88, 0]}>
+        <cylinderGeometry args={[0.006, 0.006, 0.22, 6]} />
+        <meshStandardMaterial color='#1f2937' />
+      </mesh>
+    ))}
+    <group position={[0.75, 2.2, 0]}>
+      <Soft args={[1.04, 1.24, 0.06]} color='#1c1917' radius={0.05} />
+      {[1, -1].map((side) => (
+        <TextPanel
+          key={side}
+          width={0.96}
+          height={1.16}
+          position={[0, 0, side * 0.035]}
+          rotation={[0, side > 0 ? 0 : Math.PI, 0]}
+          draw={magicFlute}
+        />
+      ))}
+    </group>
+    {/* PATIO SEATING plaque underneath */}
+    <group position={[0.75, 1.43, 0]}>
+      {[0.5, 1].map((x) => (
+        <mesh key={x} position={[x - 0.75, 0.15, 0]}>
+          <cylinderGeometry args={[0.004, 0.004, 0.12, 6]} />
+          <meshStandardMaterial color='#1f2937' />
+        </mesh>
+      ))}
+      {[1, -1].map((side) => (
+        <TextPanel
+          key={side}
+          width={0.9}
+          height={0.18}
+          position={[0, 0, side * 0.012]}
+          rotation={[0, side > 0 ? 0 : Math.PI, 0]}
+          draw={(ctx, w, h) => {
+            ctx.fillStyle = "#14271f";
+            ctx.fillRect(0, 0, w, h);
+            ctx.fillStyle = "#f8fafc";
+            ctx.font = `700 ${h * 0.6}px Poppins, sans-serif`;
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText("PATIO SEATING", w / 2, h / 2);
+          }}
+        />
+      ))}
+    </group>
+  </group>
+);
+
+// Brass menu stand at the patio entrance: the Magic Flute station marker
+const MenuStand = ({ position }) => (
+  <group position={position}>
+    <mesh position={[0, 0.02, 0]}>
+      <cylinderGeometry args={[0.18, 0.2, 0.04, 24]} />
+      <meshStandardMaterial color='#c9a227' metalness={0.7} roughness={0.3} />
+    </mesh>
+    <mesh position={[0, 0.55, 0]}>
+      <cylinderGeometry args={[0.018, 0.018, 1.05, 10]} />
+      <meshStandardMaterial color='#c9a227' metalness={0.7} roughness={0.3} />
+    </mesh>
+    <group position={[0, 1.12, 0]} rotation={[-0.6, 0, 0]}>
+      <Soft args={[0.44, 0.34, 0.03]} color='#1f2937' radius={0.01} />
+      <mesh position={[0, 0, 0.017]}>
+        <planeGeometry args={[0.36, 0.26]} />
+        <meshStandardMaterial color='#fdf6e3' />
+      </mesh>
+    </group>
+  </group>
+);
+
+// Host stand by the entrance: the "front of house" itself
+const HostStand = ({ position, rotation }) => (
+  <group position={position} rotation={rotation}>
+    <Soft args={[0.8, 1.05, 0.5]} position={[0, 0.53, 0]} color='#6b4226' radius={0.06} roughness={0.6} />
+    <Soft args={[0.9, 0.06, 0.6]} position={[0, 1.08, -0.02]} rotation={[-0.15, 0, 0]} color='#3b2416' radius={0.02} />
+    {/* stack of menus + small lamp */}
+    <Soft args={[0.28, 0.06, 0.38]} position={[-0.18, 1.14, 0]} rotation={[-0.15, 0.1, 0]} color='#7f1d1d' radius={0.01} />
+    <mesh position={[0.25, 1.25, -0.12]}>
+      <cylinderGeometry args={[0.015, 0.03, 0.26, 8]} />
+      <meshStandardMaterial color='#c9a227' metalness={0.7} roughness={0.3} />
+    </mesh>
+    <mesh position={[0.25, 1.42, -0.12]}>
+      <coneGeometry args={[0.1, 0.12, 20, 1, true]} />
+      <meshStandardMaterial color='#14532d' side={2} />
+    </mesh>
+    <pointLight position={[0.25, 1.35, -0.12]} color='#fde68a' intensity={1.2} distance={1.5} />
+    <TextPanel
+      width={0.62}
+      height={0.42}
+      position={[0, 0.7, 0.26]}
+      draw={(ctx, w, h) => {
+        ctx.fillStyle = "#1f2937";
+        ctx.fillRect(0, 0, w, h);
+        ctx.fillStyle = "#fef3c7";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.font = `italic 400 ${h * 0.2}px Georgia, serif`;
+        ctx.fillText("Please wait", w / 2, h * 0.36);
+        ctx.fillText("to be seated", w / 2, h * 0.64);
+      }}
+    />
+  </group>
+);
+
 const CafeDecor = () => (
   <>
-    <DinerCounter position={[1.1, 0, -4.2]} />
-    <BrunchTable position={[-5.1, 0, -3.7]} />
+    <DinerCounter position={[-1.2, 0, -4.2]} />
+    {/* patio turned so its fence and lights run along the left wall */}
+    <group position={[-5.9, 0, -0.6]} rotation={[0, Math.PI / 2, 0]}>
+      <BrunchTable position={[0, 0, 0]} />
+    </group>
+    <BladeSign position={[-8, 0, 1.75]} />
+    <MenuStand position={[-4.4, 0, 1.7]} />
+    <group position={[4.6, 0, -5.38]}>
+      <FlyerBoard position={[0, 0, 0]} />
+    </group>
     <group position={[6.2, 0, 1]} rotation={[0, -Math.PI / 2, 0]}>
       <KbbqTable position={[0, 0, 0]} />
     </group>
-    <group position={[-7.88, 0, 1.2]} rotation={[0, Math.PI / 2, 0]}>
-      <FlyerBoard position={[0, 0, 0]} />
-    </group>
-    <Plant url={PROPS.plantPothos} position={[7.2, 0, -4.6]} />
+    <HostStand position={[-2, 0, 3.7]} rotation={[0, 0.35, 0]} />
+    <Plant url={PROPS.plantPothos} position={[7.3, 0, -4.8]} />
     <Plant position={[-7.2, 0, 4.4]} />
   </>
 );
@@ -390,15 +503,18 @@ export default {
   wall: "#fff7ed",
   trim: "#92400e",
   stations: {
-    presidio: [0.8, -2.1],
-    magicflute: [-5.1, -1.6],
+    presidio: [-1.2, -2.1],
+    // the menu stand is the marker, so no floor ring
+    magicflute: { at: [-4.4, 1.7], area: [1.6, 1.6] },
     kelements: [4.3, 1],
-    board: [-6.3, 1.2],
+    board: [4.6, -3.8],
   },
   blockers: [
-    [1.1, -4.2, 3, 0.5],
-    [-5.1, -3.7, 1.6, 0.9],
+    [-1.2, -4.2, 3, 0.5],
+    [-6.1, -0.6, 1.2, 1.6],
+    [-4.4, 1.7, 0.15, 0.15],
     [6.5, 1, 1.2, 1],
+    [-2, 3.7, 0.45, 0.35],
   ],
   Decor: CafeDecor,
 };
