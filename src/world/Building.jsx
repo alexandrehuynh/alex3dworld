@@ -1,3 +1,5 @@
+import { useRef } from "react";
+import { useFrame } from "@react-three/fiber";
 import { RoundedBox } from "@react-three/drei";
 import { CuboidCollider, RigidBody } from "@react-three/rapier";
 
@@ -88,13 +90,14 @@ const Details = ({ style, w, h, d, b }) => {
     case "tower":
       return (
         <>
-          {/* rising bar chart + AI sparkle on the roof */}
-          {[0.9, 1.6, 2.4].map((bh, i) => (
-            <Box key={i} args={[0.7, bh, 0.7]} position={[-1 + i * 1, h + 0.3 + bh / 2, 0]} color={b.accent} />
+          {/* AI money: green rising bars, a spinning gold $ coin, AI sparkle */}
+          {[0.8, 1.4, 2.1].map((bh, i) => (
+            <Box key={i} args={[0.6, bh, 0.6]} position={[-1.5 + i * 0.75, h + 0.3 + bh / 2, -0.6]} color='#22c55e' />
           ))}
-          <mesh position={[1.4, h + 3.5, 0]} rotation={[0, Math.PI / 4, Math.PI / 4]}>
-            <octahedronGeometry args={[0.45, 0]} />
-            <meshStandardMaterial color='#facc15' emissive='#facc15' emissiveIntensity={0.8} />
+          <SpinningCoin position={[1, h + 1.9, 0.3]} />
+          <mesh position={[2, h + 3.3, 0.3]} rotation={[0, Math.PI / 4, Math.PI / 4]}>
+            <octahedronGeometry args={[0.35, 0]} />
+            <meshStandardMaterial color='#a78bfa' emissive='#8b5cf6' emissiveIntensity={0.9} />
           </mesh>
           {[1.4, 2.9].map((y) => (
             <Windows key={y} width={w} height={0.9} y={y + 0.6} z={front} color='#c4b5fd' cols={3} />
@@ -180,6 +183,39 @@ const Details = ({ style, w, h, d, b }) => {
     default:
       return null;
   }
+};
+
+const SpinningCoin = ({ position }) => {
+  const ref = useRef();
+  useFrame((_, delta) => {
+    if (ref.current) ref.current.rotation.y += delta * 1.2;
+  });
+  return (
+    <group ref={ref} position={position}>
+      <mesh rotation={[Math.PI / 2, 0, 0]} castShadow>
+        <cylinderGeometry args={[1, 1, 0.22, 48]} />
+        <meshStandardMaterial color='#facc15' metalness={0.6} roughness={0.3} />
+      </mesh>
+      {[1, -1].map((side) => (
+        <TextPanel
+          key={side}
+          width={1.5}
+          height={1.5}
+          position={[0, 0, side * 0.115]}
+          rotation={[0, side > 0 ? 0 : Math.PI, 0]}
+          draw={(ctx, w, hh) => {
+            ctx.clearRect(0, 0, w, hh);
+            ctx.fillStyle = "#a16207";
+            ctx.font = `800 ${hh * 0.7}px Poppins, sans-serif`;
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText("$", w / 2, hh * 0.54);
+          }}
+          transparent
+        />
+      ))}
+    </group>
+  );
 };
 
 const SIZES = {

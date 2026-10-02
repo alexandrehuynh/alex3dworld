@@ -4,6 +4,7 @@ import { useFrame } from "@react-three/fiber";
 import Prop from "../Prop";
 import { PROPS } from "../props";
 import { DeskSetup, Plant, Soft, TextPanel } from "./shared";
+import { daloopa, numeral, revyl } from "./brands";
 
 const REVYL = "#7c3aed";
 
@@ -87,34 +88,59 @@ const ShopAndTower = ({ position }) => (
 );
 
 /* ------------------------------------------------------------------------ */
-/* Revyl: mobile QA. Agents write tests -> conveyor -> cloud devices, with   */
-/* results looping back to the developer                                     */
+/* Revyl: a dev codes on a laptop -> code ships down the belt -> runs on    */
+/* cloud devices -> green checks loop back to the developer                  */
 /* ------------------------------------------------------------------------ */
 
-const AgentScreen = () => (
-  <TextPanel
-    width={0.62}
-    height={0.38}
-    position={[0.1, 1.12, -0.1]}
-    emissive
-    draw={(ctx, w, h) => {
-      ctx.fillStyle = "#1e1b4b";
-      ctx.fillRect(0, 0, w, h);
-      [0.2, 0.5, 0.8].forEach((x, i) => {
-        ctx.fillStyle = ["#c4b5fd", "#a78bfa", "#ddd6fe"][i];
-        ctx.beginPath();
-        ctx.roundRect(w * x - w * 0.11, h * 0.25, w * 0.22, h * 0.3, 10);
-        ctx.fill();
-        ctx.fillStyle = "#1e1b4b";
-        ctx.fillRect(w * x - w * 0.06, h * 0.35, w * 0.03, h * 0.06);
-        ctx.fillRect(w * x + w * 0.03, h * 0.35, w * 0.03, h * 0.06);
-      });
-      ctx.fillStyle = "#ede9fe";
-      ctx.font = `600 ${h * 0.14}px Poppins, sans-serif`;
-      ctx.textAlign = "center";
-      ctx.fillText("QA agents", w / 2, h * 0.82);
-    }}
-  />
+const CODE_COLORS = ["#c4b5fd", "#e2e8f0", "#fbbf24", "#a78bfa", "#94a3b8", "#c4b5fd"];
+const codeLines = (ctx, w, h, x0 = 0.08) => {
+  [0.5, 0.75, 0.4, 0.62, 0.3, 0.55].forEach((len, i) => {
+    ctx.fillStyle = CODE_COLORS[i];
+    ctx.fillRect(w * (x0 + (i % 3) * 0.05), h * (0.14 + i * 0.13), w * len * 0.8, h * 0.06);
+  });
+};
+
+const DevLaptop = () => (
+  <group position={[0, 0.78, 0]}>
+    <Soft args={[0.7, 0.03, 0.46]} position={[0, 0.015, 0]} color='#27272a' radius={0.012} />
+    <group position={[0, 0.03, -0.23]} rotation={[-0.25, 0, 0]}>
+      <Soft args={[0.7, 0.46, 0.025]} position={[0, 0.23, 0]} color='#27272a' radius={0.012} />
+      <TextPanel
+        width={0.64}
+        height={0.4}
+        position={[0, 0.23, 0.014]}
+        emissive
+        draw={(ctx, w, h) => {
+          ctx.fillStyle = "#0a0a0f";
+          ctx.fillRect(0, 0, w, h);
+          codeLines(ctx, w, h);
+        }}
+      />
+    </group>
+  </group>
+);
+
+// A floating chunk of code (a commit) riding the belt
+const CodeBlock = ({ color }) => (
+  <group>
+    <Soft args={[0.42, 0.06, 0.32]} color='#18181b' radius={0.02} />
+    <TextPanel
+      width={0.38}
+      height={0.28}
+      position={[0, 0.032, 0]}
+      rotation={[-Math.PI / 2, 0, 0]}
+      emissive
+      draw={(ctx, w, h) => {
+        ctx.fillStyle = "#0a0a0f";
+        ctx.fillRect(0, 0, w, h);
+        ctx.fillStyle = color;
+        ctx.font = `700 ${h * 0.45}px monospace`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("</>", w / 2, h / 2);
+      }}
+    />
+  </group>
 );
 
 const PHONES = 4;
@@ -140,26 +166,22 @@ const RevylLoop = ({ position }) => {
 
   return (
     <group position={position}>
-      {/* developer computer with agents */}
+      {/* developer at a laptop */}
       <group position={[-2.6, 0, 0]}>
-        <Prop url={PROPS.officeDesk} size={1.5} />
-        <Soft args={[0.7, 0.45, 0.06]} position={[0.1, 1.12, -0.14]} color='#111827' radius={0.03} />
-        <AgentScreen />
+        <Prop url={PROPS.tableMedium} size={1.3} />
+        <DevLaptop />
+        <Prop url={PROPS.officeChair} height={1.05} position={[0, 0, 0.7]} rotation={[0, Math.PI, 0]} />
       </group>
 
       {/* conveyor */}
-      <Soft args={[2.8, 0.16, 0.7]} position={[0, 0.75, 0]} color='#312e81' radius={0.07} />
+      <Soft args={[2.8, 0.16, 0.7]} position={[0, 0.75, 0]} color='#18181b' radius={0.07} />
       {[-1.2, 0, 1.2].map((x) => (
         <Soft key={x} args={[0.1, 0.68, 0.55]} position={[x, 0.34, 0]} color='#94a3b8' metalness={0.5} />
       ))}
       <group ref={phones}>
         {Array.from({ length: PHONES }, (_, i) => (
           <group key={i}>
-            <Soft args={[0.28, 0.05, 0.5]} color='#111827' radius={0.02} />
-            <mesh position={[0, 0.027, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-              <planeGeometry args={[0.23, 0.43]} />
-              <meshBasicMaterial color={["#ddd6fe", "#c4b5fd", "#e9d5ff", "#a5b4fc"][i]} toneMapped={false} />
-            </mesh>
+            <CodeBlock color={["#c4b5fd", "#a78bfa", "#e9d5ff", "#8b5cf6"][i]} />
           </group>
         ))}
       </group>
@@ -174,7 +196,7 @@ const RevylLoop = ({ position }) => {
         ].map(([x, y, z, r], i) => (
           <mesh key={i} position={[x, y, z]}>
             <sphereGeometry args={[r, 32, 24]} />
-            <meshStandardMaterial color='#f5f3ff' emissive='#ddd6fe' emissiveIntensity={0.25} roughness={0.9} />
+            <meshStandardMaterial color='#ede9fe' emissive='#a78bfa' emissiveIntensity={0.2} roughness={0.9} />
           </mesh>
         ))}
         {[-0.45, 0, 0.45].map((x, i) => (
@@ -268,7 +290,7 @@ const ModelScreen = ({ position, rotation }) => (
       draw={(ctx, w, h) => {
         ctx.fillStyle = "#f8fafc";
         ctx.fillRect(0, 0, w, h);
-        ctx.fillStyle = "#0f766e";
+        ctx.fillStyle = "#33141c";
         ctx.fillRect(0, 0, w, h * 0.14);
         ctx.fillStyle = "#ffffff";
         ctx.font = `600 ${h * 0.08}px Poppins, sans-serif`;
@@ -283,7 +305,7 @@ const ModelScreen = ({ position, rotation }) => (
           for (let c = 0; c < cols; c++) {
             const x = c * cw;
             const y = h * 0.14 + r * ch;
-            ctx.fillStyle = r === 0 || c === 0 ? "#e2e8f0" : (r + c) % 4 === 0 ? "#ccfbf1" : "#ffffff";
+            ctx.fillStyle = r === 0 || c === 0 ? "#e2e8f0" : (r + c) % 4 === 0 ? "#fce7eb" : "#ffffff";
             ctx.fillRect(x + 1, y + 1, cw - 2, ch - 2);
             ctx.fillStyle = "#334155";
             const label = r === 0 ? ["", "FY22", "FY23", "FY24", "FY25"][c] : c === 0 ? ["Rev", "COGS", "GP", "Opex", "EBIT", "EPS"][r - 1] : (100 + r * 37 + c * 13).toString();
@@ -299,11 +321,11 @@ const DaloopaHub = ({ position }) => (
   <group position={position}>
     <mesh position={[0, 0.06, 0]} receiveShadow>
       <cylinderGeometry args={[1.9, 1.95, 0.12, 64]} />
-      <meshStandardMaterial color='#0f172a' roughness={0.5} />
+      <meshStandardMaterial color='#33141c' roughness={0.5} />
     </mesh>
     <mesh position={[0, 0.125, 0]} rotation={[-Math.PI / 2, 0, 0]}>
       <ringGeometry args={[1.75, 1.85, 64]} />
-      <meshBasicMaterial color='#2dd4bf' toneMapped={false} />
+      <meshBasicMaterial color='#f5e6e8' toneMapped={false} />
     </mesh>
     <FilingStack position={[-1.15, 0.12, 0.2]} />
     <group scale={0.8} position={[0, 0.1, -0.1]}>
@@ -314,7 +336,7 @@ const DaloopaHub = ({ position }) => (
     {[0.15, 0.35, 0.55].map((dy, i) => (
       <mesh key={i} position={[0, 1.3 + dy, -0.05]} rotation={[0, 0, Math.PI / 2 + (i - 1) * 0.12]}>
         <cylinderGeometry args={[0.008, 0.008, 2.2, 6]} />
-        <meshBasicMaterial color='#5eead4' toneMapped={false} transparent opacity={0.6} />
+        <meshBasicMaterial color='#fda4af' toneMapped={false} transparent opacity={0.6} />
       </mesh>
     ))}
   </group>
@@ -333,7 +355,7 @@ const DataStack = ({ position }) => {
       {[0, 1, 2, 3].map((i) => (
         <mesh key={i} position={[0, 0.25 + i * 0.36, 0]} castShadow>
           <cylinderGeometry args={[0.45, 0.45, 0.28, 40]} />
-          <meshStandardMaterial color='#38bdf8' emissive='#0ea5e9' emissiveIntensity={0.6} roughness={0.3} />
+          <meshStandardMaterial color='#9f1239' emissive='#be123c' emissiveIntensity={0.6} roughness={0.3} />
         </mesh>
       ))}
     </group>
@@ -366,53 +388,58 @@ const ServerRack = ({ position }) => {
   );
 };
 
+// Wall sign over each company's zone
+const ZoneSign = ({ x, draw }) => (
+  <group position={[x, 0, -6.42]}>
+    <Soft args={[3.3, 1.05, 0.08]} position={[0, 2.45, 0]} color='#e2e8f0' radius={0.04} />
+    <TextPanel width={3.15} height={0.9} position={[0, 2.45, 0.045]} draw={draw} />
+  </group>
+);
+
 const SalesDecor = () => (
   <>
-    {/* Numeral: left side */}
-    <DeskSetup position={[-6.2, -1.6]}>
+    {/* Numeral, left */}
+    <ZoneSign x={-6} draw={numeral} />
+    <DeskSetup position={[-6.6, -4.9]}>
       <Paperwork />
     </DeskSetup>
-    <TaxMapBoard position={[-7.9, 0, -3.6]} rotation={[0, 0.5, 0]} />
-    <ShopAndTower position={[-4.3, 0, -2.6]} />
+    <ShopAndTower position={[-4.5, 0, -4.9]} />
+    <TaxMapBoard position={[-8.1, 0, -3.4]} rotation={[0, Math.PI / 2, 0]} />
 
-    {/* Revyl: back center */}
-    <RevylLoop position={[0, 0, -5.2]} />
-
-    {/* Daloopa: center of the room, current role */}
-    <DaloopaHub position={[0, 0, 0.2]} />
-    <ServerRack position={[8.1, 0, -4.9]} />
-
-    {/* lounge along the right wall */}
-    <group position={[7.4, 0, 1.6]} rotation={[0, -Math.PI / 2, 0]}>
-      <Prop url={PROPS.rugStripes} size={3.6} position={[0, 0.01, 0.4]} />
-      <Prop url={PROPS.couch} size={2.4} position={[0, 0, -0.5]} />
-      <Prop url={PROPS.tableLow} size={1.2} position={[0, 0, 0.7]} />
+    {/* Revyl, center */}
+    <ZoneSign x={0} draw={revyl} />
+    <group scale={0.85}>
+      <RevylLoop position={[0, 0, -5.8]} />
     </group>
-    <Plant position={[8.2, 0, 4.6]} />
-    <Plant url={PROPS.plantPothos} position={[-8.2, 0, 4.6]} />
-    <Prop url={PROPS.cactus} height={0.9} position={[-8.3, 0, -5.3]} />
+
+    {/* Daloopa, right */}
+    <ZoneSign x={6} draw={daloopa} />
+    <DaloopaHub position={[6, 0, -4.4]} />
+    <ServerRack position={[8.3, 0, -5.8]} />
+
+    <Plant position={[8.2, 0, 4.8]} />
+    <Plant url={PROPS.plantPothos} position={[-8.2, 0, 4.8]} />
   </>
 );
 
 export default {
   width: 18,
   depth: 13,
-  floor: "#f5f3ff",
-  wall: "#ede9fe",
+  floor: "#f8fafc",
+  wall: "#f1f5f9",
   trim: "#5b21b6",
   stations: {
-    numeral: [-6.2, -0.2],
-    revyl: [0, -3.1],
-    daloopa: [0, 2.7],
+    numeral: [-6, -2.2],
+    revyl: [0, -2.4],
+    daloopa: [6, -1.8],
   },
   blockers: [
-    [-6.2, -1.6, 1, 0.5],
-    [-7.9, -3.6, 1.1, 0.4],
-    [-4.3, -2.6, 0.7, 0.45],
-    [-0.1, -5.2, 3.5, 0.6],
-    [0, 0.2, 1.6, 1.1],
-    [8.1, -4.9, 0.5, 0.45],
-    [8, 1.6, 0.6, 1.3],
+    [-6.6, -4.9, 1, 0.5],
+    [-4.5, -4.9, 0.7, 0.45],
+    [-8.1, -3.4, 0.4, 1.1],
+    [0, -4.9, 3, 0.55],
+    [6, -4.4, 1.6, 1.1],
+    [8.3, -5.8, 0.5, 0.45],
   ],
   Decor: SalesDecor,
 };

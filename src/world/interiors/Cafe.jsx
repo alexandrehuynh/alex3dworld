@@ -41,23 +41,51 @@ const Bottle = ({ position, color }) => (
   </group>
 );
 
-/* Presidio Social Club: American diner counter */
+/* Presidio Social Club: long white marble bar with a dark navy front, black
+   leather stools, Edison bulbs, and steel cabinets behind (from photos) */
 const DinerCounter = ({ position }) => (
   <group position={position}>
-    <Soft args={[5.6, 1.1, 0.9]} position={[0, 0.55, 0]} color='#9f1239' radius={0.15} />
-    <TextPanel width={3.4} height={0.5} position={[0, 0.45, 0.46]} draw={presidio} />
-    <Soft args={[5.8, 0.1, 1]} position={[0, 1.13, 0]} color='#f1f5f9' radius={0.04} />
-    <Soft args={[5.6, 0.12, 0.92]} position={[0, 0.85, 0.01]} color='#e2e8f0' metalness={0.7} roughness={0.25} radius={0.05} />
+    <Soft args={[5.6, 1.1, 0.9]} position={[0, 0.55, 0]} color='#1e2a44' radius={0.3} roughness={0.35} metalness={0.3} />
+    <Soft args={[5.9, 0.1, 1.1]} position={[0, 1.13, 0.02]} color='#f4f4f5' radius={0.05} roughness={0.2} />
+    {/* steel back-bar cabinets with bottles */}
+    {[-2, -0.7, 0.6, 1.9].map((x) => (
+      <group key={x} position={[x, 0, -1.05]}>
+        <Soft args={[1.1, 0.7, 0.4]} position={[0, 1.75, 0]} color='#b8c0c8' metalness={0.7} roughness={0.3} radius={0.04} />
+        <mesh position={[0, 1.75, 0.21]}>
+          <planeGeometry args={[0.95, 0.55]} />
+          <meshStandardMaterial color='#e0f2fe' transparent opacity={0.45} roughness={0.05} />
+        </mesh>
+        {[-0.3, -0.1, 0.1, 0.3].map((bx, i) => (
+          <mesh key={bx} position={[bx, 1.66, 0.05]}>
+            <cylinderGeometry args={[0.04, 0.04, 0.26, 10]} />
+            <meshStandardMaterial color={["#14532d", "#d6d3d1", "#7c2d12", "#e0f2fe"][i]} roughness={0.2} />
+          </mesh>
+        ))}
+      </group>
+    ))}
+    {/* Edison bulb pendants */}
+    {[-2.2, -1.1, 0, 1.1, 2.2].map((x, i) => (
+      <group key={x} position={[x, 0, 0.1]}>
+        <mesh position={[0, 2.6 - (i % 2) * 0.15, 0]}>
+          <cylinderGeometry args={[0.006, 0.006, 0.9, 6]} />
+          <meshStandardMaterial color='#1f2937' />
+        </mesh>
+        <mesh position={[0, 2.12 - (i % 2) * 0.15, 0]}>
+          <sphereGeometry args={[0.07, 12, 10]} />
+          <meshStandardMaterial color='#fde68a' emissive='#f59e0b' emissiveIntensity={2} />
+        </mesh>
+      </group>
+    ))}
     {/* stools */}
     {[-1.8, -0.6, 0.6, 1.8].map((x) => (
       <group key={x} position={[x, 0, 0.95]}>
         <mesh position={[0, 0.35, 0]}>
-          <cylinderGeometry args={[0.04, 0.04, 0.7, 12]} />
-          <meshStandardMaterial color='#e2e8f0' metalness={0.8} roughness={0.2} />
+          <cylinderGeometry args={[0.05, 0.05, 0.7, 12]} />
+          <meshStandardMaterial color='#111111' metalness={0.4} roughness={0.4} />
         </mesh>
         <mesh position={[0, 0.74, 0]} castShadow>
-          <cylinderGeometry args={[0.24, 0.22, 0.12, 24]} />
-          <meshStandardMaterial color='#9f1239' roughness={0.4} />
+          <cylinderGeometry args={[0.25, 0.23, 0.18, 24]} />
+          <meshStandardMaterial color='#111111' roughness={0.35} />
         </mesh>
       </group>
     ))}
@@ -104,39 +132,13 @@ const DinerCounter = ({ position }) => (
     </group>
     <Prop url={PROPS.cafeCake} size={0.4} position={[1.1, 1.18, 0]} />
     <Prop url={PROPS.cafeMug} size={0.18} position={[1.8, 1.18, 0.2]} />
-    {/* neon sign for the whole cafe */}
-    <TextPanel
-      width={3.6}
-      height={0.7}
-      position={[0, 2.35, -0.85]}
-      emissive
-      draw={(ctx, w, h) => {
-        ctx.fillStyle = "#0f172a";
-        ctx.beginPath();
-        ctx.roundRect(0, 0, w, h, h * 0.25);
-        ctx.fill();
-        ctx.shadowColor = "#f472b6";
-        ctx.shadowBlur = h * 0.15;
-        ctx.fillStyle = "#fbcfe8";
-        ctx.font = `700 ${h * 0.4}px Poppins, sans-serif`;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText("THE CAFÉ", w / 2, h * 0.42);
-        ctx.shadowColor = "#38bdf8";
-        ctx.fillStyle = "#bae6fd";
-        ctx.font = `500 ${h * 0.17}px Poppins, sans-serif`;
-        ctx.fillText("OPEN · EVERY SHIFT COUNTS", w / 2, h * 0.78);
-      }}
-    />
-    {/* checkerboard floor in front */}
-    {Array.from({ length: 10 }, (_, i) =>
-      Array.from({ length: 3 }, (_, j) => (
-        <mesh key={`${i}-${j}`} position={[-2.7 + i * 0.6, 0.012, 0.75 + j * 0.6]} rotation={[-Math.PI / 2, 0, 0]}>
-          <planeGeometry args={[0.6, 0.6]} />
-          <meshStandardMaterial color={(i + j) % 2 ? "#111827" : "#f8fafc"} roughness={0.5} />
-        </mesh>
-      ))
-    )}
+    {/* Presidio's sign up on the back wall, clear of the stools */}
+    <TextPanel width={3.9} height={0.6} position={[0, 2.62, -1.24]} draw={presidio} />
+    {/* wood floor in front of the bar */}
+    <mesh position={[0, 0.012, 1.4]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+      <planeGeometry args={[6.2, 1.8]} />
+      <meshStandardMaterial color='#8a5a35' roughness={0.6} />
+    </mesh>
   </group>
 );
 
@@ -309,7 +311,7 @@ const Flyer = ({ flyer, position, tilt }) => (
 const FlyerBoard = ({ position }) => {
   const flyers = rooms.cafe.sections.find((s) => s.id === "board").flyers;
   return (
-    <group position={position} rotation={[0, Math.PI / 2, 0]}>
+    <group position={position}>
       <Soft args={[3.2, 2, 0.12]} position={[0, 1.6, 0]} color='#78350f' radius={0.05} />
       <Soft args={[3, 1.8, 0.14]} position={[0, 1.6, 0.01]} color='#d6a76c' radius={0.04} roughness={1} />
       {flyers.map((flyer, i) => (
@@ -326,10 +328,10 @@ const FlyerBoard = ({ position }) => {
 
 const CafeDecor = () => (
   <>
-    <DinerCounter position={[0.5, 0, -4.2]} />
+    <DinerCounter position={[1.1, 0, -4.2]} />
     <BrunchTable position={[-4.6, 0, 1]} />
     <KbbqTable position={[4.6, 0, 1]} />
-    <FlyerBoard position={[-7.85, 0, -2.2]} />
+    <FlyerBoard position={[-5.1, 0, -5.38]} />
     <Plant url={PROPS.plantPothos} position={[7.2, 0, -4.6]} />
     <Plant position={[-7.2, 0, 4.4]} />
   </>
@@ -342,13 +344,13 @@ export default {
   wall: "#fff7ed",
   trim: "#92400e",
   stations: {
-    presidio: [0.5, -2.1],
+    presidio: [0.8, -2.1],
     magicflute: [-4.6, 2.8],
     kelements: [4.6, 2.8],
-    board: [-6.3, -2.2],
+    board: [-5.1, -3.7],
   },
   blockers: [
-    [0.5, -4.2, 2.9, 0.5],
+    [1.1, -4.2, 3, 0.5],
     [-4.6, 1, 1.6, 0.9],
     [4.6, 1, 1, 0.7],
   ],

@@ -1,8 +1,6 @@
 import { Canvas } from "@react-three/fiber";
 import { Environment, KeyboardControls, Lightformer, OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
-import { Bloom, EffectComposer, N8AO, SMAA, ToneMapping, Vignette } from "@react-three/postprocessing";
-import { ToneMappingMode } from "postprocessing";
 import { Physics } from "@react-three/rapier";
 import { Joystick, useJoystickStore } from "ecctrl/input";
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -19,6 +17,7 @@ import StationCard from "../components/StationCard";
 import { BUILDING_RING, buildings, rooms } from "../constants/world";
 import { Building, Clouds, Island, Player } from "../world";
 import ClickToWalk from "../world/ClickToWalk";
+import Effects from "../world/Effects";
 import { Interior, interiorSpawn } from "../world/interiors";
 import { SPAWN } from "../world/Player";
 
@@ -262,13 +261,7 @@ const Home = () => {
 
             {/* Soft contact shading + gentle glow; skipped on phones to keep it smooth */}
             {!touch && (
-              <EffectComposer multisampling={0}>
-                <N8AO aoRadius={1.4} intensity={1.6} distanceFalloff={1} halfRes />
-                <Bloom luminanceThreshold={0.85} intensity={0.35} mipmapBlur />
-                <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
-                <Vignette offset={0.35} darkness={0.25} />
-                <SMAA />
-              </EffectComposer>
+              <Effects />
             )}
           </Suspense>
         </Canvas>

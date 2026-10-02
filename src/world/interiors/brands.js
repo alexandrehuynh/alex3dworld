@@ -23,17 +23,37 @@ const roundRect = (ctx, x, y, w, h, r, fill, stroke, lw) => {
 
 /* ------------------------------ Performance Lab ------------------------------ */
 
+// Wordmark with the signature O cut by a diagonal gap
 export const equinox = (ctx, w, h) => {
   ctx.fillStyle = "#0a0a0a";
   ctx.fillRect(0, 0, w, h);
-  center(ctx);
   ctx.fillStyle = "#ffffff";
-  ctx.font = `500 ${h * 0.34}px Poppins, sans-serif`;
-  ctx.letterSpacing = `${h * 0.08}px`;
-  ctx.fillText("EQUINOX", w / 2, h * 0.42);
-  ctx.letterSpacing = "0px";
+  ctx.textBaseline = "middle";
+  ctx.textAlign = "center";
+  const size = h * 0.36;
+  ctx.font = `600 ${size}px Poppins, sans-serif`;
+  const letters = ["E", "Q", "U", "I", "N", "O", "X"];
+  const step = w * 0.12;
+  const x0 = w / 2 - step * 3;
+  const y = h * 0.42;
+  letters.forEach((l, i) => {
+    const x = x0 + i * step;
+    if (l !== "O") return ctx.fillText(l, x, y);
+    const r = size * 0.36;
+    ctx.lineWidth = size * 0.13;
+    ctx.strokeStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.strokeStyle = "#0a0a0a";
+    ctx.lineWidth = size * 0.08;
+    ctx.beginPath();
+    ctx.moveTo(x + r * 0.9, y - r * 1.3);
+    ctx.lineTo(x - r * 0.9, y + r * 1.3);
+    ctx.stroke();
+  });
   ctx.font = `500 ${h * 0.12}px Poppins, sans-serif`;
-  ctx.fillText("IT'S NOT FITNESS. IT'S LIFE.", w / 2, h * 0.78);
+  ctx.fillText("IT'S NOT FITNESS. IT'S LIFE.", w / 2, h * 0.8);
 };
 
 export const murray = (ctx, w, h) => {
@@ -306,4 +326,224 @@ export const flyerArt = {
     ctx.font = `700 ${w * 0.06}px Poppins, sans-serif`;
     ctx.fillText("SF  ·  CA", w / 2, h * 0.92);
   },
+};
+
+/* -------------------------------- AI Sales HQ ------------------------------- */
+
+export const numeral = (ctx, w, h) => {
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, w, h);
+  ctx.fillStyle = "#4a4e6e";
+  ctx.fillRect(0, 0, w, h * 0.16);
+  ctx.textAlign = "left";
+  ctx.textBaseline = "middle";
+  // folded-corner mark
+  ctx.fillStyle = "#1e2340";
+  ctx.beginPath();
+  ctx.moveTo(w * 0.06, h * 0.72);
+  ctx.lineTo(w * 0.06, h * 0.32);
+  ctx.lineTo(w * 0.17, h * 0.32);
+  ctx.lineTo(w * 0.06, h * 0.72);
+  ctx.fill();
+  ctx.fillStyle = "#1e2340";
+  ctx.font = `700 ${h * 0.3}px Poppins, sans-serif`;
+  ctx.fillText("Numeral", w * 0.2, h * 0.5);
+  ctx.font = `600 ${h * 0.12}px Poppins, sans-serif`;
+  ctx.fillText("Sales tax, solved.", w * 0.2, h * 0.8);
+};
+
+export const revyl = (ctx, w, h) => {
+  ctx.fillStyle = "#0a0a0f";
+  ctx.fillRect(0, 0, w, h);
+  // dotted grid
+  ctx.fillStyle = "rgba(167,139,250,0.18)";
+  for (let x = w * 0.04; x < w; x += w * 0.04) for (let y = h * 0.1; y < h; y += h * 0.15) ctx.fillRect(x, y, 2, 2);
+  // diamond mark
+  const cx = w * 0.14;
+  const cy = h * 0.42;
+  const r = h * 0.2;
+  ctx.strokeStyle = "#ffffff";
+  ctx.lineWidth = h * 0.05;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy - r);
+  ctx.lineTo(cx + r, cy);
+  ctx.lineTo(cx, cy + r);
+  ctx.lineTo(cx - r, cy);
+  ctx.closePath();
+  ctx.stroke();
+  ctx.fillStyle = "#ffffff";
+  ctx.beginPath();
+  ctx.moveTo(cx, cy - r * 0.45);
+  ctx.lineTo(cx + r * 0.45, cy);
+  ctx.lineTo(cx, cy + r * 0.45);
+  ctx.lineTo(cx - r * 0.45, cy);
+  ctx.fill();
+  ctx.textAlign = "left";
+  ctx.textBaseline = "middle";
+  ctx.font = `600 ${h * 0.3}px Poppins, sans-serif`;
+  ctx.fillText("Revyl", w * 0.27, h * 0.42);
+  ctx.fillStyle = "#c4b5fd";
+  ctx.font = `500 ${h * 0.12}px Poppins, sans-serif`;
+  ctx.fillText("Build mobile with confidence.", w * 0.27, h * 0.76);
+};
+
+export const daloopa = (ctx, w, h) => {
+  ctx.fillStyle = "#33141c";
+  ctx.fillRect(0, 0, w, h);
+  // diagonal chevron, like the site's background
+  ctx.fillStyle = "rgba(255,255,255,0.05)";
+  ctx.beginPath();
+  ctx.moveTo(w * 0.55, 0);
+  ctx.lineTo(w, h * 0.5);
+  ctx.lineTo(w * 0.55, h);
+  ctx.lineTo(w * 0.75, h);
+  ctx.lineTo(w, h * 0.75);
+  ctx.lineTo(w, h * 0.25);
+  ctx.lineTo(w * 0.75, 0);
+  ctx.fill();
+  center(ctx);
+  ctx.fillStyle = "#ffffff";
+  ctx.font = `400 ${h * 0.34}px Georgia, serif`;
+  ctx.letterSpacing = `${h * 0.03}px`;
+  ctx.fillText("δ DALOOPA", w / 2, h * 0.44);
+  ctx.letterSpacing = "0px";
+  ctx.font = `400 ${h * 0.11}px Georgia, serif`;
+  ctx.fillText("Trusted financial data for public equity", w / 2, h * 0.78);
+};
+
+/* -------------------------------- Dev Studio -------------------------------- */
+
+export const kateeva = (ctx, w, h) => {
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, w, h);
+  // orange split-circle K mark
+  const cx = h * 0.5;
+  const cy = h / 2;
+  const r = h * 0.32;
+  ctx.fillStyle = "#e8642c";
+  ctx.beginPath();
+  ctx.moveTo(cx - r * 0.15, cy);
+  ctx.arc(cx, cy, r, Math.PI * 0.6, Math.PI * 1.4);
+  ctx.closePath();
+  ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(cx + r * 0.05, cy);
+  ctx.arc(cx, cy, r, -Math.PI * 0.35, Math.PI * 0.35);
+  ctx.closePath();
+  ctx.fill();
+  ctx.textAlign = "left";
+  ctx.textBaseline = "middle";
+  ctx.fillStyle = "#4b4b4b";
+  ctx.font = `italic 700 ${h * 0.5}px Poppins, sans-serif`;
+  ctx.fillText("kateeva", h * 0.95, h * 0.5);
+};
+
+export const codingTemple = (ctx, w, h) => {
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, w, h);
+  const teal = "#12c4a0";
+  // meditating coder: head, bun, body, laptop
+  const cx = h * 0.5;
+  ctx.fillStyle = teal;
+  ctx.beginPath();
+  ctx.arc(cx, h * 0.12, h * 0.06, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(cx, h * 0.3, h * 0.15, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(cx, h * 0.72, h * 0.4, h * 0.24, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(cx - h * 0.15, h * 0.58, h * 0.3, h * 0.2);
+  ctx.textAlign = "left";
+  ctx.textBaseline = "middle";
+  ctx.fillStyle = teal;
+  ctx.font = `700 ${h * 0.36}px Poppins, sans-serif`;
+  ctx.fillText("coding", h * 1.05, h * 0.32);
+  ctx.font = `400 ${h * 0.36}px Poppins, sans-serif`;
+  ctx.fillText("temple", h * 1.05, h * 0.72);
+};
+
+export const coLab = (ctx, w, h) => {
+  ctx.fillStyle = "#eef2fb";
+  ctx.fillRect(0, 0, w, h);
+  ctx.fillStyle = "#f6c94b";
+  ctx.beginPath();
+  ctx.arc(h * 0.55, h * 0.4, h * 0.22, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "#6bb3f5";
+  ctx.beginPath();
+  ctx.arc(h * 0.4, h * 0.6, h * 0.22, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "#4f5ae8";
+  ctx.fillRect(h * 0.4, h * 0.4, h * 0.15, h * 0.2);
+  ctx.textAlign = "left";
+  ctx.textBaseline = "middle";
+  ctx.fillStyle = "#111827";
+  ctx.font = `700 ${h * 0.4}px Poppins, sans-serif`;
+  ctx.fillText("Co.Lab", h * 0.95, h * 0.5);
+};
+
+export const gainSpan = (ctx, w, h) => {
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, w, h);
+  // orange dots arcing over the name
+  ctx.fillStyle = "#f2a51a";
+  for (let i = 0; i < 7; i++) {
+    const t = i / 6;
+    ctx.beginPath();
+    ctx.arc(w * (0.32 + t * 0.4), h * (0.3 - Math.sin(t * Math.PI) * 0.12), h * (0.06 - t * 0.03), 0, Math.PI * 2);
+    ctx.fill();
+  }
+  const grad = ctx.createLinearGradient(0, h * 0.4, 0, h * 0.8);
+  grad.addColorStop(0, "#1f8fa6");
+  grad.addColorStop(1, "#0d4f6b");
+  center(ctx);
+  ctx.fillStyle = grad;
+  ctx.font = `italic 800 ${h * 0.36}px Poppins, sans-serif`;
+  ctx.fillText("GainSpan", w / 2, h * 0.58);
+  ctx.fillStyle = "#1f2937";
+  ctx.font = `italic 500 ${h * 0.11}px Poppins, sans-serif`;
+  ctx.fillText("Getting Connected with Wi-Fi", w / 2, h * 0.86);
+};
+
+/* ------------------------------- OFFTHEWEIGHTS ------------------------------ */
+
+export const offTheWeights = (ctx, w, h) => {
+  ctx.fillStyle = "#1c1c1e";
+  ctx.fillRect(0, 0, w, h);
+  const gold = "#fbb917";
+  // emblem ring with a flexing-arm hint
+  const cx = w / 2;
+  const cy = h * 0.3;
+  const r = h * 0.2;
+  ctx.strokeStyle = gold;
+  ctx.lineWidth = h * 0.025;
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.fillStyle = gold;
+  ctx.beginPath();
+  ctx.arc(cx, cy - r * 0.35, r * 0.22, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(cx, cy + r * 0.25, r * 0.55, r * 0.4, 0, Math.PI, 0);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(cx - r * 0.95, cy - r * 0.2, r * 0.22, r * 0.45, -0.4, 0, Math.PI * 2);
+  ctx.fill();
+  // wordmark between two curved bars
+  center(ctx);
+  ctx.font = `800 ${h * 0.24}px Poppins, sans-serif`;
+  ctx.fillText("OFFTHEWEIGHTS", w / 2, h * 0.7);
+  ctx.lineWidth = h * 0.025;
+  [0.53, 0.87].forEach((y) => {
+    ctx.beginPath();
+    ctx.moveTo(w * 0.06, h * y);
+    ctx.quadraticCurveTo(w / 2, h * (y - 0.06), w * 0.94, h * y);
+    ctx.stroke();
+  });
+  ctx.font = `600 ${h * 0.07}px Poppins, sans-serif`;
+  ctx.fillText("MIND · BODY · SPIRIT", w / 2, h * 0.95);
 };

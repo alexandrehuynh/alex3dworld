@@ -19,16 +19,16 @@ export const DeskSetup = ({ position, rotation = 0, children }) => (
 );
 
 // Flat text panel (banners, posters, screens)
-export const TextPanel = ({ width, height, draw, deps = [], emissive = false, ...props }) => {
+export const TextPanel = ({ width, height, draw, deps = [], emissive = false, transparent = false, ...props }) => {
   const px = 256;
   const texture = useCanvasTexture(Math.round(width * px), Math.round(height * px), draw, deps);
   return (
     <mesh {...props}>
       <planeGeometry args={[width, height]} />
       {emissive ? (
-        <meshBasicMaterial map={texture} toneMapped={false} />
+        <meshBasicMaterial map={texture} toneMapped={false} transparent={transparent} />
       ) : (
-        <meshStandardMaterial map={texture} roughness={0.8} />
+        <meshStandardMaterial map={texture} roughness={0.8} transparent={transparent} />
       )}
     </mesh>
   );
