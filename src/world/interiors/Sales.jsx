@@ -3,7 +3,8 @@ import { useFrame } from "@react-three/fiber";
 
 import Prop from "../Prop";
 import { PROPS } from "../props";
-import { DeskSetup, Plant, Soft, TextPanel } from "./shared";
+import { DeskSetup, LogoDecal, Plant, Soft, TextPanel } from "./shared";
+import numeralLogo from "../../assets/logos/numeral.png";
 import { daloopa, numeral, revyl } from "./brands";
 
 const REVYL = "#7c3aed";
@@ -389,17 +390,18 @@ const ServerRack = ({ position }) => {
 };
 
 // Wall sign over each company's zone
-const ZoneSign = ({ x, draw }) => (
+const ZoneSign = ({ x, draw, logo }) => (
   <group position={[x, 0, -6.42]}>
     <Soft args={[3.3, 1.05, 0.08]} position={[0, 2.45, 0]} color='#e2e8f0' radius={0.04} />
     <TextPanel width={3.15} height={0.9} position={[0, 2.45, 0.045]} draw={draw} />
+    {logo && <LogoDecal url={logo} width={0.66} position={[-1.05, 2.45, 0.05]} />}
   </group>
 );
 
 const SalesDecor = () => (
   <>
     {/* Numeral, left */}
-    <ZoneSign x={-6} draw={numeral} />
+    <ZoneSign x={-6} draw={numeral} logo={numeralLogo} />
     <DeskSetup position={[-6.6, -4.9]}>
       <Paperwork />
     </DeskSetup>

@@ -351,26 +351,18 @@ export const flyerArt = {
 
 /* -------------------------------- AI Sales HQ ------------------------------- */
 
+// Wordmark only; the real square mark is placed beside it as an image
 export const numeral = (ctx, w, h) => {
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(0, 0, w, h);
-  ctx.fillStyle = "#4a4e6e";
-  ctx.fillRect(0, 0, w, h * 0.16);
   ctx.textAlign = "left";
   ctx.textBaseline = "middle";
-  // folded-corner mark
   ctx.fillStyle = "#1e2340";
-  ctx.beginPath();
-  ctx.moveTo(w * 0.06, h * 0.72);
-  ctx.lineTo(w * 0.06, h * 0.32);
-  ctx.lineTo(w * 0.17, h * 0.32);
-  ctx.lineTo(w * 0.06, h * 0.72);
-  ctx.fill();
-  ctx.fillStyle = "#1e2340";
-  ctx.font = `700 ${h * 0.3}px Poppins, sans-serif`;
-  ctx.fillText("Numeral", w * 0.2, h * 0.5);
+  ctx.font = `700 ${h * 0.34}px Poppins, sans-serif`;
+  ctx.fillText("Numeral", w * 0.3, h * 0.44);
+  ctx.fillStyle = "#4a4e6e";
   ctx.font = `600 ${h * 0.12}px Poppins, sans-serif`;
-  ctx.fillText("Sales tax, solved.", w * 0.2, h * 0.8);
+  ctx.fillText("Sales tax, solved.", w * 0.3, h * 0.76);
 };
 
 export const revyl = (ctx, w, h) => {
