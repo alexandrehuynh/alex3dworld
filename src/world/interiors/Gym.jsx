@@ -2,6 +2,7 @@ import Prop from "../Prop";
 import { PROPS } from "../props";
 import { LogoDecal, Plant, Puffs, Soft, TextPanel } from "./shared";
 import murrayLogo from "../../assets/logos/murray.png";
+import otwLogo from "../../assets/logos/offtheweights_long.webp";
 import { bayClubBadge, equinox, luxfit, skrapPack } from "./brands";
 
 /* Equinox: black-and-white luxury spa with a sauna, glowing heater and steam */
@@ -210,7 +211,7 @@ const TurfLane = ({ position }) => (
         <meshStandardMaterial color='#ffffff' />
       </mesh>
     ))}
-    <TextPanel width={0.9} height={0.9} position={[1.95, 0.021, 0]} rotation={[-Math.PI / 2, 0, 0]} draw={bayClubBadge} transparent />
+    <TextPanel width={0.9} height={0.9} position={[0.8, 0.021, 0]} rotation={[-Math.PI / 2, 0, 0]} draw={bayClubBadge} transparent />
     {/* push sled at the start of the lane */}
     <group position={[-1.9, 0, 0]} rotation={[0, -Math.PI / 2, 0]}>
       <Soft args={[0.9, 0.1, 1.1]} position={[0, 0.06, 0]} color='#1f2937' />
@@ -312,21 +313,11 @@ const ParallelBars = ({ position, rotation }) => (
 
 const BrandCorner = ({ position }) => (
   <group position={position}>
-    <TextPanel
-      width={3}
-      height={1}
-      position={[-0.75, 1.9, 0.4]}
-      rotation={[0, Math.PI / 2, 0]}
-      draw={(ctx, w, h) => {
-        ctx.fillStyle = "#facc15";
-        ctx.fillRect(0, 0, w, h);
-        ctx.fillStyle = "#111827";
-        ctx.font = `800 ${h * 0.34}px Poppins, sans-serif`;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText("OFFTHEWEIGHTS", w / 2, h / 2);
-      }}
-    />
+    {/* the real long logo, gold on a charcoal panel like the brand mockups */}
+    <group position={[-0.75, 1.85, 0.4]} rotation={[0, Math.PI / 2, 0]}>
+      <Soft args={[3.4, 1.4, 0.06]} color='#1c1c1e' radius={0.05} roughness={0.9} />
+      <LogoDecal url={otwLogo} width={3.1} position={[0, 0, 0.035]} />
+    </group>
     <ParallelBars position={[2.1, 0, 0.9]} rotation={[0, Math.PI / 2, 0]} />
   </group>
 );
