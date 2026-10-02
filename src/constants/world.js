@@ -1,3 +1,5 @@
+import obourLogo from "../assets/logos/obour.png";
+
 // Layout and content for the walkable hub world.
 // Buildings sit on the northern half of a ring around the central plaza, doors facing
 // the center. The south side stays open for the spawn point and follow camera.
@@ -276,6 +278,7 @@ export const rooms = {
             dates: SOON,
             color: "#fef08a",
             art: "obour",
+            logo: obourLogo,
           },
         ],
       },

@@ -121,8 +121,9 @@ const Details = ({ style, w, h, d, b }) => {
               <circleGeometry args={[0.92, 48]} />
               <meshStandardMaterial color='#78350f' />
             </mesh>
-            <mesh position={[1.05, 0.95, 0]} rotation={[0, 0, Math.PI / 2]}>
-              <torusGeometry args={[0.38, 0.1, 16, 32, Math.PI]} />
+            {/* handle: right half of a ring, ends tucked into the cup wall */}
+            <mesh position={[0.86, 0.9, 0]} rotation={[0, 0, -Math.PI / 2]}>
+              <torusGeometry args={[0.36, 0.1, 16, 32, Math.PI]} />
               <meshStandardMaterial color='#ffffff' roughness={0.35} />
             </mesh>
             <Puffs position={[0, 1.7, 0]} count={6} height={1.8} spread={0.9} size={0.35} />

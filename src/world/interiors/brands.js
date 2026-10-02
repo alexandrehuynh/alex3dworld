@@ -208,37 +208,55 @@ export const magicFlute = (ctx, w, h) => {
   ctx.fillText("Est. 1981", w / 2, h * 0.88);
 };
 
+// Dark wood planks, brush-painted four-color circle, white brush lettering
 export const kElements = (ctx, w, h) => {
-  // dark reclaimed-wood fascia
-  ctx.fillStyle = "#2b2622";
+  ctx.fillStyle = "#2a1d14";
   ctx.fillRect(0, 0, w, h);
-  ctx.strokeStyle = "rgba(255,255,255,0.06)";
-  for (let y = h * 0.2; y < h; y += h * 0.2) {
+  for (let i = 0; i < 4; i++) {
+    ctx.fillStyle = i % 2 ? "rgba(255,230,200,0.05)" : "rgba(0,0,0,0.18)";
+    ctx.fillRect(0, (h * i) / 4, w, h / 4 - 2);
+  }
+  ctx.strokeStyle = "rgba(255,220,180,0.08)";
+  ctx.lineWidth = 2;
+  for (let i = 0; i < 18; i++) {
+    const y = (h * (i + 0.5)) / 18;
     ctx.beginPath();
     ctx.moveTo(0, y);
-    ctx.lineTo(w, y);
+    ctx.bezierCurveTo(w * 0.3, y - 6, w * 0.6, y + 6, w, y - 3);
     ctx.stroke();
   }
-  // four-element circle
+  // four brush blobs in a ring
   const cx = h * 0.55;
   const cy = h / 2;
-  const r = h * 0.36;
-  ["#dc2626", "#f59e0b", "#2563eb", "#16a34a"].forEach((c, i) => {
+  const r = h * 0.17;
+  [
+    ["#e11d2e", 0, -1],
+    ["#f97316", 1, 0],
+    ["#9ca3af", 0, 1],
+    ["#2563eb", -1, 0],
+  ].forEach(([c, dx, dy]) => {
     ctx.fillStyle = c;
     ctx.beginPath();
-    ctx.moveTo(cx, cy);
-    ctx.arc(cx, cy, r, (i * Math.PI) / 2 - Math.PI / 2, ((i + 1) * Math.PI) / 2 - Math.PI / 2);
+    ctx.arc(cx + dx * r * 0.95, cy + dy * r * 0.95, r * 1.05, 0, Math.PI * 2);
     ctx.fill();
   });
+  ctx.strokeStyle = "#16a34a";
+  ctx.lineWidth = h * 0.05;
+  ctx.beginPath();
+  ctx.arc(cx, cy, r * 2.05, Math.PI * 0.7, Math.PI * 1.35);
+  ctx.stroke();
   ctx.fillStyle = "#ffffff";
-  ctx.fillRect(cx - r * 0.25, cy - r * 0.25, r * 0.5, r * 0.5);
-  ctx.textAlign = "left";
   ctx.textBaseline = "middle";
-  ctx.fillStyle = "#ffffff";
-  ctx.font = `800 ${h * 0.34}px Poppins, sans-serif`;
-  ctx.fillText("K-ELEMENTS", h * 1.05, h * 0.36);
+  ctx.textAlign = "left";
+  ctx.save();
+  ctx.transform(1, 0, -0.12, 1, 0, 0);
+  ctx.font = `900 ${h * 0.82}px Poppins, sans-serif`;
+  ctx.fillText("K", h * 1.15, h * 0.53);
   ctx.font = `800 ${h * 0.3}px Poppins, sans-serif`;
-  ctx.fillText("BBQ", h * 1.05, h * 0.72);
+  ctx.fillText("-ELEMENTS", h * 1.68, h * 0.32);
+  ctx.font = `800 ${h * 0.34}px Poppins, sans-serif`;
+  ctx.fillText("BBQ", h * 2.3, h * 0.72);
+  ctx.restore();
 };
 
 /* --------------------------------- Flyers --------------------------------- */

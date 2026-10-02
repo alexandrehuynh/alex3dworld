@@ -2,7 +2,7 @@ import Prop from "../Prop";
 import { PROPS } from "../props";
 import { wrapText } from "../textTexture";
 import { rooms } from "../../constants/world";
-import { Plant, Puffs, Soft, TextPanel } from "./shared";
+import { LogoDecal, Plant, Puffs, Soft, TextPanel } from "./shared";
 import { flyerArt, kElements, magicFlute, presidio } from "./brands";
 
 const Glass = ({ position, liquid, height = 0.22, stem = true }) => (
@@ -120,7 +120,7 @@ const DinerCounter = ({ position }) => (
     <Prop url={PROPS.cafeCake} size={0.4} position={[1.1, 1.18, 0]} />
     <Prop url={PROPS.cafeMug} size={0.18} position={[1.8, 1.18, 0.2]} />
     {/* Presidio's sign up on the back wall, clear of the stools */}
-    <TextPanel width={3.9} height={0.6} position={[0, 2.62, -1.24]} draw={presidio} />
+    <TextPanel width={5.4} height={0.82} position={[0, 2.68, -1.24]} draw={presidio} />
     {/* wood floor in front of the bar */}
     <mesh position={[0, 0.012, 1.4]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
       <planeGeometry args={[6.2, 1.8]} />
@@ -170,18 +170,18 @@ const PatioBackdrop = () => (
       </mesh>
     ))}
     {[-1.7, 1.7].map((x) => (
-      <Soft key={x} args={[0.06, 2.1, 0.06]} position={[x, 1.05, 0]} color='#3b2416' />
+      <Soft key={x} args={[0.06, 2.7, 0.06]} position={[x, 1.35, 0]} color='#3b2416' />
     ))}
     {Array.from({ length: 11 }, (_, i) => (
-      <mesh key={i} position={[-1.6 + i * 0.32, 2 - Math.sin((i / 10) * Math.PI) * 0.25, 0]}>
+      <mesh key={i} position={[-1.6 + i * 0.32, 2.6 - Math.sin((i / 10) * Math.PI) * 0.25, 0]}>
         <sphereGeometry args={[0.045, 10, 8]} />
         <meshStandardMaterial color='#fde68a' emissive='#fbbf24' emissiveIntensity={2} />
       </mesh>
     ))}
     <pointLight position={[0, 1.6, 0.8]} color='#fcd34d' intensity={2.5} distance={3} />
     {/* hanging wood sign off the right post */}
-    <Soft args={[0.75, 0.04, 0.04]} position={[1.4, 2.05, 0.04]} color='#c9a227' radius={0.015} />
-    <TextPanel width={0.6} height={0.75} position={[1.35, 1.6, 0.06]} draw={magicFlute} />
+    <Soft args={[1.2, 0.05, 0.05]} position={[1.1, 2.45, 0.06]} color='#c9a227' radius={0.02} />
+    <TextPanel width={1} height={1.25} position={[1, 1.78, 0.09]} draw={magicFlute} />
   </group>
 );
 
@@ -312,6 +312,15 @@ const FLYER_H = 1;
 
 const Flyer = ({ flyer, position, tilt }) => (
   <group position={position} rotation={[0, 0, tilt]}>
+    {flyer.logo ? (
+      <>
+        <mesh>
+          <planeGeometry args={[FLYER_W, FLYER_H]} />
+          <meshStandardMaterial color='#ffffff' roughness={0.8} />
+        </mesh>
+        <LogoDecal url={flyer.logo} width={FLYER_W * 0.92} position={[0, -0.05, 0.005]} />
+      </>
+    ) : (
     <TextPanel
       width={FLYER_W}
       height={FLYER_H}
@@ -331,6 +340,7 @@ const Flyer = ({ flyer, position, tilt }) => (
         })
       }
     />
+    )}
     <mesh position={[0, FLYER_H / 2 - 0.08, 0.02]}>
       <sphereGeometry args={[0.035, 12, 8]} />
       <meshStandardMaterial color='#ef4444' />
@@ -359,11 +369,17 @@ const FlyerBoard = ({ position }) => {
 const CafeDecor = () => (
   <>
     <DinerCounter position={[1.1, 0, -4.2]} />
-    <BrunchTable position={[-4.6, 0, 1]} />
+    <BrunchTable position={[-5.1, 0, -3.7]} />
     <group position={[6.2, 0, 1]} rotation={[0, -Math.PI / 2, 0]}>
       <KbbqTable position={[0, 0, 0]} />
     </group>
-    <FlyerBoard position={[-5.1, 0, -5.38]} />
+    {/* freestanding, angled toward the room so the flyers face you */}
+    <group position={[-6.9, 0, 1.4]} rotation={[0, 0.87, 0]} scale={1.2}>
+      <FlyerBoard position={[0, 0, 0]} />
+      {[-1.3, 1.3].map((x) => (
+        <Soft key={x} args={[0.1, 0.7, 0.1]} position={[x, 0.35, 0]} color='#5b3a1e' />
+      ))}
+    </group>
     <Plant url={PROPS.plantPothos} position={[7.2, 0, -4.6]} />
     <Plant position={[-7.2, 0, 4.4]} />
   </>
@@ -378,13 +394,14 @@ export default {
   trim: "#92400e",
   stations: {
     presidio: [0.8, -2.1],
-    magicflute: [-4.6, 2.8],
+    magicflute: [-5.1, -1.6],
     kelements: [4.3, 1],
-    board: [-5.1, -3.7],
+    board: [-5.6, 2.5],
   },
   blockers: [
     [1.1, -4.2, 3, 0.5],
-    [-4.6, 1, 1.6, 0.9],
+    [-5.1, -3.7, 1.6, 0.9],
+    [-6.9, 1.4, 0.8, 0.8],
     [6.5, 1, 1.2, 1],
   ],
   Decor: CafeDecor,
