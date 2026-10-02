@@ -226,9 +226,9 @@ export const rooms = {
       {
         id: "daloopa",
         title: "Daloopa",
-        role: "GTM Business Development · placed via InsideScale",
+        role: "Go-To-Market / Business Development Representative",
         dates: "Oct 2026 – Present",
-        place: "SF Bay Area",
+        place: "New York, NY",
         points: ["The data layer for financial models.", "More details coming soon."],
       },
     ],

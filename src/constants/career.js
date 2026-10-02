@@ -7,7 +7,7 @@ export const RESUME_URL = `${import.meta.env.BASE_URL}AlexHuynh-GTM-Resume.pdf`;
 
 export const headline = {
   role: "Go-To-Market & Sales",
-  current: "GTM Business Development at Daloopa",
+  current: "Go-To-Market / Business Development at Daloopa",
   summary:
     "Engineer turned seller. Three years building and testing software, then into outbound, where I cleared quota every month of ramp and moved into a founding GTM seat two months later. I sell to engineers because I used to be one.",
 };
