@@ -6,6 +6,7 @@ import { PROPS } from "../props";
 import { LogoDecal, Plant, Soft, TextPanel } from "./shared";
 import codingTempleLogo from "../../assets/logos/codingtemple.png";
 import coLabLogo from "../../assets/logos/colab.png";
+import unrLogo from "../../assets/logos/unr.png";
 import { gainSpan, kateeva } from "./brands";
 
 /* Kateeva: an OLED inkjet printer laying RGB pixels onto a glass panel */
@@ -349,12 +350,51 @@ const WelcomeDesk = ({ position }) => (
   </group>
 );
 
+// UNR diploma, framed on the back wall between the printer and the bootcamp
+const Diploma = ({ position }) => (
+  <group position={position}>
+    <Soft args={[1.75, 1.35, 0.06]} color='#1e2a4a' radius={0.03} />
+    <Soft args={[1.6, 1.2, 0.07]} color='#c9a227' radius={0.02} metalness={0.4} roughness={0.4} />
+    <TextPanel
+      width={1.5}
+      height={1.1}
+      position={[0, 0, 0.04]}
+      draw={(ctx, w, h) => {
+        ctx.fillStyle = "#fffdf6";
+        ctx.fillRect(0, 0, w, h);
+        ctx.strokeStyle = "#1e2a4a";
+        ctx.lineWidth = w * 0.008;
+        ctx.strokeRect(w * 0.03, h * 0.04, w * 0.94, h * 0.92);
+        ctx.fillStyle = "#1e2a4a";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.font = `600 ${h * 0.065}px Georgia, serif`;
+        ctx.fillText("University of Nevada, Reno", w / 2, h * 0.42);
+        ctx.font = `italic 400 ${h * 0.05}px Georgia, serif`;
+        ctx.fillText("confers upon Alexandre Huynh the degree of", w / 2, h * 0.53);
+        ctx.font = `700 ${h * 0.075}px Georgia, serif`;
+        ctx.fillText("Bachelor of Science", w / 2, h * 0.64);
+        ctx.font = `600 ${h * 0.06}px Georgia, serif`;
+        ctx.fillText("Electrical Engineering", w / 2, h * 0.74);
+        ctx.font = `400 ${h * 0.045}px Georgia, serif`;
+        ctx.fillText("Minors in Mathematics and Business Administration", w / 2, h * 0.83);
+        ctx.fillText("May 2017", w / 2, h * 0.9);
+      }}
+    />
+    {/* the N mark at the top of the diploma (crop of the logo's square) */}
+    <LogoDecal url={unrLogo} width={0.5} position={[0, 0.34, 0.045]} />
+  </group>
+);
+
 const DevStudioDecor = () => (
   <>
     <OledPrinter position={[-4.6, 0, -3.3]} />
     <TextPanel width={4.4} height={0.8} position={[-4.6, 2.35, -5.48]} draw={kateeva} />
     <TextPanel width={1.9} height={0.95} position={[-7.97, 1.6, 2.7]} rotation={[0, Math.PI / 2, 0]} draw={gainSpan} />
     <Bootcamp position={[3.6, 0, -3.6]} />
+    <group scale={1.3}>
+      <Diploma position={[-0.3, 1.4, -4.19]} />
+    </group>
     <BigScreen position={[7.75, 0, 1.6]} rotation={[0, -Math.PI / 2, 0]} />
     <InternDesk position={[-6.2, 0, 2.6]} rotation={[0, 0.5, 0]} />
     <WelcomeDesk position={[0, 0, 1.8]} />
@@ -377,6 +417,7 @@ export default {
     gainspan: { at: [-5.3, 2.8], radius: 1.7 },
     codingtemple: { at: [2.3, -1.8], area: [2.3, 2] },
     colab: { at: [4.9, -1.8], area: [2.3, 2] },
+    unr: { at: [-0.5, -4], area: [2.4, 2] },
     projects: { at: [6.2, 1.6], area: [2.2, 3.2] },
   },
   blockers: [

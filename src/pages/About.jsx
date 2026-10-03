@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 
 import { CTA } from "../components";
+import unrLogo from "../assets/logos/unr.png";
 import { skills } from "../constants";
 import { RESUME_URL, headline, salesSkills, toolkit, tracks } from "../constants/career";
 
@@ -92,6 +93,18 @@ const About = () => {
               </p>
             </Link>
           ))}
+        </div>
+      </div>
+
+      <div className='mt-16'>
+        <h3 className='subhead-text'>Education</h3>
+        <div className='mt-6 flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm'>
+          <img src={unrLogo} alt='University of Nevada, Reno' className='h-16 w-16 shrink-0 object-contain' />
+          <div>
+            <p className='font-poppins font-semibold text-slate-900'>University of Nevada, Reno</p>
+            <p className='text-slate-700'>B.S. Electrical Engineering · 2017</p>
+            <p className='text-sm text-slate-500'>Minors in Mathematics and Business Administration</p>
+          </div>
         </div>
       </div>
 

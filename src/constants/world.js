@@ -119,6 +119,14 @@ export const rooms = {
         ],
       },
       {
+        id: "unr",
+        title: "University of Nevada, Reno",
+        role: "B.S. Electrical Engineering",
+        dates: "Aug 2012 – May 2017",
+        place: "Reno, NV",
+        points: ["Minors in Mathematics and Business Administration."],
+      },
+      {
         id: "projects",
         title: "Projects & hackathons",
         role: "AI fitness and health apps I've built",

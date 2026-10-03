@@ -87,7 +87,7 @@ const Signpost = ({ position = [-2.4, 0, 7] }) => (
     {BOARDS.map((b, i) => {
       const accent = buildings.find((x) => x.id === b.id).accent;
       return (
-        <group key={b.id} position={[b.dir * (W / 2 - 0.1), 2.75 - i * 0.55, 0.09]} rotation={[0, 0, b.tilt]}>
+        <group key={b.id} position={[b.dir * (W / 2 - 0.1), 2.6 - i * 0.55, b.dir < 0 ? 0.11 : 0.09]} rotation={[0, 0, b.tilt]}>
           <TextPanel width={W} height={H} draw={arrowBoard(b.label, accent, b.dir)} deps={[b.label]} transparent />
         </group>
       );
