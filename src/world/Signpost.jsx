@@ -9,12 +9,12 @@ import { buildings } from "../constants/world";
 // buildings that sit ahead.
 const BOARDS = [
   { id: "cafe", label: "Customer Service", dir: -1, tilt: 0.22 },
-  { id: "code", label: "Software Dev", dir: 1, tilt: -0.22 },
+  { id: "code", label: "Software Engineering", dir: 1, tilt: -0.22 },
   { id: "sales", label: "Tech Sales", dir: -1, tilt: 0 },
-  { id: "gym", label: "Fitness Coach", dir: 1, tilt: 0 },
+  { id: "gym", label: "Fitness Coaching", dir: 1, tilt: 0 },
 ];
 
-const W = 2.1;
+const W = 2.5;
 const H = 0.42;
 
 const arrowBoard = (label, color, dir) => (ctx, w, h) => {
@@ -55,14 +55,35 @@ const Signpost = ({ position = [-2.4, 0, 7] }) => (
     <RigidBody type='fixed' colliders={false}>
       <CylinderCollider args={[1.5, 0.15]} position={[0, 1.5, 0]} />
     </RigidBody>
-    <mesh position={[0, 1.55, 0]} castShadow>
-      <cylinderGeometry args={[0.07, 0.09, 3.1, 12]} />
+    <mesh position={[0, 1.85, 0]} castShadow>
+      <cylinderGeometry args={[0.07, 0.09, 3.7, 12]} />
       <meshStandardMaterial color='#7c4a2d' roughness={0.8} />
     </mesh>
-    <mesh position={[0, 3.13, 0]}>
+    <mesh position={[0, 3.75, 0]}>
       <sphereGeometry args={[0.1, 16, 12]} />
       <meshStandardMaterial color='#fbbf24' metalness={0.5} roughness={0.3} />
     </mesh>
+    {/* header plank telling people what the arrows lead to */}
+    <group position={[0, 3.35, 0.09]}>
+      <TextPanel
+        width={1.9}
+        height={0.5}
+        transparent
+        draw={(ctx, w, h) => {
+          ctx.clearRect(0, 0, w, h);
+          ctx.beginPath();
+          ctx.roundRect(4, 4, w - 8, h - 8, h * 0.18);
+          ctx.fillStyle = "#7c4a2d";
+          ctx.fill();
+          ctx.fillStyle = "#fef3c7";
+          ctx.font = `800 ${h * 0.42}px Poppins, sans-serif`;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.letterSpacing = `${h * 0.04}px`;
+          ctx.fillText("CAREER PATHS", w / 2, h / 2 + 2);
+        }}
+      />
+    </group>
     {BOARDS.map((b, i) => {
       const accent = buildings.find((x) => x.id === b.id).accent;
       return (
