@@ -5,11 +5,11 @@ import { buildings } from "../constants/world";
 
 // Directory signpost in front of the fountain. The boards face the spawn
 // camera (boards aimed straight at the far buildings would be edge-on), and
-// each is shaped like an arrow toward its building, tilted up for the two
-// buildings that sit ahead.
+// each is shaped like an arrow toward its building; the two buildings that
+// sit further back get arrows angled upward.
 const BOARDS = [
-  { id: "cafe", label: "Customer Service", dir: -1, tilt: 0.22 },
-  { id: "code", label: "Software Engineering", dir: 1, tilt: -0.22 },
+  { id: "cafe", label: "Customer Service", dir: -1, tilt: -0.2 },
+  { id: "code", label: "Software Engineering", dir: 1, tilt: 0.2 },
   { id: "sales", label: "Tech Sales", dir: -1, tilt: 0 },
   { id: "gym", label: "Fitness Coaching", dir: 1, tilt: 0 },
 ];
@@ -87,7 +87,7 @@ const Signpost = ({ position = [-2.4, 0, 7] }) => (
     {BOARDS.map((b, i) => {
       const accent = buildings.find((x) => x.id === b.id).accent;
       return (
-        <group key={b.id} position={[b.dir * (W / 2 - 0.1), 2.6 - i * 0.55, b.dir < 0 ? 0.11 : 0.09]} rotation={[0, 0, b.tilt]}>
+        <group key={b.id} position={[b.dir * (W / 2 - 0.1), 2.45 - i * 0.55, b.dir < 0 ? 0.11 : 0.09]} rotation={[0, 0, b.tilt]}>
           <TextPanel width={W} height={H} draw={arrowBoard(b.label, accent, b.dir)} deps={[b.label]} transparent />
         </group>
       );
