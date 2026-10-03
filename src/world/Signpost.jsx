@@ -55,16 +55,16 @@ const Signpost = ({ position = [-2.4, 0, 7] }) => (
     <RigidBody type='fixed' colliders={false}>
       <CylinderCollider args={[2.1, 0.15]} position={[0, 2.1, 0]} />
     </RigidBody>
-    <mesh position={[0, 2.15, 0]} castShadow>
-      <cylinderGeometry args={[0.07, 0.09, 4.3, 12]} />
+    <mesh position={[0, 1.95, 0]} castShadow>
+      <cylinderGeometry args={[0.07, 0.09, 3.9, 12]} />
       <meshStandardMaterial color='#7c4a2d' roughness={0.8} />
     </mesh>
-    <mesh position={[0, 4.35, 0]}>
+    <mesh position={[0, 3.95, 0]}>
       <sphereGeometry args={[0.1, 16, 12]} />
       <meshStandardMaterial color='#fbbf24' metalness={0.5} roughness={0.3} />
     </mesh>
     {/* header plank telling people what the arrows lead to */}
-    <group position={[0, 3.95, 0.09]}>
+    <group position={[0, 3.6, 0.09]}>
       <TextPanel
         width={1.9}
         height={0.5}
@@ -88,7 +88,7 @@ const Signpost = ({ position = [-2.4, 0, 7] }) => (
       const accent = buildings.find((x) => x.id === b.id).accent;
       return (
         // pivot at the pole so a tilted board only lifts its outer tip
-        <group key={b.id} position={[0, 3.35 - i * 0.55, b.dir < 0 ? 0.11 : 0.09]} rotation={[0, 0, b.dir * b.tilt]}>
+        <group key={b.id} position={[0, 3.0 - i * 0.55, b.dir < 0 ? 0.11 : 0.09]} rotation={[0, 0, b.dir * b.tilt]}>
           <group position={[b.dir * (W / 2 - 0.1), 0, 0]}>
             <TextPanel width={W} height={H} draw={arrowBoard(b.label, accent, b.dir)} deps={[b.label]} transparent />
           </group>
