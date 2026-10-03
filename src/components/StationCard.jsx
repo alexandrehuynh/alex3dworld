@@ -40,8 +40,9 @@ const StationCard = ({ building, section, onClose, onOverview }) => {
       <div
         ref={cardRef}
         role='dialog'
+        // let people select/copy text in cards even though the world disables it
         aria-label={section.title}
-        className='w-full max-w-lg max-h-[70vh] overflow-y-auto rounded-2xl bg-white/95 p-5 shadow-2xl backdrop-blur'
+        className='w-full max-w-lg max-h-[70vh] overflow-y-auto overflow-x-hidden overscroll-contain rounded-2xl bg-white/95 p-5 shadow-2xl backdrop-blur'
         style={{ borderTop: `6px solid ${building.accent}` }}
       >
         <div className='flex items-start justify-between gap-3'>
@@ -95,14 +96,14 @@ const StationCard = ({ building, section, onClose, onOverview }) => {
         )}
 
         {section.id === "projects" && (
-          <div className='mt-4 grid gap-2 sm:grid-cols-2'>
+          <div className='mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2'>
             {projects.map((p) => (
               <a
                 key={p.name}
                 href={p.link ?? p.codeLink}
                 target='_blank'
                 rel='noopener noreferrer'
-                className='flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-2.5 transition hover:border-blue-300 hover:shadow-sm'
+                className='flex min-w-0 items-center gap-3 rounded-xl border border-slate-200 bg-white p-2.5 transition hover:border-blue-300 hover:shadow-sm'
               >
                 <img src={p.iconUrl} alt='' className='h-8 w-8 shrink-0 rounded-lg bg-slate-50 object-contain p-1' />
                 <span className='min-w-0'>

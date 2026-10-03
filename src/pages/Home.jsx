@@ -203,7 +203,8 @@ const Home = () => {
   }, [showIntro, picking]);
 
   return (
-    <section className='w-full h-screen relative overflow-hidden'>
+    // fixed to the visible viewport (dvh) so phones can't scroll or bounce the 3D page
+    <section className='world-page fixed inset-0 h-[100dvh] w-full overflow-hidden'>
       {picking && (
         <CharacterPicker
           characters={characters}

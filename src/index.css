@@ -13,6 +13,22 @@ body {
   font-family: "Work Sans", sans-serif;
 }
 
+/* 3D page on phones: no long-press text selection or callout, no tap flash,
+   no pull-to-refresh / bounce */
+.world-page {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+  touch-action: none;
+}
+.world-page [role="dialog"] {
+  -webkit-user-select: text;
+  user-select: text;
+  touch-action: pan-y;
+}
+
 body:has(.card[data-color="blue"]:hover) {
   background-color: rgb(var(--blue-rgb) / 25%);
 }
