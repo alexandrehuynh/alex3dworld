@@ -49,7 +49,8 @@ const arrowBoard = (label, color, dir) => (ctx, w, h) => {
   ctx.fillText(label, (left + right) / 2, h / 2 + 2, right - left - 16);
 };
 
-const Signpost = ({ position = [-2.6, 0, 4.4] }) => (
+// sits on the grass ring between the plaza and the track, offset left
+const Signpost = ({ position = [-2.4, 0, 7] }) => (
   <group position={position}>
     <RigidBody type='fixed' colliders={false}>
       <CylinderCollider args={[1.5, 0.15]} position={[0, 1.5, 0]} />

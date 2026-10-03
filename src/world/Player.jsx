@@ -8,7 +8,8 @@ import { useJoystickStore } from "ecctrl/input";
 import CharacterModel from "./CharacterModel";
 import { playerState } from "./playerState";
 
-export const SPAWN = [0, 2, 9];
+// just outside the track, looking in toward the fountain
+export const SPAWN = [0, 2, 10.6];
 const CAMERA_OFFSET = new THREE.Vector3(0, 7.5, 10);
 // Portrait phones see less width, so pull the camera further back
 const CAMERA_OFFSET_NARROW = new THREE.Vector3(0, 11, 15);
