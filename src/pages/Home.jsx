@@ -53,7 +53,8 @@ const Home = () => {
   const [characterId, setCharacterId] = useState(
     () => characters.find((c) => c.id === loadCharacterId())?.id ?? null
   );
-  const [picking, setPicking] = useState(characterId === null);
+  // always start by choosing a character; the last choice is pre-selected
+  const [picking, setPicking] = useState(true);
   const [previewId, setPreviewId] = useState(characterId ?? characters[0].id);
   const activeCharacter = characters.find((c) => c.id === (picking ? previewId : characterId));
 
