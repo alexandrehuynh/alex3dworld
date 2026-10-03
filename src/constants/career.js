@@ -9,7 +9,7 @@ export const headline = {
   role: "Go-To-Market & Sales",
   current: "Go-To-Market / Business Development at Daloopa",
   summary:
-    "Engineer turned seller. Three years building and testing software, then into outbound, where I cleared quota every month of ramp and moved into a founding GTM seat two months later. I sell to engineers because I used to be one.",
+    "Engineer turned seller. Three years building and testing software, then I followed my passion into fitness, where coaching and selling training packages led me into sales. In outbound, I cleared quota every month of ramp and moved into a founding GTM seat three months later. Now I sell financial data to analysts at Daloopa.",
 };
 
 // Each track maps to a building in the 3D world (worldId) so a room's
@@ -75,7 +75,7 @@ export const tracks = [
     label: "Engineering",
     emoji: "💻",
     accent: "#0284c7",
-    blurb: "Where I started: QA automation, an internship, and two bootcamps. It's why I can talk shop with the engineers I sell to.",
+    blurb: "Where I started: QA automation, an internship, and two bootcamps. It's why I'm comfortable talking shop with technical buyers.",
     stats: [
       { value: "~70%", label: "manual test time cut at Kateeva" },
       { value: "10+", label: "major releases shipped with automated QA" },

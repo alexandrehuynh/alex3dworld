@@ -73,9 +73,9 @@ const About = () => {
         <p className='mt-5 max-w-3xl text-slate-500'>
           I started in engineering, then left to chase strength and conditioning: an unpaid internship and
           my CSCS, with restaurant shifts paying the rent, then five years coaching at gyms. Sales is where
-          I'm building my career now, and everything before it is why I'm good at it: I can talk shop with
-          engineers, I learned trust and retention on the gym floor, and I learned to read a room waiting
-          tables.
+          I'm building my career now, and everything before it is why I'm good at it: I can go deep with
+          technical buyers, I learned trust and retention on the gym floor, and I learned to read a room
+          waiting tables.
         </p>
         <div className='mt-6 grid gap-4 sm:grid-cols-3'>
           {pastTracks.map((t) => (
