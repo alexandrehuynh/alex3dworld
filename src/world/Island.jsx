@@ -6,6 +6,7 @@ import { CylinderCollider, RigidBody } from "@react-three/rapier";
 import { BUILDING_RING, ISLAND_RADIUS, buildings } from "../constants/world";
 import { SIZES } from "./Building";
 import { setNavMap } from "./pathfinding";
+import Signpost from "./Signpost";
 
 // Deterministic pseudo-random so the scenery layout is stable between reloads
 const seeded = (seed) => () => {
@@ -295,6 +296,7 @@ const Island = () => {
   useEffect(() => {
     setNavMap({ type: "circle", r: ISLAND_RADIUS }, [
       { type: "circle", x: 0, z: 0, r: 2.45 },
+      { type: "circle", x: -2.6, z: 4.4, r: 0.2 },
       ...scenery.trees.map((t) => ({ type: "circle", x: t.position[0], z: t.position[2], r: 0.5 * t.scale })),
       ...scenery.rocks.map((r) => ({ type: "circle", x: r.position[0], z: r.position[2], r: 0.35 * r.scale })),
       ...buildings.map((b) => {
@@ -349,6 +351,7 @@ const Island = () => {
       ))}
 
       <Fountain />
+      <Signpost />
 
       {scenery.trees.map((t, i) => (
         <RigidBody key={`tree-${i}`} type='fixed' colliders={false} position={t.position}>
